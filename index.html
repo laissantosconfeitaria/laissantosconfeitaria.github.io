@@ -383,6 +383,25 @@
   }
   .cardapio-obs p { font-size: 0.95rem; color: var(--taupe); }
 
+
+  .whatsapp-float { position: relative; }
+  .wa-tooltip {
+    position: absolute; right: 70px; bottom: 50%;
+    transform: translateY(50%);
+    background: var(--dark); color: #fff;
+    font-size: 0.78rem; font-weight: 400;
+    padding: 0.5rem 0.9rem; border-radius: 2rem;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .wa-tooltip::after {
+    content: ''; position: absolute; left: 100%;
+    top: 50%; transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: var(--dark);
+  }
+  .whatsapp-float:hover .wa-tooltip { opacity: 1; }
+
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2VQS64MLCD"></script>
@@ -410,7 +429,10 @@
 </nav>
 
 <!-- WHATSAPP FLUTUANTE -->
-<a href="https://wa.me/5565992094491" target="_blank" class="whatsapp-float" title="Fale comigo no WhatsApp">💬</a>
+<a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="whatsapp-float" title="Fale comigo no WhatsApp">
+  <span class="wa-tooltip">Faça seu pedido! 🎂</span>
+  💬
+</a>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -420,7 +442,7 @@
     <h1>Bolos feitos com <em>amor</em> e muito carinho</h1>
     <p class="hero-sub">Adoçando a vida de famílias cuiabanas desde 2016 — mais de 2.000 bolos entregues com carinho e dedicação.</p>
     <div class="btn-group">
-      <a href="https://wa.me/5565992094491" target="_blank" class="btn-primary">💬 Pedir Orçamento</a>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="btn-primary">💬 Pedir Orçamento</a>
       <a href="#bolos" class="btn-outline">🎂 Ver Criações</a>
     </div>
   </div>
@@ -600,7 +622,7 @@
     <div class="cardapio-obs">
       <p class="section-label" style="margin-bottom:0.8rem;">✦ Adicionais</p>
       <p>Os valores podem ter acréscimo conforme personalização: recheios com frutas, Nutella, cobertura de ganache de chocolate ou brigadeiro, e decoração com frutas ou brigadeiros. Consulte pelo WhatsApp! 🌸</p>
-      <a href="https://wa.me/5565992094491" target="_blank" class="btn-primary" style="margin-top:1.5rem;display:inline-flex;">💬 Consultar preço personalizado</a>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="btn-primary" style="margin-top:1.5rem;display:inline-flex;">💬 Consultar preço personalizado</a>
     </div>
 
   </div>
@@ -613,7 +635,7 @@
     <h2 class="section-title">Solicite seu <em>orçamento</em></h2>
     <p class="section-text">Entre em contato para tirar dúvidas, pedir orçamentos ou agendar sua encomenda. Respondo com muito carinho! 🌸</p>
     <div class="orcamento-options">
-      <a href="https://wa.me/5565992094491" target="_blank" class="orc-card">
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="orc-card">
         <div class="orc-icon">📱</div>
         <div class="orc-title">WhatsApp</div>
         <div class="orc-desc">(65) 99209-4491 · Resposta rápida</div>
@@ -626,7 +648,7 @@
       <a href="https://www.instagram.com/laissantosconfeitaria" target="_blank" class="orc-card">
         <div class="orc-icon">📸</div>
         <div class="orc-title">Instagram</div>
-        <div class="orc-desc">@laissantosconfeitaria</div>
+        <div class="orc-desc">Siga e veja nossos bolos!</div>
       </a>
     </div>
   </div>
@@ -675,7 +697,7 @@
 <!-- FOOTER -->
 <footer>
   <span class="footer-logo">Lais Santos Confeitaria</span>
-  <p>Cuiabá, Mato Grosso · Atendimento via <a href="https://wa.me/5565992094491" target="_blank">WhatsApp</a></p>
+  <p>Cuiabá, Mato Grosso · Atendimento via <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank">WhatsApp</a></p>
   <p style="margin-top: 0.3rem;">
     <a href="mailto:laissantosv@gmail.com">laissantosv@gmail.com</a> ·
     <a href="https://www.instagram.com/laissantosconfeitaria" target="_blank">@laissantosconfeitaria</a>
