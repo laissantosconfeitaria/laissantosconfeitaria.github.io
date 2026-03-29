@@ -320,6 +320,22 @@
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+  .wa-tooltip {
+    position: absolute; right: 70px; bottom: 50%;
+    transform: translateY(50%);
+    background: var(--dark); color: #fff;
+    font-size: 0.78rem; font-weight: 400;
+    padding: 0.5rem 0.9rem; border-radius: 2rem;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .wa-tooltip::after {
+    content: ''; position: absolute; left: 100%;
+    top: 50%; transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: var(--dark);
+  }
+  .whatsapp-float:hover .wa-tooltip { opacity: 1; }
 
   /* ANIMAÇÕES DE ENTRADA */
   @keyframes fadeUp {
@@ -384,7 +400,7 @@
   .cardapio-obs p { font-size: 0.95rem; color: var(--taupe); }
 
 
-  .whatsapp-float { position: relative; }
+  .whatsapp-float { position: fixed !important; bottom: 1.8rem !important; right: 1.8rem !important; z-index: 200 !important; }
   .wa-tooltip {
     position: absolute; right: 70px; bottom: 50%;
     transform: translateY(50%);
