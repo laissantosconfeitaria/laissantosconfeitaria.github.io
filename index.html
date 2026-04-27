@@ -439,6 +439,7 @@
     <li><a href="#sobre" onclick="this.closest('.nav-links').classList.remove('open')">Minha História</a></li>
     <li><a href="#depoimentos" onclick="this.closest('.nav-links').classList.remove('open')">Clientes</a></li>
     <li><a href="#cardapio" onclick="this.closest('.nav-links').classList.remove('open')">Cardápio</a></li>
+    <li><a href="javascript:openCardapio()" onclick="this.closest('.nav-links').classList.remove('open')">Cardápio Completo</a></li>
     <li><a href="#orcamento" onclick="this.closest('.nav-links').classList.remove('open')">Orçamento</a></li>
     <li><a href="#contato" onclick="this.closest('.nav-links').classList.remove('open')">Contato</a></li>
   </ul>
@@ -639,6 +640,7 @@
       <p class="section-label" style="margin-bottom:0.8rem;">✦ Adicionais</p>
       <p>Os valores podem ter acréscimo conforme personalização: recheios com frutas, Nutella, cobertura de ganache de chocolate ou brigadeiro, e decoração com frutas ou brigadeiros. Consulte pelo WhatsApp! 🌸</p>
       <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="btn-primary" style="margin-top:1.5rem;display:inline-flex;">💬 Consultar preço personalizado</a>
+      <button onclick="openCardapio()" class="btn-outline" style="margin-top:0.8rem;display:inline-flex;border:none;cursor:pointer;font-family:'Jost',sans-serif;">📋 Ver Cardápio Completo</button>
     </div>
 
   </div>
@@ -720,6 +722,355 @@
   </p>
   <p style="margin-top: 1rem; opacity: 0.4; font-size: 0.72rem;">© 2025 Lais Santos Confeitaria · Todos os direitos reservados</p>
 </footer>
+
+
+<!-- PÁGINA DO CARDÁPIO COMPLETO -->
+<div id="cardapio-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999; background:var(--cream); overflow-y:auto;">
+  <div style="max-width:900px; margin:0 auto; padding:2rem 1.5rem 4rem;">
+
+    <!-- HEADER -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; padding-bottom:1rem; border-bottom:0.5px solid var(--blush);">
+      <div>
+        <p style="font-size:0.7rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500;">✦ Cardápio Completo</p>
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--dark);">Monte seu <em style="font-style:italic; color:var(--rose-dark);">pedido</em></h2>
+      </div>
+      <button onclick="document.getElementById('cardapio-modal').style.display='none'; document.body.style.overflow=''"
+        style="background:var(--rose-light); border:none; border-radius:50%; width:42px; height:42px; font-size:1.2rem; cursor:pointer; color:var(--rose-dark);">✕</button>
+    </div>
+
+    <!-- INTRO -->
+    <div style="background:var(--rose-light); border-radius:1rem; padding:1.2rem 1.5rem; margin-bottom:2rem; font-size:0.88rem; color:var(--taupe); line-height:1.7;">
+      🎂 Trabalho no modelo <strong style="color:var(--dark);">Monte seu Bolo</strong> — você escolhe o tamanho, a massa, o recheio e a cobertura!<br>
+      Padrão: 3 discos de massa, 2 camadas de recheio, altura 10-12 cm · 100g por convidado sugerido · 100% artesanal
+    </div>
+
+    <!-- ABAS -->
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem;" id="cardapio-tabs">
+      <button class="tab-btn active" onclick="showTab('bolos-dec')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--rose); background:var(--rose); color:#fff; cursor:pointer;">🎂 Bolos Decorados</button>
+      <button class="tab-btn" onclick="showTab('bolos-simples')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🍰 Bolos Simples</button>
+      <button class="tab-btn" onclick="showTab('doces')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🍬 Doces & Trufas</button>
+      <button class="tab-btn" onclick="showTab('sobremesas')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🍮 Sobremesas</button>
+      <button class="tab-btn" onclick="showTab('kitfesta')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🎉 Kit Festa</button>
+      <button class="tab-btn" onclick="showTab('outros')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🧁 Cupcakes & Mais</button>
+      <button class="tab-btn" onclick="showTab('salgados')" style="font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border-radius:2rem; border:1px solid var(--blush); background:transparent; color:var(--taupe); cursor:pointer;">🥐 Salgados</button>
+    </div>
+
+    <!-- TAB: BOLOS DECORADOS -->
+    <div id="tab-bolos-dec" class="tab-content">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:0.3rem;">Bolos Decorados</h3>
+      <p style="font-size:0.85rem; color:var(--taupe); margin-bottom:1.5rem;">Massas disponíveis: Chocolate · Baunilha · Red Velvet</p>
+
+      <!-- TAMANHOS -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0.8rem; margin-bottom:2rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem; text-align:center;">
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">PP · Bento</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">~2 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">10cm · 350g</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem; text-align:center;">
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">P</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">8-10 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">15cm · 1-1,3kg</div>
+        </div>
+        <div style="background:#fff; border:1.5px solid var(--rose); border-radius:0.8rem; padding:1rem; text-align:center; position:relative;">
+          <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--rose); color:#fff; font-size:0.6rem; padding:0.15rem 0.6rem; border-radius:2rem; white-space:nowrap; font-weight:500;">Mais pedido</div>
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">M</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">18-20 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">18cm · 1,9-2,1kg</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem; text-align:center;">
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">G</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">28-30 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">21cm · 2,8-3,1kg</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem; text-align:center;">
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">GG</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">38-40 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">23cm · 3,8-4,1kg</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem; text-align:center;">
+          <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">EX</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--dark);">48-50 fatias</div>
+          <div style="font-size:0.75rem; color:var(--taupe);">26cm · 4,8-5kg</div>
+        </div>
+      </div>
+
+      <!-- RECHEIOS -->
+      <div style="margin-bottom:1.5rem;">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--dark); margin-bottom:0.8rem;">Recheios Tradicionais <span style="font-size:0.8rem; color:var(--taupe); font-family:'Jost',sans-serif; font-weight:300;">— PP R$60 · P R$99 · M R$198 · G R$297 · GG R$396 · EX R$495</span></h4>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+          <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Brigadeiro gourmet 50% cacau</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Beijinho de coco</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Doce de leite artesanal</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Dois amores</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Prestígio</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Leite ninho</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">4 leites</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Mousse de chocolate</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Brigadeiro de maracujá</span> <span style="background:var(--rose-light); color:var(--rose-dark); font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Brigadeiro de limão</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.5rem;">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--dark); margin-bottom:0.8rem;">Recheios Especiais <span style="font-size:0.8rem; color:var(--taupe); font-family:'Jost',sans-serif; font-weight:300;">— PP R$70 · P R$125 · M R$249 · G R$375 · GG R$499 · EX R$625</span></h4>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+          <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">4 leites com morango</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Brigadeiro com morango</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Doce de leite com ameixa</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Dois amores com morango</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Creme de coco com abacaxi</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Leite ninho com Nutella</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">4 leites com abacaxi</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">4 leites com Oreo</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Caramelo salgado com mousse de chocolate</span> <span style="background:#f0e6d3; color:#8c6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Floresta Negra</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.5rem;">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--dark); margin-bottom:0.8rem;">Recheios Premium <span style="font-size:0.8rem; color:var(--taupe); font-family:'Jost',sans-serif; font-weight:300;">— P R$145 · M R$289 · G R$435 · GG R$579 · EX R$725</span></h4>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+          <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Pistache</span> <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Kinder Bueno</span> <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Ouro Branco ou Sonho de Valsa</span> <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Nozes com praliné</span> <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Doce de leite com praliné de nozes e brigadeiro</span> <span style="background:#f5f0e6; color:#7a6a3e; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2rem;">Marta Rocha</span>
+        </div>
+      </div>
+
+      <!-- COBERTURAS -->
+      <div style="margin-bottom:2rem;">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--dark); margin-bottom:0.8rem;">Coberturas</h4>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:0.8rem;">
+          <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem;">
+            <div style="font-weight:500; font-size:0.9rem; color:var(--dark);">Chantininho ou Naked Cake</div>
+            <div style="font-size:0.8rem; color:var(--rose-dark); font-weight:500;">Sem custo adicional</div>
+          </div>
+          <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem;">
+            <div style="font-weight:500; font-size:0.9rem; color:var(--dark);">Chantininho Personalizado</div>
+            <div style="font-size:0.8rem; color:var(--rose-dark); font-weight:500;">+ R$20 por tamanho</div>
+          </div>
+          <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem;">
+            <div style="font-weight:500; font-size:0.9rem; color:var(--dark);">Cobertura de Brigadeiro</div>
+            <div style="font-size:0.8rem; color:var(--rose-dark); font-weight:500;">+ R$25 por tamanho</div>
+          </div>
+          <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem;">
+            <div style="font-weight:500; font-size:0.9rem; color:var(--dark);">Ganache de Chocolate</div>
+            <div style="font-size:0.8rem; color:var(--rose-dark); font-weight:500;">+ R$40 por tamanho</div>
+          </div>
+          <div style="background:#fff; border:0.5px solid var(--blush); border-radius:0.8rem; padding:1rem;">
+            <div style="font-weight:500; font-size:0.9rem; color:var(--dark);">Ganache Saborizada</div>
+            <div style="font-size:0.75rem; color:var(--taupe);">Pistache · Morango · Maracujá · Limão</div>
+            <div style="font-size:0.8rem; color:var(--rose-dark); font-weight:500;">+ R$35 por tamanho</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: BOLOS SIMPLES -->
+    <div id="tab-bolos-simples" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:1.5rem;">Bolos Simples & Vulcão</h3>
+      <div style="overflow-x:auto; margin-bottom:2rem;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+          <thead>
+            <tr style="background:var(--rose-light);">
+              <th style="text-align:left; padding:0.8rem 1rem; font-weight:500; color:var(--dark);">Sabor</th>
+              <th style="text-align:center; padding:0.8rem; color:var(--dark);">Tam. M</th>
+              <th style="text-align:center; padding:0.8rem; color:var(--dark);">Tam. G</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Fubá</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$40</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Chocolate sem cobertura</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$32</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$58</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Chocolate com cobertura</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$45</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$70</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Formigueiro sem cobertura</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$38</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$58</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Formigueiro com cobertura</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$50</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$70</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Fubá cremoso</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$50</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$70</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Milho</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$45</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$65</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Toalha felpuda</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$50</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$70</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Laranja</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$45</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$58</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Cenoura com brigadeiro</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$50</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$68</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Mesclado</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$35</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$58</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Mesclado com cobertura</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$50</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$70</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--dark); margin-bottom:1rem;">Bolo Vulcão</h4>
+      <p style="font-size:0.85rem; color:var(--taupe); margin-bottom:1rem;">Massas: Baunilha · Chocolate · Red Velvet</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+          <thead>
+            <tr style="background:var(--rose-light);">
+              <th style="text-align:left; padding:0.8rem 1rem; font-weight:500; color:var(--dark);">Cobertura</th>
+              <th style="text-align:center; padding:0.8rem; color:var(--dark);">Tam. M</th>
+              <th style="text-align:center; padding:0.8rem; color:var(--dark);">Tam. G</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Brigadeiro</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$85</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Dois amores</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$85</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Leite ninho</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$85</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Leite ninho com brigadeiro</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$85</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Leite ninho com Nutella</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$65</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$90</td></tr>
+<tr style="background:var(--cream); border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Cream cheese</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$75</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$99</td></tr>
+<tr style="background:#fff; border-bottom:0.5px solid var(--blush);"><td style="padding:0.7rem 1rem; color:var(--dark);">Cenoura com brigadeiro</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$60</td><td style="text-align:center; padding:0.7rem; color:var(--rose-dark); font-weight:500;">R$85</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: DOCES -->
+    <div id="tab-doces" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:1.5rem;">Doces & Trufas</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-bottom:2rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Docinhos Tradicionais</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Brigadeiro, beijinho, bicho de pé, limão, maracujá, dois amores, churros, prestígio, ninho · 15g cada</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">25un R$50 · 50un R$100 · 100un R$190</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Docinhos Especiais</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Surpresa de uva, Oreo, pistache, cajuzinho, Romeu e Julieta, ninho com nutella, olho de sogra, banoffee</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">25un R$75 · 50un R$120 · 100un R$220</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Caixas Degustação</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Doces variados em caixa pétala</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">15 doces R$55 · 20 doces R$70 · 25 doces R$100</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Trufas de Chocolate</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Brigadeiro · Beijinho · Dois amores · Prestígio · Doce de leite · Brigadeiro branco</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">R$4,00 unidade</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Trufas com Frutas</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Morango, damasco, ameixa, uva, abacaxi, cereja</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">R$4,80 unidade</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Especiais</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Copinho de chocolate com cereja R$4 · Bombom negresco R$4,50 · Trufa meio amarga no cacau 50% cento R$250</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: SOBREMESAS -->
+    <div id="tab-sobremesas" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:1.5rem;">Sobremesas & Tortas</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-bottom:2rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Travessa da Felicidade</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Creme 4 leites, frutas in natura, brownie de chocolate</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">P R$80 · M R$130 · G R$199</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Travessa Red Velvet</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Red velvet, creme 4 leites, geleia de morango artesanal, chocolate branco</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">P R$80 · M R$130 · G R$219</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Bombom Aberto</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Creme 4 leites, morango/uva/abacaxi, ganache de chocolate nobre</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">P R$80 · M R$130 · G R$199</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Banoffee</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Doce de leite artesanal, doce de banana artesanal, bolacha artesanal, chantininho</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">M R$130 · G R$199</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Tortas</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Limão · Maracujá · Prestígio · Brigadeiro · Dois amores · Massa amanteigada artesanal</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">8 pessoas R$129 · 13 pessoas R$199</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Pudim de Leite Condensado</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Cremoso com calda caramelizada</div>
+          <div style="font-size:0.85rem; color:var(--rose-dark); font-weight:500;">Médio R$65 (8p) · Grande R$85 (18p)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: KIT FESTA -->
+    <div id="tab-kitfesta" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:0.5rem;">Kit Festa</h3>
+      <p style="font-size:0.85rem; color:var(--taupe); margin-bottom:1.5rem;">Bolo decorado + docinhos · Cobertura chantininho · 100% artesanal</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:0.8rem; margin-bottom:2rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1rem; text-align:center;"><div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">Tam. P</div><div style="font-size:0.75rem; color:var(--taupe);">15cm · 8-10 fatias</div><div style="font-size:0.82rem; color:var(--taupe); margin-top:0.3rem;">70 docinhos</div><div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose-dark); margin-top:0.3rem;">R$200</div></div>
+<div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1rem; text-align:center;"><div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">Tam. M</div><div style="font-size:0.75rem; color:var(--taupe);">18cm · 18-20 fatias</div><div style="font-size:0.82rem; color:var(--taupe); margin-top:0.3rem;">100 docinhos</div><div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose-dark); margin-top:0.3rem;">R$325</div></div>
+<div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1rem; text-align:center;"><div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">Tam. G</div><div style="font-size:0.75rem; color:var(--taupe);">21cm · 28-30 fatias</div><div style="font-size:0.82rem; color:var(--taupe); margin-top:0.3rem;">150 docinhos</div><div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose-dark); margin-top:0.3rem;">R$450</div></div>
+<div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1rem; text-align:center;"><div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">Tam. GG</div><div style="font-size:0.75rem; color:var(--taupe);">23cm · 38-40 fatias</div><div style="font-size:0.82rem; color:var(--taupe); margin-top:0.3rem;">200 docinhos</div><div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose-dark); margin-top:0.3rem;">R$649</div></div>
+<div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1rem; text-align:center;"><div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:500;">Tam. EX</div><div style="font-size:0.75rem; color:var(--taupe);">26cm · 48-50 fatias</div><div style="font-size:0.82rem; color:var(--taupe); margin-top:0.3rem;">250 docinhos</div><div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose-dark); margin-top:0.3rem;">R$815</div></div>
+      </div>
+      <p style="font-size:0.82rem; color:var(--taupe);">Massas: Chocolate · Baunilha · Recheios: Brigadeiro 50% · Beijinho · Doce de leite · 4 leites · Ninho · Choconinho · Prestígio · Dois amores</p>
+    </div>
+
+    <!-- TAB: OUTROS -->
+    <div id="tab-outros" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:1.5rem;">Cupcakes, Pão de Mel & Mais</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Cupcakes</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Mínimo 20 unidades · Recheios: brigadeiro, 4 leites, doce de leite</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Grande + chantininho R$8,50 · Grande + brigadeiro R$12<br>Pequeno + chantininho R$6,50 · Pequeno + brigadeiro R$9</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Pão de Mel</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Mínimo 10 unidades · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Pequeno R$6 · Grande R$10<br>Personalizado com pasta: P R$8 · G R$12</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Pirulitos de Chocolate</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Mínimo 10 unidades</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Simples R$9 · Com pasta e papel de arroz R$14 · Com sprinkles R$20</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Brownie</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.5rem;">Mínimo 10 unidades · 6x6cm · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Simples R$6 · Recheado R$12</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: SALGADOS -->
+    <div id="tab-salgados" class="tab-content" style="display:none;">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--dark); margin-bottom:1.5rem;">Cardápio Salgado</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem;">
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Torta de Frango Fria</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Sem geleia R$110/kg · Com geleia de morango R$129/kg</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Pão Italiano</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.3rem;">Presunto, queijo, tomate, orégano</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">Médio R$60 · Grande R$90</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Quiches / Empadão</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.3rem;">Frango c/ catupiry · Alho poró c/ queijo · Bacon e calabresa · Carne seca c/ banana · Bacon c/ abacaxi</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">600g R$80 · 1,1kg R$150</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Quiche de Camarão</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.3rem;">Camarão com catupiry</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">600g R$100 · 1,1kg R$199</div>
+        </div>
+        <div style="background:#fff; border:0.5px solid var(--blush); border-radius:1rem; padding:1.2rem;">
+          <div style="font-weight:500; color:var(--dark); margin-bottom:0.3rem;">Torta Assada</div>
+          <div style="font-size:0.82rem; color:var(--taupe); margin-bottom:0.3rem;">Frango ou carne moída</div>
+          <div style="font-size:0.82rem; color:var(--rose-dark);">R$80/kg</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÃO WHATSAPP -->
+    <div style="text-align:center; margin-top:3rem; padding-top:2rem; border-top:0.5px solid var(--blush);">
+      <p style="color:var(--taupe); font-size:0.9rem; margin-bottom:1rem;">Gostou? Fale comigo para montar seu pedido! 🌸</p>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20card%C3%A1pio%20no%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20%F0%9F%8E%82" target="_blank" class="btn-primary">💬 Fazer meu pedido pelo WhatsApp</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.getElementById('tab-' + tabId).style.display = 'block';
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--taupe)';
+    b.style.borderColor = 'var(--blush)';
+  });
+  event.target.style.background = 'var(--rose)';
+  event.target.style.color = '#fff';
+  event.target.style.borderColor = 'var(--rose)';
+}
+function openCardapio() {
+  document.getElementById('cardapio-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  window.scrollTo(0,0);
+}
+</script>
 
 </body>
 </html>
