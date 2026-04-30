@@ -270,7 +270,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-sim-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
-      <button class="add-btn" onclick="addGeneric('🍰 Bolo Simples',[['g-sim-sab','Sabor'],['g-sim-tam','Tamanho']])">🍰 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addSimples()">🍰 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -305,7 +305,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-vul-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
-      <button class="add-btn" onclick="addGeneric('🌋 Bolo Vulcão',[['g-vul-mas','Massa'],['g-vul-cob','Cobertura'],['g-vul-tam','Tamanho']])">🌋 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addVulcao()">🌋 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -327,7 +327,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         </div>
       </div>
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('doc',-1)">−</button><span class="qty-num" id="q-doc">1</span><button class="qty-btn" onclick="chgQ('doc',1)">+</button></div></div>
-      <button class="add-btn" onclick="addQty('doc','🍬 Doces & Trufas','g-doc-item')">🍬 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addDoces()">🍬 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -354,7 +354,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-sob-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
-      <button class="add-btn" onclick="addGeneric('🍮 Sobremesa',[['g-sob-item','Sobremesa'],['g-sob-tam','Tamanho']])">🍮 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addSobremesa()">🍮 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -392,7 +392,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Dois amores</div></div>
         </div>
       </div>
-      <button class="add-btn" onclick="addGeneric('🎉 Kit Festa',[['g-kit-tam','Kit'],['g-kit-mas','Massa'],['g-kit-rec','Recheio']])">🎉 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addKit()">🎉 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -419,7 +419,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         </div>
       </div>
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('out',-1)">−</button><span class="qty-num" id="q-out">1</span><button class="qty-btn" onclick="chgQ('out',1)">+</button></div></div>
-      <button class="add-btn" onclick="addQty('out','🧁 Cupcakes & Mais','g-out-item')">🧁 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addCupcakes()">🧁 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -442,7 +442,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Carne moída</div><div class="si-price">R$80/kg</div></div>
         </div>
       </div>
-      <button class="add-btn" onclick="addGeneric('🥐 Salgado',[['g-sal-item','Item']])">🥐 Adicionar ao carrinho</button>
+      <button class="add-btn" onclick="addSalgado()">🥐 Adicionar ao carrinho</button>
     </div>
   </div>
 
@@ -454,14 +454,14 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
     <span class="cart-badge" id="cart-badge">0 itens</span>
   </div>
   <div id="cart-body">
-    <div class="cart-empty"><span class="cart-empty-icon">🛒</span><p>Seu carrinho está vazio.<br>Monte seu pedido acima!</p></div>
+    <div class="cart-empty"><span class="cart-empty-icon"></span><p>Seu carrinho está vazio.<br>Monte seu pedido acima!</p></div>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none">
     <label class="obs-label">Observações / data do evento</label>
     <textarea class="cart-obs" id="cart-obs" placeholder="Ex: Aniversário no dia 15/06, escrever Feliz Aniversário Ana..."></textarea>
     <div class="cart-actions">
       
-      <button class="btn-copy" id="btn-copy" onclick="copyPedido()">📋 Copiar pedido</button>
+      <button class="btn-copy" id="btn-copy" onclick="copyPedido()">Copiar pedido</button>
       <div class="resumo-box" id="resumo-box"></div>
       <a id="btn-wa-confirm" href="#" class="btn-wa" onclick="openWA(event)" style="display:none; text-decoration:none; margin-top:0.2rem;">💬 Enviar pedido pelo WhatsApp</a>
       <button class="btn-clear" onclick="clearCart()">🗑 Limpar carrinho</button>
@@ -495,7 +495,7 @@ function sel(el, gid) {
 function multi(el, gid, max) {
   if (el.classList.contains('selected')) { el.classList.remove('selected'); return; }
   const selected = document.querySelectorAll('#' + gid + ' .selected');
-  if (selected.length >= max) { showToast('Máximo ' + max + ' recheios! 😊'); return; }
+  if (selected.length >= max) { showToast('Maximo ' + max + ' recheios!'); return; }
   el.classList.add('selected');
 }
 
@@ -515,13 +515,13 @@ function clearGroup(ids) { ids.forEach(id => document.querySelectorAll('#' + id 
 // Add bolo decorado
 function addBolo() {
   const m = getV('g-dec-mas'), t = getV('g-dec-tam'), recs = getMulti('g-dec-rec'), c = getV('g-dec-cob');
-  if (!m) return showToast('Escolha a massa! 🌾');
-  if (!t) return showToast('Escolha o tamanho! 📏');
-  if (!recs.length) return showToast('Escolha pelo menos um recheio! 🍫');
-  if (!c) return showToast('Escolha a cobertura! 🎨');
-  cart.push({ name: '🎂 Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c });
+  if (!m) return showToast('Escolha a massa!');
+  if (!t) return showToast('Escolha o tamanho!');
+  if (!recs.length) return showToast('Escolha pelo menos um recheio!');
+  if (!c) return showToast('Escolha a cobertura!');
+  cart.push({ name: 'Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c });
   clearGroup(['g-dec-mas', 'g-dec-tam', 'g-dec-rec', 'g-dec-cob']);
-  updateCart(); showToast('Bolo adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updateCart(); showToast('Bolo adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // Add generic item
@@ -529,22 +529,22 @@ function addGeneric(label, fields) {
   let details = [];
   for (let [gid, lbl] of fields) {
     const v = getV(gid);
-    if (!v) return showToast('Escolha ' + lbl.toLowerCase() + '! 😊');
+    if (!v) return showToast('Escolha ' + lbl.toLowerCase() + '!');
     details.push(lbl + ': ' + v);
   }
   cart.push({ name: label, detail: details.join(' | ') });
   fields.forEach(([gid]) => document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected')));
-  updateCart(); showToast('Adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updateCart(); showToast('Adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // Add qty item
 function addQty(key, label, gid) {
   const v = getV(gid);
-  if (!v) return showToast('Escolha um item! 😊');
+  if (!v) return showToast('Escolha um item!');
   cart.push({ name: label, detail: v + ' | Quantidade: ' + (qtys[key] || 1) });
   document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected'));
   qtys[key] = 1; document.getElementById('q-' + key).innerText = '1';
-  updateCart(); showToast('Adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updateCart(); showToast('Adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function removeItem(i) { cart.splice(i, 1); updateCart(); }
@@ -580,10 +580,10 @@ function copyPedido() {
 
   navigator.clipboard.writeText(msg).then(() => {
     const btn = document.getElementById('btn-copy');
-    btn.innerText = '✅ Copiado!';
+    btn.innerText = 'Copiado!';
     btn.classList.add('copied');
-    showToast('Pedido copiado! Agora abra o WhatsApp e cole 📋');
-    setTimeout(() => { btn.innerText = '📋 Copiar pedido'; btn.classList.remove('copied'); }, 3500);
+    showToast('Pedido copiado! Abra o WhatsApp e cole.');
+    setTimeout(() => { btn.innerText = 'Copiar pedido'; btn.classList.remove('copied'); }, 3500);
   }).catch(() => {
     showToast('Selecione o texto acima e copie manualmente!');
   });
@@ -602,7 +602,7 @@ function updateCart() {
   badge.innerText = cart.length + (cart.length === 1 ? ' item' : ' itens');
 
   if (!cart.length) {
-    body.innerHTML = '<div class="cart-empty"><span class="cart-empty-icon">🛒</span><p>Seu carrinho está vazio.<br>Monte seu pedido ao lado!</p></div>';
+    body.innerHTML = '<div class="cart-empty"><span class="cart-empty-icon"></span><p>Seu carrinho está vazio.<br>Monte seu pedido ao lado!</p></div>';
     footer.style.display = 'none';
     return;
   }
@@ -624,7 +624,7 @@ updateCart();
 
 
 function sel(el,gid){document.querySelectorAll('#'+gid+' .opt-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
-function multi(el,gid,max){if(el.classList.contains('selected')){el.classList.remove('selected');return;}const s=document.querySelectorAll('#'+gid+' .selected');if(s.length>=max){showToast('Máximo '+max+' recheios! 😊');return;}el.classList.add('selected');}
+function multi(el,gid,max){if(el.classList.contains('selected')){el.classList.remove('selected');return;}const s=document.querySelectorAll('#'+gid+' .selected');if(s.length>=max){showToast('Maximo ' + max + ' recheios!');return;}el.classList.add('selected');}
 function ssel(el,gid){document.querySelectorAll('#'+gid+' .si-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
 function getV(gid){const el=document.querySelector('#'+gid+' .selected, #'+gid+' .opt-card.selected');return el?(el.querySelector('.opt-name,.si-name')||{}).innerText||null:null;}
 function getMulti(gid){return[...document.querySelectorAll('#'+gid+' .selected')].map(e=>(e.querySelector('.opt-name')||{}).innerText).filter(Boolean);}
