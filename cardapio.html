@@ -143,6 +143,16 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
 .si-price{font-size:.82rem;color:var(--rose-dark);font-weight:500;margin-top:.3rem}
 .si-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.6rem}
 .si-grid.wide{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+
+  /* PRICE PREVIEW */
+  .price-preview { background: var(--cream); border: 1.5px solid var(--rose); border-radius: 1rem; padding: 1.2rem 1.5rem; margin-top: 1.5rem; display: none; }
+  .preview-title { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 0.8rem; }
+  .preview-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; color: var(--taupe); padding: 0.3rem 0; border-bottom: 0.5px solid var(--blush); }
+  .preview-row span:last-child { font-weight: 500; color: var(--dark); }
+  .preview-total { display: flex; justify-content: space-between; align-items: center; font-size: 1rem; font-weight: 500; color: var(--dark); padding: 0.6rem 0 0.2rem; margin-top: 0.3rem; }
+  .preview-total span:last-child { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--rose-dark); }
+  .preview-note { font-size: 0.72rem; color: var(--taupe); font-style: italic; margin-top: 0.3rem; }
+
 </style>
 </head>
 <body>
@@ -185,12 +195,12 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">2</div><div class="step-label">Escolha o tamanho</div></div>
         <div class="options-grid" id="g-dec-tam">
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">PP · Bento</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$60</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho P</div><div class="opt-info">8-10 fatias · 15cm</div><div class="opt-price">a partir de R$99</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-badge badge-popular">Mais pedido</div><div class="opt-name">Tamanho M</div><div class="opt-info">18-20 fatias · 18cm</div><div class="opt-price">a partir de R$198</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho G</div><div class="opt-info">28-30 fatias · 21cm</div><div class="opt-price">a partir de R$297</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho GG</div><div class="opt-info">38-40 fatias · 23cm</div><div class="opt-price">a partir de R$396</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho EX</div><div class="opt-info">48-50 fatias · 26cm</div><div class="opt-price">a partir de R$495</div></div>
+          <div class="opt-card" data-bento="true" onclick="sel(this,'g-dec-tam')"><div class="opt-name">PP · Bento</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$ 60</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho P</div><div class="opt-info">8-10 fatias · 15cm</div><div class="opt-price">a partir de R$ 99</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-badge badge-popular">Mais pedido</div><div class="opt-name">Tamanho M</div><div class="opt-info">18-20 fatias · 18cm</div><div class="opt-price">a partir de R$ 198</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho G</div><div class="opt-info">28-30 fatias · 21cm</div><div class="opt-price">a partir de R$ 297</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho GG</div><div class="opt-info">38-40 fatias · 23cm</div><div class="opt-price">a partir de R$ 396</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho EX</div><div class="opt-info">48-50 fatias · 26cm</div><div class="opt-price">a partir de R$ 495</div></div>
         </div>
       </div>
 
@@ -232,12 +242,13 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <div class="options-grid wide" id="g-dec-cob">
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho</div><div class="opt-price">Sem adicional</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Naked Cake</div><div class="opt-price">Sem adicional</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho Personalizado</div><div class="opt-price">+ R$20</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Cobertura de Brigadeiro</div><div class="opt-price">+ R$25</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache de Chocolate</div><div class="opt-price">+ R$40</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache Saborizada</div><div class="opt-info">Pistache · Morango · Maracujá · Limão</div><div class="opt-price">+ R$35</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho Personalizado</div><div class="opt-price">+ R$ 20</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Cobertura de Brigadeiro</div><div class="opt-price">+ R$ 25</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache de Chocolate</div><div class="opt-price">+ R$ 40</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache Saborizada</div><div class="opt-info">Pistache · Morango · Maracujá · Limão</div><div class="opt-price">+ R$ 35</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview"></div>
       <button class="add-btn" onclick="addBolo()">🎂 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -249,18 +260,18 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o sabor</div></div>
         <div class="si-grid" id="g-sim-sab">
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá</div><div class="si-price">M R$40 · G R$60</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate sem cobertura</div><div class="si-price">M R$32 · G R$58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate com cobertura</div><div class="si-price">M R$45 · G R$70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro sem cobertura</div><div class="si-price">M R$38 · G R$58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro com cobertura</div><div class="si-price">M R$50 · G R$70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá cremoso</div><div class="si-price">M R$50 · G R$70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Milho</div><div class="si-price">M R$45 · G R$65</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Toalha felpuda</div><div class="si-price">M R$50 · G R$70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Laranja</div><div class="si-price">M R$45 · G R$58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$50 · G R$68</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado</div><div class="si-price">M R$35 · G R$58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado com cobertura</div><div class="si-price">M R$50 · G R$70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá</div><div class="si-price">M R$ 40 · G R$ 60</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate sem cobertura</div><div class="si-price">M R$ 32 · G R$ 58</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate com cobertura</div><div class="si-price">M R$ 45 · G R$ 70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro sem cobertura</div><div class="si-price">M R$ 38 · G R$ 58</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro com cobertura</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá cremoso</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Milho</div><div class="si-price">M R$ 45 · G R$ 65</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Toalha felpuda</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Laranja</div><div class="si-price">M R$ 45 · G R$ 58</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 50 · G R$ 68</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado</div><div class="si-price">M R$ 35 · G R$ 58</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado com cobertura</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
         </div>
       </div>
       <div class="step">
@@ -270,6 +281,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-sim-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview-simples"></div>
       <button class="add-btn" onclick="addSimples()">🍰 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -289,13 +301,13 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">2</div><div class="step-label">Escolha a cobertura</div></div>
         <div class="si-grid" id="g-vul-cob">
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Brigadeiro</div><div class="si-price">M R$60 · G R$85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Dois amores</div><div class="si-price">M R$60 · G R$85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho</div><div class="si-price">M R$60 · G R$85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com brigadeiro</div><div class="si-price">M R$60 · G R$85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com Nutella</div><div class="si-price">M R$65 · G R$90</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cream cheese</div><div class="si-price">M R$75 · G R$99</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$60 · G R$85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Dois amores</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com Nutella</div><div class="si-price">M R$ 65 · G R$ 90</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cream cheese</div><div class="si-price">M R$ 75 · G R$ 99</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
         </div>
       </div>
       <div class="step">
@@ -305,6 +317,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-vul-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview-vulcao"></div>
       <button class="add-btn" onclick="addVulcao()">🌋 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -316,17 +329,18 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-doc-item">
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Tradicionais</div><div class="si-desc">Brigadeiro, beijinho, bicho de pé, limão, maracujá, dois amores, churros, prestígio, ninho</div><div class="si-price">25un R$50 · 50un R$100 · 100un R$190</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Especiais</div><div class="si-desc">Surpresa de uva, Oreo, pistache, cajuzinho, Romeu e Julieta, ninho com nutella, olho de sogra, banoffee</div><div class="si-price">25un R$75 · 50un R$120 · 100un R$220</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Caixa Degustação</div><div class="si-desc">Doces variados em caixa pétala</div><div class="si-price">15 doces R$55 · 20 doces R$70 · 25 doces R$100</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas de Chocolate</div><div class="si-desc">Brigadeiro · Beijinho · Dois amores · Prestígio · Doce de leite · Brigadeiro branco</div><div class="si-price">R$4,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas com Frutas</div><div class="si-desc">Morango, damasco, ameixa, uva, abacaxi, cereja</div><div class="si-price">R$4,80/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Copinho de Chocolate com Cereja</div><div class="si-price">R$4,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Bombom Negresco</div><div class="si-price">R$4,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufa Meio Amarga (cacau 50%)</div><div class="si-price">Cento R$250</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Tradicionais</div><div class="si-desc">Brigadeiro, beijinho, bicho de pé, limão, maracujá, dois amores, churros, prestígio, ninho</div><div class="si-price">25un R$ 50 · 50un R$ 100 · 100un R$ 190</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Especiais</div><div class="si-desc">Surpresa de uva, Oreo, pistache, cajuzinho, Romeu e Julieta, ninho com nutella, olho de sogra, banoffee</div><div class="si-price">25un R$ 75 · 50un R$ 120 · 100un R$ 220</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Caixa Degustação</div><div class="si-desc">Doces variados em caixa pétala</div><div class="si-price">15 doces R$ 55 · 20 doces R$ 70 · 25 doces R$ 100</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas de Chocolate</div><div class="si-desc">Brigadeiro · Beijinho · Dois amores · Prestígio · Doce de leite · Brigadeiro branco</div><div class="si-price">R$ 4,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas com Frutas</div><div class="si-desc">Morango, damasco, ameixa, uva, abacaxi, cereja</div><div class="si-price">R$ 4,80/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Copinho de Chocolate com Cereja</div><div class="si-price">R$ 4,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Bombom Negresco</div><div class="si-price">R$ 4,50/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufa Meio Amarga (cacau 50%)</div><div class="si-price">Cento R$ 250</div></div>
         </div>
       </div>
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('doc',-1)">−</button><span class="qty-num" id="q-doc">1</span><button class="qty-btn" onclick="chgQ('doc',1)">+</button></div></div>
+      <div class="price-preview" id="price-preview-doces"></div>
       <button class="add-btn" onclick="addDoces()">🍬 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -338,12 +352,12 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha a sobremesa</div></div>
         <div class="si-grid wide" id="g-sob-item">
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa da Felicidade</div><div class="si-desc">Creme 4 leites, frutas in natura, brownie de chocolate</div><div class="si-price">P R$80 · M R$130 · G R$199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa Red Velvet</div><div class="si-desc">Red velvet, creme 4 leites, geleia de morango artesanal, chocolate branco</div><div class="si-price">P R$80 · M R$130 · G R$219</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Bombom Aberto</div><div class="si-desc">Creme 4 leites, morango/uva/abacaxi, ganache de chocolate nobre</div><div class="si-price">P R$80 · M R$130 · G R$199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Banoffee</div><div class="si-desc">Doce de leite artesanal, doce de banana, bolacha artesanal, chantininho</div><div class="si-price">M R$130 · G R$199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Torta</div><div class="si-desc">Limão · Maracujá · Prestígio · Brigadeiro · Dois amores</div><div class="si-price">8p R$129 · 13p R$199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Pudim de Leite Condensado</div><div class="si-desc">Cremoso com calda caramelizada</div><div class="si-price">Médio R$65 · Grande R$85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa da Felicidade</div><div class="si-desc">Creme 4 leites, frutas in natura, brownie de chocolate</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 199</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa Red Velvet</div><div class="si-desc">Red velvet, creme 4 leites, geleia de morango artesanal, chocolate branco</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Bombom Aberto</div><div class="si-desc">Creme 4 leites, morango/uva/abacaxi, ganache de chocolate nobre</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 199</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Banoffee</div><div class="si-desc">Doce de leite artesanal, doce de banana, bolacha artesanal, chantininho</div><div class="si-price">M R$ 130 · G R$ 199</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Torta</div><div class="si-desc">Limão · Maracujá · Prestígio · Brigadeiro · Dois amores</div><div class="si-price">8p R$ 129 · 13p R$ 199</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Pudim de Leite Condensado</div><div class="si-desc">Cremoso com calda caramelizada</div><div class="si-price">Médio R$ 65 · Grande R$ 85</div></div>
         </div>
       </div>
       <div class="step">
@@ -354,6 +368,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-sob-tam')"><div class="opt-name">Grande (G)</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview-sob"></div>
       <button class="add-btn" onclick="addSobremesa()">🍮 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -365,11 +380,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o kit</div></div>
         <div class="si-grid" id="g-kit-tam">
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$200</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$325</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$450</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$649</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$815</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 200</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 325</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 450</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 649</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 815</div></div>
         </div>
       </div>
       <div class="step">
@@ -392,6 +407,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Dois amores</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview-kit"></div>
       <button class="add-btn" onclick="addKit()">🎉 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -403,22 +419,23 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-out-item">
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Chantininho</div><div class="si-desc">Mín. 20un · Recheios: brigadeiro, 4 leites, doce de leite</div><div class="si-price">R$8,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$12,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Chantininho</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$6,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$9,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Pequeno</div><div class="si-desc">Mín. 10un · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$6,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Grande</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$10,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (P)</div><div class="si-price">R$8,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (G)</div><div class="si-price">R$12,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito Simples</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$9,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Pasta e Papel de Arroz</div><div class="si-price">R$14,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Sprinkles</div><div class="si-price">R$20,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Simples (6x6cm)</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$6,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Recheado (6x6cm)</div><div class="si-desc">Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$12,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Chantininho</div><div class="si-desc">Mín. 20un · Recheios: brigadeiro, 4 leites, doce de leite</div><div class="si-price">R$ 8,50/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 12,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Chantininho</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 6,50/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 9,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Pequeno</div><div class="si-desc">Mín. 10un · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 6,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Grande</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 10,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (P)</div><div class="si-price">R$ 8,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (G)</div><div class="si-price">R$ 12,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito Simples</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 9,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Pasta e Papel de Arroz</div><div class="si-price">R$ 14,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Sprinkles</div><div class="si-price">R$ 20,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Simples (6x6cm)</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 6,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Recheado (6x6cm)</div><div class="si-desc">Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 12,00/un</div></div>
         </div>
       </div>
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('out',-1)">−</button><span class="qty-num" id="q-out">1</span><button class="qty-btn" onclick="chgQ('out',1)">+</button></div></div>
+      <div class="price-preview" id="price-preview-outros"></div>
       <button class="add-btn" onclick="addCupcakes()">🧁 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -430,18 +447,19 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-sal-item">
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-price">Sem geleia R$110/kg · Com geleia de morango R$129/kg</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Pão Italiano</div><div class="si-desc">Presunto, queijo, tomate, orégano</div><div class="si-price">Médio R$60 · Grande R$90</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Frango c/ catupiry</div><div class="si-price">600g R$80 · 1,1kg R$150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Alho poró c/ queijo</div><div class="si-price">600g R$80 · 1,1kg R$150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon e calabresa</div><div class="si-price">600g R$80 · 1,1kg R$150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Carne seca c/ banana</div><div class="si-price">600g R$80 · 1,1kg R$150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon c/ abacaxi</div><div class="si-price">600g R$80 · 1,1kg R$150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche de Camarão</div><div class="si-desc">Camarão com catupiry</div><div class="si-price">600g R$100 · 1,1kg R$199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Frango</div><div class="si-price">R$80/kg</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Carne moída</div><div class="si-price">R$80/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-price">Sem geleia R$ 110/kg · Com geleia de morango R$ 129/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Pão Italiano</div><div class="si-desc">Presunto, queijo, tomate, orégano</div><div class="si-price">Médio R$ 60 · Grande R$ 90</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Frango c/ catupiry</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Alho poró c/ queijo</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon e calabresa</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Carne seca c/ banana</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon c/ abacaxi</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche de Camarão</div><div class="si-desc">Camarão com catupiry</div><div class="si-price">600g R$ 100 · 1,1kg R$ 199</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Frango</div><div class="si-price">R$ 80/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Carne moída</div><div class="si-price">R$ 80/kg</div></div>
         </div>
       </div>
+      <div class="price-preview" id="price-preview-sal"></div>
       <button class="add-btn" onclick="addSalgado()">🥐 Adicionar ao carrinho</button>
     </div>
   </div>
@@ -474,162 +492,665 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
 </div><!-- /wrap -->
 
 <script>
-let cart = [];
-let qtys = { doc: 1, out: 1 };
+var cart = [];
+var qtys = { doc: 1, out: 1 };
 
-// Tab switching
+// ============================================================
+// TABELAS DE PRECOS
+// ============================================================
+
+// Bolos Decorados - por tier e tamanho
+var P_TRAD = { PP:60, P:99, M:198, G:297, GG:396, EX:495 };
+var P_ESP  = { PP:70, P:125, M:249, G:375, GG:499, EX:625 };
+var P_PREM = { PP:null, P:145, M:289, G:435, GG:579, EX:725 };
+var P_COB  = { 'Chantininho':0, 'Naked Cake':0, 'Chantininho Personalizado':20, 'Cobertura de Brigadeiro':25, 'Ganache de Chocolate':40, 'Ganache Saborizada':35 };
+
+var RECHEIO_TIPO = {
+  'Brigadeiro gourmet 50% cacau':'trad','Beijinho de coco':'trad','Doce de leite artesanal':'trad',
+  'Dois amores':'trad','Prestigio':'trad','Leite ninho':'trad','4 leites':'trad',
+  'Mousse de chocolate':'trad','Brigadeiro de maracuja':'trad','Brigadeiro de limao':'trad',
+  '4 leites com morango':'esp','Brigadeiro com morango':'esp','Doce de leite com ameixa':'esp',
+  'Dois amores com morango':'esp','Creme de coco com abacaxi':'esp','Leite ninho com Nutella':'esp',
+  '4 leites com abacaxi':'esp','4 leites com Oreo':'esp','Caramelo salgado c/ mousse':'esp','Floresta Negra':'esp',
+  'Pistache':'prem','Kinder Bueno':'prem','Ouro Branco ou Sonho de Valsa':'prem',
+  'Nozes com praline':'prem','Doce de leite c/ praline de nozes':'prem','Marta Rocha':'prem'
+};
+
+// Bolos Simples - por sabor e tamanho (M, G)
+var P_SIMPLES = {
+  'Fubá':{M:40,G:60},
+  'Chocolate sem cobertura':{M:32,G:58},
+  'Chocolate com cobertura':{M:45,G:70},
+  'Formigueiro sem cobertura':{M:38,G:58},
+  'Formigueiro com cobertura':{M:50,G:70},
+  'Fubá cremoso':{M:50,G:70},
+  'Milho':{M:45,G:65},
+  'Toalha felpuda':{M:50,G:70},
+  'Laranja':{M:45,G:58},
+  'Cenoura com brigadeiro':{M:50,G:68},
+  'Mesclado com cobertura':{M:50,G:70},
+  'Mesclado':{M:35,G:58}
+};
+
+// Bolo Vulcao - por cobertura e tamanho (M, G)
+var P_VULCAO = {
+  'Brigadeiro':{M:60,G:85},'Dois amores':{M:60,G:85},'Leite ninho':{M:60,G:85},
+  'Leite ninho com brigadeiro':{M:60,G:85},'Leite ninho com Nutella':{M:65,G:90},
+  'Cream cheese':{M:75,G:99},'Cenoura com brigadeiro':{M:60,G:85}
+};
+
+// Doces - por tipo e quantidade
+var P_DOCES = {
+  'Docinhos Tradicionais': {25:50, 50:100, 100:190},
+  'Docinhos Especiais':    {25:75, 50:120, 100:220},
+  'Caixa Degustação': {15:55, 20:70, 25:100},
+  'Trufas de Chocolate': 'R$ 4,00/unid',
+  'Trufas com Frutas': 'R$ 4,80/unid',
+  'Copinho de Chocolate com Cereja': 'R$ 4,00/unid',
+  'Bombom Negresco': 'R$ 4,50/unid',
+  'Trufa Meio Amarga (cacau 50%)': 'Cento R$ 250'
+};
+
+// Sobremesas - por tipo e tamanho
+var P_SOBREMESAS = {
+  'Travessa da Felicidade':    {P:80, M:130, G:199},
+  'Travessa Red Velvet':       {P:80, M:130, G:219},
+  'Bombom Aberto':             {P:80, M:130, G:199},
+  'Banoffee':                  {M:130, G:199},
+  'Torta':                     {'8p':129, '13p':199},
+  'Pudim de Leite Condensado': {M:65, G:85}
+};
+
+// Kit Festa
+var P_KIT = { P:200, M:325, G:450, GG:649, EX:815 };
+
+// Cupcakes
+var P_CUPCAKE = {
+  'Cupcake Grande + Chantininho': 8.50,
+  'Cupcake Grande + Brigadeiro': 12.00,
+  'Cupcake Pequeno + Chantininho': 6.50,
+  'Cupcake Pequeno + Brigadeiro': 9.00
+};
+
+// Pao de mel
+var P_PAODEMEL = {
+  'Pão de Mel Pequeno': 6.00,
+  'Pão de Mel Grande': 10.00,
+  'Pão de Mel Personalizado (P)': 8.00,
+  'Pão de Mel Personalizado (G)': 12.00
+};
+
+// Pirulitos
+var P_PIRULITO = {
+  'Pirulito Simples': 9.00,
+  'Pirulito com Pasta e Papel de Arroz': 14.00,
+  'Pirulito com Sprinkles': 20.00
+};
+
+// Brownies
+var P_BROWNIE = {
+  'Brownie Simples (6x6cm)': 6.00,
+  'Brownie Recheado (6x6cm)': 12.00
+};
+
+// Salgados
+var P_SALGADO = {
+  'Torta de Frango Fria': 'R$ 110/kg (sem geleia) ou R$ 129/kg (com geleia de morango)',
+  'Pão Italiano': 'Médio R$ 60 | Grande R$ 90',
+  'Quiche — Frango c/ catupiry': 'R$ 80 (600g) | R$ 150 (1,1kg)',
+  'Quiche — Alho poró c/ queijo': 'R$ 80 (600g) | R$ 150 (1,1kg)',
+  'Quiche — Bacon e calabresa': 'R$ 80 (600g) | R$ 150 (1,1kg)',
+  'Quiche — Carne seca c/ banana': 'R$ 80 (600g) | R$ 150 (1,1kg)',
+  'Quiche — Bacon c/ abacaxi': 'R$ 80 (600g) | R$ 150 (1,1kg)',
+  'Quiche de Camarão': 'R$ 100 (600g) | R$ 199 (1,1kg)',
+  'Torta Assada — Frango': 'R$ 80/kg',
+  'Torta Assada — Carne moída': 'R$ 80/kg'
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function getTamKey(name) {
+  if (!name) return null;
+  if (name.indexOf('PP') >= 0 || name.indexOf('Bento') >= 0) return 'PP';
+  if (name.indexOf('EX') >= 0) return 'EX';
+  if (name.indexOf('GG') >= 0) return 'GG';
+  if (name.indexOf('Tam. G') >= 0 || (name.indexOf('Tamanho G') >= 0 && name.indexOf('GG') < 0)) return 'G';
+  if (name.indexOf('Tam. M') >= 0 || name.indexOf('Tamanho M') >= 0 || name === 'M' || name === 'Medio (M)') return 'M';
+  if (name.indexOf('Tam. P') >= 0 || name.indexOf('Tamanho P') >= 0 || name === 'P' || name === 'Pequeno (P)') return 'P';
+  if (name === 'Grande (G)') return 'G';
+  if (name === 'Grande (G)') return 'G';
+  return null;
+}
+
+function fmt(v) {
+  var num = Number.isInteger(v) ? String(v) : v.toFixed(2).replace('.', ',');
+  return 'R$ ' + num;
+}
+
+function getTier(recs) {
+  if (!recs || !recs.length) return 'trad';
+  var hasPrem = recs.some(function(r) { return RECHEIO_TIPO[r] === 'prem'; });
+  var hasEsp  = recs.some(function(r) { return RECHEIO_TIPO[r] === 'esp'; });
+  if (hasPrem) return 'prem';
+  if (hasEsp)  return 'esp';
+  return 'trad';
+}
+
+function getCobExtra(cob) {
+  if (!cob) return 0;
+  for (var k in P_COB) {
+    if (cob.indexOf(k) >= 0) return P_COB[k];
+  }
+  return 0;
+}
+
+function findKey(obj, name) {
+  if (!name) return null;
+  // 1. Exact match
+  if (obj[name] !== undefined) return name;
+  // 2. Key fully contains name or name fully contains key (longer match wins)
+  var best = null, bestLen = 0;
+  for (var k in obj) {
+    if (name === k) return k;
+    if (name.indexOf(k) >= 0 || k.indexOf(name) >= 0) {
+      if (k.length > bestLen) { best = k; bestLen = k.length; }
+    }
+  }
+  if (best) return best;
+  // 3. Fuzzy: first word match
+  var first = name.split(' ')[0];
+  for (var k in obj) {
+    if (k.indexOf(first) >= 0) return k;
+  }
+  return null;
+}
+
+// ============================================================
+// PRICE PREVIEW BUILDERS
+// ============================================================
+
+function buildPreviewHTML(rows, total, note) {
+  var h = '<div class="preview-title">Estimativa de valor</div>';
+  rows.forEach(function(r) {
+    h += '<div class="preview-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+  });
+  if (total !== null && total !== undefined) {
+    h += '<div class="preview-total"><span>Estimativa</span><span>' + total + '</span></div>';
+  }
+  if (note) h += '<div class="preview-note">' + note + '</div>';
+  return h;
+}
+
+function updatePreview() {
+  var preview = document.getElementById('price-preview');
+  if (!preview) return;
+  var tam = getV('g-dec-tam'), recs = getMulti('g-dec-rec'), cob = getV('g-dec-cob');
+  if (!tam && !recs.length && !cob) { preview.style.display = 'none'; return; }
+  preview.style.display = 'block';
+
+  var tamKey = getTamKey(tam);
+  var tier = getTier(recs);
+  var tierLabel = {'trad':'Tradicional','esp':'Especial','prem':'Premium'}[tier];
+  var base = null;
+  if (tamKey) {
+    base = tier === 'trad' ? P_TRAD[tamKey] : tier === 'esp' ? P_ESP[tamKey] : P_PREM[tamKey];
+  }
+  var cobExtra = getCobExtra(cob);
+  var rows = [];
+  if (tam && base !== null && base !== undefined) {
+    rows.push([tam + ' + Recheio ' + tierLabel, fmt(base)]);
+  } else if (tam && tamKey === 'PP' && tier === 'prem') {
+    rows.push(['Recheio Premium nao disponivel no Bento', '-']);
+    preview.innerHTML = buildPreviewHTML(rows, null, null);
+    return;
+  } else if (tam) {
+    rows.push([tam, 'selecione o recheio']);
+  }
+  if (cob) {
+    rows.push(['Cobertura: ' + cob, cobExtra > 0 ? '+ ' + fmt(cobExtra) : 'gratis']);
+  }
+  var total = (base !== null && base !== undefined) ? fmt(base + cobExtra) : null;
+  preview.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewSimples() {
+  var p = document.getElementById('price-preview-simples');
+  if (!p) return;
+  var sab = getV('g-sim-sab'), tam = getV('g-sim-tam');
+  if (!sab && !tam) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+  var tamKey = tam && (tam.indexOf('M') >= 0 || tam === 'Medio (M)') ? 'M' : 'G';
+  var key = findKey(P_SIMPLES, sab);
+  if (key && tam) {
+    var v = P_SIMPLES[key][tamKey];
+    rows.push([key + ' - Tam. ' + tamKey, fmt(v)]);
+    total = fmt(v);
+  } else if (sab) {
+    rows.push([sab, 'selecione o tamanho']);
+  } else if (tam) {
+    rows.push(['Tamanho ' + tamKey, 'selecione o sabor']);
+  }
+  p.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewVulcao() {
+  var p = document.getElementById('price-preview-vulcao');
+  if (!p) return;
+  var cob = getV('g-vul-cob'), tam = getV('g-vul-tam');
+  if (!cob && !tam) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+  var tamKey = tam && (tam.indexOf('M') >= 0) ? 'M' : 'G';
+  var key = findKey(P_VULCAO, cob);
+  if (key && tam) {
+    var v = P_VULCAO[key][tamKey];
+    rows.push([key + ' - Tam. ' + tamKey, fmt(v)]);
+    total = fmt(v);
+  } else if (cob) {
+    rows.push([cob, 'selecione o tamanho']);
+  }
+  p.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewDoces() {
+  var p = document.getElementById('price-preview-doces');
+  if (!p) return;
+  var item = getV('g-doc-item'), qty = qtys['doc'] || 1;
+  if (!item) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+  var key = findKey(P_DOCES, item);
+  if (key) {
+    var v = P_DOCES[key];
+    if (typeof v === 'string') {
+      rows.push([item, v]);
+    } else {
+      // Table pricing
+      var keys = Object.keys(v).map(Number).sort(function(a,b){return a-b;});
+      rows.push([item + ' - opcoes:', '']);
+      keys.forEach(function(k) { rows.push(['  ' + k + ' unid', fmt(v[k])]); });
+      rows.push(['Quantidade solicitada', qty + ' unid']);
+    }
+  } else {
+    rows.push([item, 'consulte valor']);
+  }
+  p.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewSobremesa() {
+  var p = document.getElementById('price-preview-sob');
+  if (!p) return;
+  var item = getV('g-sob-item'), tam = getV('g-sob-tam');
+  if (!item && !tam) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+
+  var tamKey = null;
+  if (tam) {
+    if (tam.indexOf('P') >= 0 && tam.indexOf('M') < 0 && tam.indexOf('G') < 0) tamKey = 'P';
+    else if (tam.indexOf('M') >= 0) tamKey = 'M';
+    else if (tam.indexOf('G') >= 0) tamKey = 'G';
+    // Torta special keys
+    if (tam.indexOf('8') >= 0) tamKey = '8p';
+    if (tam.indexOf('13') >= 0) tamKey = '13p';
+  }
+
+  var key = findKey(P_SOBREMESAS, item);
+  if (key && tamKey) {
+    var v = P_SOBREMESAS[key][tamKey];
+    if (v) { rows.push([key + ' - ' + tam, fmt(v)]); total = fmt(v); }
+    else { rows.push([key, 'tamanho nao disponivel neste item']); }
+  } else if (item) {
+    var pObj = findKey(P_SOBREMESAS, item);
+    if (pObj) {
+      var opts = P_SOBREMESAS[pObj];
+      Object.keys(opts).forEach(function(k) { rows.push(['  Tam. ' + k, fmt(opts[k])]); });
+    } else { rows.push([item, 'selecione o tamanho']); }
+  }
+  p.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewKit() {
+  var p = document.getElementById('price-preview-kit');
+  if (!p) return;
+  var kit = getV('g-kit-tam');
+  if (!kit) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+  var tamKey = null;
+  if (kit.indexOf('Kit EX') >= 0) tamKey = 'EX';
+  else if (kit.indexOf('Kit GG') >= 0) tamKey = 'GG';
+  else if (kit.indexOf('Kit G') >= 0) tamKey = 'G';
+  else if (kit.indexOf('Kit M') >= 0) tamKey = 'M';
+  else if (kit.indexOf('Kit P') >= 0) tamKey = 'P';
+  if (tamKey && P_KIT[tamKey]) {
+    rows.push([kit, fmt(P_KIT[tamKey])]);
+    rows.push(['Inclui bolo decorado + docinhos', '']);
+    total = fmt(P_KIT[tamKey]);
+  } else {
+    rows.push([kit, 'consulte valor']);
+  }
+  p.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewOutros() {
+  var p = document.getElementById('price-preview-outros');
+  if (!p) return;
+  var item = getV('g-out-item'), qty = qtys['out'] || 1;
+  if (!item) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [], total = null;
+  var unitPrice = null;
+  for (var k in P_CUPCAKE) { if (item.indexOf(k) >= 0) { unitPrice = P_CUPCAKE[k]; break; } }
+  if (!unitPrice) for (var k in P_PAODEMEL) { if (item.indexOf(k) >= 0) { unitPrice = P_PAODEMEL[k]; break; } }
+  if (!unitPrice) for (var k in P_PIRULITO) { if (item.indexOf(k) >= 0) { unitPrice = P_PIRULITO[k]; break; } }
+  if (!unitPrice) for (var k in P_BROWNIE) { if (item.indexOf(k) >= 0) { unitPrice = P_BROWNIE[k]; break; } }
+  if (unitPrice) {
+    rows.push([item, fmt(unitPrice) + '/un']);
+    rows.push(['Quantidade', qty + ' unid']);
+    total = fmt(unitPrice * qty);
+    rows.push(['Subtotal estimado', total]);
+    total = null; // already in rows
+  } else {
+    rows.push([item, 'consulte valor']);
+  }
+  p.innerHTML = buildPreviewHTML(rows, null, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+function updatePreviewSalgado() {
+  var p = document.getElementById('price-preview-sal');
+  if (!p) return;
+  var item = getV('g-sal-item');
+  if (!item) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  var rows = [];
+  var price = P_SALGADO[item] || null;
+  if (!price) {
+    // Try findKey as fallback
+    var key = findKey(P_SALGADO, item);
+    if (key) price = P_SALGADO[key];
+  }
+  rows.push([item, price || 'consulte valor']);
+  p.innerHTML = buildPreviewHTML(rows, null, 'Valor final confirmado pela Lais no WhatsApp');
+}
+
+// ============================================================
+// SELECT HANDLERS
+// ============================================================
+
 function showTab(tabId, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('tab-' + tabId).classList.add('active');
   btn.classList.add('active');
 }
 
-// Single select
 function sel(el, gid) {
-  document.querySelectorAll('#' + gid + ' .opt-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('#' + gid + ' .opt-card').forEach(function(c) { c.classList.remove('selected'); });
   el.classList.add('selected');
-}
-
-// Multi select
-function multi(el, gid, max) {
-  if (el.classList.contains('selected')) { el.classList.remove('selected'); return; }
-  const selected = document.querySelectorAll('#' + gid + ' .selected');
-  if (selected.length >= max) { showToast('Maximo ' + max + ' recheios!'); return; }
-  el.classList.add('selected');
-}
-
-// Get selected value
-function getV(gid) {
-  const el = document.querySelector('#' + gid + ' .si-card.selected, #' + gid + ' .opt-card.selected');
-  return el ? (el.querySelector('.opt-name, .si-name') || {}).innerText || null : null;
-}
-function getMulti(gid) {
-  return [...document.querySelectorAll('#' + gid + ' .selected')].map(e => (e.querySelector('.opt-name') || {}).innerText).filter(Boolean);
-}
-
-function chgQ(k, d) { qtys[k] = Math.max(1, (qtys[k] || 1) + d); document.getElementById('q-' + k).innerText = qtys[k]; }
-
-function clearGroup(ids) { ids.forEach(id => document.querySelectorAll('#' + id + ' .selected').forEach(e => e.classList.remove('selected'))); }
-
-// Add bolo decorado
-function addBolo() {
-  const m = getV('g-dec-mas'), t = getV('g-dec-tam'), recs = getMulti('g-dec-rec'), c = getV('g-dec-cob');
-  if (!m) return showToast('Escolha a massa!');
-  if (!t) return showToast('Escolha o tamanho!');
-  if (!recs.length) return showToast('Escolha pelo menos um recheio!');
-  if (!c) return showToast('Escolha a cobertura!');
-  cart.push({ name: 'Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c });
-  clearGroup(['g-dec-mas', 'g-dec-tam', 'g-dec-rec', 'g-dec-cob']);
-  updateCart(); showToast('Bolo adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-// Add generic item
-function addGeneric(label, fields) {
-  let details = [];
-  for (let [gid, lbl] of fields) {
-    const v = getV(gid);
-    if (!v) return showToast('Escolha ' + lbl.toLowerCase() + '!');
-    details.push(lbl + ': ' + v);
+  if (gid === 'g-dec-tam') {
+    var name = (el.querySelector('.opt-name') || {}).innerText || '';
+    var isBento = el.getAttribute('data-bento') === 'true';
+    var recNote = document.getElementById('rec-note');
+    if (recNote) recNote.innerText = isBento ? 'Bento cake: apenas 1 recheio.' : 'Clique para selecionar ate 2 recheios.';
+    if (isBento) {
+      var sels = document.querySelectorAll('#g-dec-rec .selected');
+      if (sels.length > 1) sels[1].classList.remove('selected');
+    }
+    updatePreview();
+  } else if (gid === 'g-dec-cob') {
+    updatePreview();
+  } else if (gid === 'g-sim-sab' || gid === 'g-sim-tam') {
+    updatePreviewSimples();
+  } else if (gid === 'g-vul-tam') {
+    updatePreviewVulcao();
+  } else if (gid === 'g-sob-tam') {
+    updatePreviewSobremesa();
   }
-  cart.push({ name: label, detail: details.join(' | ') });
-  fields.forEach(([gid]) => document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected')));
-  updateCart(); showToast('Adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-// Add qty item
-function addQty(key, label, gid) {
-  const v = getV(gid);
-  if (!v) return showToast('Escolha um item!');
-  cart.push({ name: label, detail: v + ' | Quantidade: ' + (qtys[key] || 1) });
-  document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected'));
-  qtys[key] = 1; document.getElementById('q-' + key).innerText = '1';
-  updateCart(); showToast('Adicionado ao carrinho!'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+function multi(el, gid, maxNormal) {
+  var tamEl = document.querySelector('#g-dec-tam .selected');
+  var isBento = tamEl ? (tamEl.getAttribute('data-bento') === 'true') : false;
+  var maxAllowed = isBento ? 1 : maxNormal;
+  if (el.classList.contains('selected')) { el.classList.remove('selected'); updatePreview(); return; }
+  var selected = document.querySelectorAll('#' + gid + ' .selected');
+  if (selected.length >= maxAllowed) { showToast(isBento ? 'Bento cake: apenas 1 recheio!' : 'Maximo 2 recheios!'); return; }
+  el.classList.add('selected');
+  updatePreview();
+}
+
+function ssel(el, gid) {
+  document.querySelectorAll('#' + gid + ' .si-card').forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+  if (gid === 'g-doc-item') updatePreviewDoces();
+  else if (gid === 'g-vul-cob') updatePreviewVulcao();
+  else if (gid === 'g-sob-item') updatePreviewSobremesa();
+  else if (gid === 'g-kit-tam') updatePreviewKit();
+  else if (gid === 'g-out-item') updatePreviewOutros();
+  else if (gid === 'g-sal-item') updatePreviewSalgado();
+}
+
+function getV(gid) {
+  var el = document.querySelector('#' + gid + ' .si-card.selected, #' + gid + ' .opt-card.selected');
+  return el ? ((el.querySelector('.opt-name, .si-name') || {}).innerText || null) : null;
+}
+
+function getMulti(gid) {
+  return Array.prototype.slice.call(document.querySelectorAll('#' + gid + ' .selected'))
+    .map(function(e) { return (e.querySelector('.opt-name') || {}).innerText; }).filter(Boolean);
+}
+
+function chgQ(k, d) {
+  qtys[k] = Math.max(1, (qtys[k] || 1) + d);
+  document.getElementById('q-' + k).innerText = qtys[k];
+  if (k === 'doc') updatePreviewDoces();
+  if (k === 'out') updatePreviewOutros();
+}
+
+// ============================================================
+// ADD TO CART
+// ============================================================
+
+function addBolo() {
+  var m = getV('g-dec-mas'), t = getV('g-dec-tam'), recs = getMulti('g-dec-rec'), c = getV('g-dec-cob');
+  if (!m) { showToast('Escolha a massa!'); return; }
+  if (!t) { showToast('Escolha o tamanho!'); return; }
+  if (!recs.length) { showToast('Escolha pelo menos um recheio!'); return; }
+  if (!c) { showToast('Escolha a cobertura!'); return; }
+  var tamKey = getTamKey(t), tier = getTier(recs);
+  var base = tier === 'trad' ? P_TRAD[tamKey] : tier === 'esp' ? P_ESP[tamKey] : P_PREM[tamKey];
+  var cobExtra = getCobExtra(c);
+  var precoStr = (base !== null && base !== undefined) ? ' | Estimativa: ' + fmt(base + cobExtra) : '';
+  cart.push({ name: 'Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c + precoStr });
+  ['g-dec-mas','g-dec-tam','g-dec-rec','g-dec-cob'].forEach(function(g) {
+    document.querySelectorAll('#' + g + ' .selected').forEach(function(e) { e.classList.remove('selected'); });
+  });
+  var pp = document.getElementById('price-preview'); if (pp) pp.style.display = 'none';
+  updateCart(); showToast('Bolo adicionado!');
+  document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function addGenericWithPrice(label, fields, priceFn) {
+  var details = [], vals = {};
+  for (var i = 0; i < fields.length; i++) {
+    var gid = fields[i][0], lbl = fields[i][1];
+    var v = getV(gid);
+    if (!v) { showToast('Escolha ' + lbl.toLowerCase() + '!'); return; }
+    details.push(lbl + ': ' + v);
+    vals[lbl] = v;
+  }
+  var precoStr = '';
+  if (priceFn) {
+    var p = priceFn(vals);
+    if (p) precoStr = ' | Estimativa: ' + p;
+  }
+  cart.push({ name: label, detail: details.join(' | ') + precoStr });
+  fields.forEach(function(f) {
+    document.querySelectorAll('#' + f[0] + ' .selected').forEach(function(e) { e.classList.remove('selected'); });
+  });
+  updateCart(); showToast('Adicionado ao carrinho!');
+  document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function addGeneric(label, fields) { addGenericWithPrice(label, fields, null); }
+
+function addSimples() {
+  addGenericWithPrice('Bolo Simples', [['g-sim-sab','Sabor'],['g-sim-tam','Tamanho']], function(v) {
+    var tamKey = (v['Tamanho'] && v['Tamanho'].indexOf('M') >= 0) ? 'M' : 'G';
+    var key = findKey(P_SIMPLES, v['Sabor']);
+    return key ? fmt(P_SIMPLES[key][tamKey]) : null;
+  });
+  var pp = document.getElementById('price-preview-simples'); if (pp) pp.style.display = 'none';
+}
+
+function addVulcao() {
+  addGenericWithPrice('Bolo Vulcao', [['g-vul-mas','Massa'],['g-vul-cob','Cobertura'],['g-vul-tam','Tamanho']], function(v) {
+    var tamKey = (v['Tamanho'] && v['Tamanho'].indexOf('M') >= 0) ? 'M' : 'G';
+    var key = findKey(P_VULCAO, v['Cobertura']);
+    return key ? fmt(P_VULCAO[key][tamKey]) : null;
+  });
+  var pp = document.getElementById('price-preview-vulcao'); if (pp) pp.style.display = 'none';
+}
+
+function addDoces() {
+  var v = getV('g-doc-item'), qty = qtys['doc'] || 1;
+  if (!v) { showToast('Escolha um item!'); return; }
+  var key = findKey(P_DOCES, v), precoStr = '';
+  if (key) {
+    var pv = P_DOCES[key];
+    precoStr = typeof pv === 'string' ? ' | Preco: ' + pv : ' | Qty: ' + qty;
+  }
+  cart.push({ name: 'Doces e Trufas', detail: v + precoStr });
+  document.querySelectorAll('#g-doc-item .selected').forEach(function(e) { e.classList.remove('selected'); });
+  qtys['doc'] = 1; document.getElementById('q-doc').innerText = '1';
+  var pp = document.getElementById('price-preview-doces'); if (pp) pp.style.display = 'none';
+  updateCart(); showToast('Adicionado ao carrinho!');
+  document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function addSobremesa() {
+  addGenericWithPrice('Sobremesa', [['g-sob-item','Sobremesa'],['g-sob-tam','Tamanho']], function(v) {
+    var key = findKey(P_SOBREMESAS, v['Sobremesa']);
+    var tamKey = null;
+    var t = v['Tamanho'];
+    if (t) {
+      if (t.indexOf('P') >= 0 && t.indexOf('M') < 0 && t.indexOf('G') < 0) tamKey = 'P';
+      else if (t.indexOf('M') >= 0) tamKey = 'M';
+      else if (t.indexOf('G') >= 0) tamKey = 'G';
+    }
+    if (key && tamKey && P_SOBREMESAS[key][tamKey]) return fmt(P_SOBREMESAS[key][tamKey]);
+    return null;
+  });
+  var pp = document.getElementById('price-preview-sob'); if (pp) pp.style.display = 'none';
+}
+
+function addKit() {
+  addGenericWithPrice('Kit Festa', [['g-kit-tam','Kit'],['g-kit-mas','Massa'],['g-kit-rec','Recheio']], function(v) {
+    var k = v['Kit'];
+    var tamKey = null;
+    if (k.indexOf('Kit EX') >= 0) tamKey = 'EX';
+    else if (k.indexOf('Kit GG') >= 0) tamKey = 'GG';
+    else if (k.indexOf('Kit G') >= 0) tamKey = 'G';
+    else if (k.indexOf('Kit M') >= 0) tamKey = 'M';
+    else if (k.indexOf('Kit P') >= 0) tamKey = 'P';
+    return tamKey && P_KIT[tamKey] ? fmt(P_KIT[tamKey]) : null;
+  });
+  var pp = document.getElementById('price-preview-kit'); if (pp) pp.style.display = 'none';
+}
+
+function addCupcakes() {
+  var v = getV('g-out-item'), qty = qtys['out'] || 1;
+  if (!v) { showToast('Escolha um item!'); return; }
+  var unitPrice = null;
+  for (var k in P_CUPCAKE) { if (v.indexOf(k) >= 0) { unitPrice = P_CUPCAKE[k]; break; } }
+  if (!unitPrice) for (var k in P_PAODEMEL) { if (v.indexOf(k) >= 0) { unitPrice = P_PAODEMEL[k]; break; } }
+  if (!unitPrice) for (var k in P_PIRULITO) { if (v.indexOf(k) >= 0) { unitPrice = P_PIRULITO[k]; break; } }
+  if (!unitPrice) for (var k in P_BROWNIE) { if (v.indexOf(k) >= 0) { unitPrice = P_BROWNIE[k]; break; } }
+  var precoStr = unitPrice ? ' | ' + fmt(unitPrice) + '/un x ' + qty + ' = ' + fmt(unitPrice * qty) : ' | Qty: ' + qty;
+  cart.push({ name: 'Cupcakes e Mais', detail: v + precoStr });
+  document.querySelectorAll('#g-out-item .selected').forEach(function(e) { e.classList.remove('selected'); });
+  qtys['out'] = 1; document.getElementById('q-out').innerText = '1';
+  var pp = document.getElementById('price-preview-outros'); if (pp) pp.style.display = 'none';
+  updateCart(); showToast('Adicionado ao carrinho!');
+  document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function addSalgado() {
+  addGenericWithPrice('Salgado', [['g-sal-item','Item']], function(v) {
+    var key = findKey(P_SALGADO, v['Item']);
+    return key ? P_SALGADO[key] : null;
+  });
+  var pp = document.getElementById('price-preview-sal'); if (pp) pp.style.display = 'none';
 }
 
 function removeItem(i) { cart.splice(i, 1); updateCart(); }
-function clearCart() { cart = []; document.getElementById('cart-obs').value = ''; document.getElementById('resumo-box').style.display = 'none'; updateCart(); }
+function clearCart() {
+  cart = [];
+  document.getElementById('cart-obs').value = '';
+  var rb = document.getElementById('resumo-box'); if (rb) rb.style.display = 'none';
+  var wb = document.getElementById('btn-wa-confirm'); if (wb) wb.style.display = 'none';
+  updateCart();
+}
 
 function buildMessage() {
-  const obs = document.getElementById('cart-obs').value.trim();
-  const nl = String.fromCharCode(10);
-  let msg = String.fromCharCode(127800) + ' Ola, Lais! Gostaria de fazer um pedido:' + nl + nl;
+  var obs = document.getElementById('cart-obs').value.trim();
+  var nl = String.fromCharCode(10);
+  var msg = 'Ola, Lais! Gostaria de fazer um pedido:' + nl + nl;
   cart.forEach(function(item, i) {
-    msg += (i + 1) + '. ' + item.name + nl + '   ' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + nl + nl;
+    msg += (i+1) + '. ' + item.name + nl + '   ' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + nl + nl;
   });
   if (obs) msg += 'Observacoes: ' + obs + nl + nl;
   msg += 'Aguardo seu retorno para confirmar os detalhes!';
   return msg;
 }
 
-function sendWA() {
-  if (!cart.length) return;
-  window.open('https://wa.me/5565992094491?text=' + encodeURIComponent(buildMessage()), '_blank');
-}
-
 function copyPedido() {
   if (!cart.length) return;
-  const msg = buildMessage();
-  const box = document.getElementById('resumo-box');
-  box.innerText = msg;
-  box.style.display = 'block';
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-  const waBtn = document.getElementById('btn-wa-confirm');
-  waBtn.style.display = 'flex';
-
-  navigator.clipboard.writeText(msg).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.innerText = 'Copiado!';
-    btn.classList.add('copied');
-    showToast('Pedido copiado! Abra o WhatsApp e cole.');
-    setTimeout(() => { btn.innerText = 'Copiar pedido'; btn.classList.remove('copied'); }, 3500);
-  }).catch(() => {
-    showToast('Selecione o texto acima e copie manualmente!');
-  });
+  var msg = buildMessage();
+  var box = document.getElementById('resumo-box');
+  box.innerText = msg; box.style.display = 'block';
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  var waBtn = document.getElementById('btn-wa-confirm'); if (waBtn) waBtn.style.display = 'flex';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(msg).then(function() {
+      var btn = document.getElementById('btn-copy');
+      btn.innerText = 'Copiado!'; btn.classList.add('copied');
+      showToast('Pedido copiado! Abra o WhatsApp e cole.');
+      setTimeout(function() { btn.innerText = 'Copiar pedido'; btn.classList.remove('copied'); }, 3500);
+    }).catch(function() { showToast('Selecione o texto acima e copie manualmente!'); });
+  } else { showToast('Selecione o texto acima e copie manualmente!'); }
 }
 
 function openWA(e) {
   e.preventDefault();
-  const msg = 'Ol%C3%A1%2C+Lais%21+Escolhi+meu+pedido+no+site+e+gostaria+de+confirmar+os+detalhes+%F0%9F%8E%82';
-  window.open('https://wa.me/5565992094491?text=' + msg, '_blank');
+  window.open('https://wa.me/5565992094491?text=Ola%2C+Lais%21+Escolhi+meu+pedido+no+site+e+gostaria+de+confirmar+os+detalhes', '_blank');
 }
 
 function updateCart() {
-  const body = document.getElementById('cart-body');
-  const footer = document.getElementById('cart-footer');
-  const badge = document.getElementById('cart-badge');
+  var body = document.getElementById('cart-body');
+  var footer = document.getElementById('cart-footer');
+  var badge = document.getElementById('cart-badge');
   badge.innerText = cart.length + (cart.length === 1 ? ' item' : ' itens');
-
   if (!cart.length) {
-    body.innerHTML = '<div class="cart-empty"><span class="cart-empty-icon"></span><p>Seu carrinho está vazio.<br>Monte seu pedido ao lado!</p></div>';
-    footer.style.display = 'none';
-    return;
+    body.innerHTML = '<div class="cart-empty"><p>Seu carrinho esta vazio. Monte seu pedido acima!</p></div>';
+    footer.style.display = 'none'; return;
   }
-
   footer.style.display = 'block';
-  body.innerHTML = '<div class="cart-items">' + cart.map((item, i) =>
-    '<div class="cart-item"><div class="ci-info"><div class="ci-name">' + item.name + '</div><div class="ci-detail">' + item.detail.replace(/[|]/g, '·') + '</div></div><button class="ci-remove" onclick="removeItem(' + i + ')" title="Remover">✕</button></div>'
-  ).join('') + '</div>';
+  body.innerHTML = '<div class="cart-items">' + cart.map(function(item, i) {
+    return '<div class="cart-item"><div class="ci-info"><div class="ci-name">' + item.name + '</div><div class="ci-detail">' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + '</div></div><button class="ci-remove" onclick="removeItem(' + i + ')">X</button></div>';
+  }).join('') + '</div>';
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  var t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
 }
 
 updateCart();
-
-
-function sel(el,gid){document.querySelectorAll('#'+gid+' .opt-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
-function multi(el,gid,max){if(el.classList.contains('selected')){el.classList.remove('selected');return;}const s=document.querySelectorAll('#'+gid+' .selected');if(s.length>=max){showToast('Maximo ' + max + ' recheios!');return;}el.classList.add('selected');}
-function ssel(el,gid){document.querySelectorAll('#'+gid+' .si-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
-function getV(gid){const el=document.querySelector('#'+gid+' .selected, #'+gid+' .opt-card.selected');return el?(el.querySelector('.opt-name,.si-name')||{}).innerText||null:null;}
-function getMulti(gid){return[...document.querySelectorAll('#'+gid+' .selected')].map(e=>(e.querySelector('.opt-name')||{}).innerText).filter(Boolean);}
-function chgQ(k,d){qtys[k]=Math.max(1,(qtys[k]||1)+d);document.getElementById('q-'+k).innerText=qtys[k];}
-
 </script>
 
 
