@@ -460,9 +460,10 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
     <label class="obs-label">Observações / data do evento</label>
     <textarea class="cart-obs" id="cart-obs" placeholder="Ex: Aniversário no dia 15/06, escrever Feliz Aniversário Ana..."></textarea>
     <div class="cart-actions">
-      <button class="btn-wa" onclick="sendWA()">💬 Enviar direto pelo WhatsApp</button>
-      <button class="btn-copy" id="btn-copy" onclick="copyPedido()">📋 Copiar pedido (colar no WhatsApp)</button>
+      
+      <button class="btn-copy" id="btn-copy" onclick="copyPedido()">📋 Copiar pedido</button>
       <div class="resumo-box" id="resumo-box"></div>
+      <a id="btn-wa-confirm" href="#" class="btn-wa" onclick="openWA(event)" style="display:none; text-decoration:none; margin-top:0.2rem;">💬 Enviar pedido pelo WhatsApp</a>
       <button class="btn-clear" onclick="clearCart()">🗑 Limpar carrinho</button>
     </div>
   </div>
@@ -500,7 +501,7 @@ function multi(el, gid, max) {
 
 // Get selected value
 function getV(gid) {
-  const el = document.querySelector('#' + gid + ' .selected, #' + gid + ' .opt-card.selected');
+  const el = document.querySelector('#' + gid + ' .si-card.selected, #' + gid + ' .opt-card.selected');
   return el ? (el.querySelector('.opt-name, .si-name') || {}).innerText || null : null;
 }
 function getMulti(gid) {
@@ -520,7 +521,7 @@ function addBolo() {
   if (!c) return showToast('Escolha a cobertura! 🎨');
   cart.push({ name: '🎂 Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c });
   clearGroup(['g-dec-mas', 'g-dec-tam', 'g-dec-rec', 'g-dec-cob']);
-  updateCart(); showToast('Bolo adicionado ao carrinho! 🎉');
+  updateCart(); showToast('Bolo adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // Add generic item
@@ -533,7 +534,7 @@ function addGeneric(label, fields) {
   }
   cart.push({ name: label, detail: details.join(' | ') });
   fields.forEach(([gid]) => document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected')));
-  updateCart(); showToast('Adicionado ao carrinho! 🎉');
+  updateCart(); showToast('Adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // Add qty item
@@ -543,7 +544,7 @@ function addQty(key, label, gid) {
   cart.push({ name: label, detail: v + ' | Quantidade: ' + (qtys[key] || 1) });
   document.querySelectorAll('#' + gid + ' .selected').forEach(e => e.classList.remove('selected'));
   qtys[key] = 1; document.getElementById('q-' + key).innerText = '1';
-  updateCart(); showToast('Adicionado ao carrinho! 🎉');
+  updateCart(); showToast('Adicionado ao carrinho! 🎉'); document.getElementById('cart-panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function removeItem(i) { cart.splice(i, 1); updateCart(); }
@@ -551,16 +552,12 @@ function clearCart() { cart = []; document.getElementById('cart-obs').value = ''
 
 function buildMessage() {
   const obs = document.getElementById('cart-obs').value.trim();
-  let msg = '🌸 Olá, Lais! Gostaria de fazer um pedido:
-
-';
-  cart.forEach((item, i) => { msg += (i + 1) + '. ' + item.name + '
-   ' + item.detail.replace(/[|]/g, '·') + '
-
-'; });
-  if (obs) msg += '📝 Observações: ' + obs + '
-
-';
+  const nl = String.fromCharCode(10);
+  let msg = String.fromCharCode(127800) + ' Ola, Lais! Gostaria de fazer um pedido:' + nl + nl;
+  cart.forEach(function(item, i) {
+    msg += (i + 1) + '. ' + item.name + nl + '   ' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + nl + nl;
+  });
+  if (obs) msg += 'Observacoes: ' + obs + nl + nl;
   msg += 'Aguardo seu retorno para confirmar os detalhes!';
   return msg;
 }
@@ -578,15 +575,24 @@ function copyPedido() {
   box.style.display = 'block';
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
+  const waBtn = document.getElementById('btn-wa-confirm');
+  waBtn.style.display = 'flex';
+
   navigator.clipboard.writeText(msg).then(() => {
     const btn = document.getElementById('btn-copy');
-    btn.innerText = '✅ Copiado! Agora cole no WhatsApp';
+    btn.innerText = '✅ Copiado!';
     btn.classList.add('copied');
-    showToast('Pedido copiado! Cole no WhatsApp 📋');
+    showToast('Pedido copiado! Agora abra o WhatsApp e cole 📋');
     setTimeout(() => { btn.innerText = '📋 Copiar pedido'; btn.classList.remove('copied'); }, 3500);
   }).catch(() => {
     showToast('Selecione o texto acima e copie manualmente!');
   });
+}
+
+function openWA(e) {
+  e.preventDefault();
+  const msg = 'Ol%C3%A1%2C+Lais%21+Escolhi+meu+pedido+no+site+e+gostaria+de+confirmar+os+detalhes+%F0%9F%8E%82';
+  window.open('https://wa.me/5565992094491?text=' + msg, '_blank');
 }
 
 function updateCart() {
