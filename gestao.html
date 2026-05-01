@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão – Lais Santos Confeitaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rosa:#c97fa0;
+  --rosa-light:#f7eaf0;
+  --rosa-dark:#8b4c69;
+  --creme:#fdf6ef;
+  --marrom:#5c3d2e;
+  --marrom-light:#8b6556;
+  --verde:#4a7c59;
+  --vermelho:#c0392b;
+  --amarelo:#d4a017;
+  --bg:#fdf6ef;
+  --card:#ffffff;
+  --texto:#3a2a1f;
+  --texto-sec:#7a6055;
+  --borda:#e8d8d0;
+  --sombra:0 2px 12px rgba(90,50,40,.08);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);min-height:100vh}
+
+/* LOGIN */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;background:linear-gradient(135deg,#fdf6ef 0%,#f5e6f0 100%);
+}
+.login-box{
+  background:var(--card);border-radius:20px;padding:3rem 2.5rem;
+  box-shadow:0 8px 40px rgba(90,50,40,.12);max-width:380px;width:90%;text-align:center;
+}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--rosa);margin-bottom:.3rem}
+.login-sub{font-size:.8rem;color:var(--texto-sec);margin-bottom:2rem;letter-spacing:.05em}
+.login-box input{
+  width:100%;padding:.75rem 1rem;border:1.5px solid var(--borda);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;background:#fafafa;outline:none;
+  transition:border .2s;
+}
+.login-box input:focus{border-color:var(--rosa)}
+.login-box button{
+  width:100%;margin-top:1rem;padding:.8rem;background:var(--rosa);color:#fff;
+  border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;
+  font-weight:500;cursor:pointer;transition:background .2s;
+}
+.login-box button:hover{background:var(--rosa-dark)}
+.login-error{font-size:.82rem;color:var(--vermelho);margin-top:.5rem;display:none}
+
+/* APP */
+#app{display:none;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;top:0;left:0;height:100vh;width:220px;
+  background:#fff;border-right:1px solid var(--borda);
+  display:flex;flex-direction:column;z-index:100;
+}
+.sidebar-logo{
+  padding:1.5rem 1.2rem 1rem;border-bottom:1px solid var(--borda);
+}
+.sidebar-logo .marca{font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);line-height:1.2}
+.sidebar-logo .sub{font-size:.7rem;color:var(--texto-sec)}
+nav{flex:1;padding:1rem 0}
+nav a{
+  display:flex;align-items:center;gap:.75rem;padding:.65rem 1.2rem;
+  font-size:.88rem;color:var(--texto-sec);cursor:pointer;
+  border-left:3px solid transparent;transition:all .15s;text-decoration:none;
+}
+nav a:hover{background:var(--rosa-light);color:var(--rosa-dark)}
+nav a.active{background:var(--rosa-light);color:var(--rosa);border-left-color:var(--rosa);font-weight:500}
+nav a .icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{
+  padding:1rem 1.2rem;border-top:1px solid var(--borda);
+  font-size:.75rem;color:var(--texto-sec);
+}
+.logout-btn{
+  display:flex;align-items:center;gap:.5rem;cursor:pointer;
+  color:var(--texto-sec);transition:color .15s;background:none;border:none;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.3rem 0;
+}
+.logout-btn:hover{color:var(--vermelho)}
+
+/* MAIN */
+.main{margin-left:220px;padding:2rem;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+
+.page-header{margin-bottom:1.75rem}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--marrom);font-weight:500}
+.page-header p{font-size:.88rem;color:var(--texto-sec);margin-top:.2rem}
+
+/* CARDS */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
+.card-stat{
+  background:var(--card);border-radius:14px;padding:1.2rem;
+  box-shadow:var(--sombra);border:1px solid var(--borda);
+}
+.card-stat .label{font-size:.75rem;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
+.card-stat .value{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--marrom);font-weight:500}
+.card-stat .value.green{color:var(--verde)}
+.card-stat .value.red{color:var(--vermelho)}
+.card-stat .sub{font-size:.75rem;color:var(--texto-sec);margin-top:.2rem}
+
+/* FORM CARDS */
+.form-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
+.form-card h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--marrom);margin-bottom:1.2rem;font-weight:500}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.9rem;margin-bottom:.9rem}
+label{font-size:.82rem;color:var(--texto-sec);display:block;margin-bottom:.3rem}
+input,select,textarea{
+  width:100%;padding:.65rem .85rem;border:1.5px solid var(--borda);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;background:#fafafa;outline:none;
+  transition:border .2s;color:var(--texto);
+}
+input:focus,select:focus,textarea:focus{border-color:var(--rosa);background:#fff}
+textarea{resize:vertical;min-height:80px}
+
+.btn{
+  padding:.65rem 1.4rem;border-radius:9px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;transition:all .2s;
+}
+.btn-primary{background:var(--rosa);color:#fff}
+.btn-primary:hover{background:var(--rosa-dark)}
+.btn-danger{background:var(--vermelho);color:#fff}
+.btn-danger:hover{background:#a93226}
+.btn-ghost{background:transparent;color:var(--rosa);border:1.5px solid var(--rosa)}
+.btn-ghost:hover{background:var(--rosa-light)}
+.btn-sm{padding:.4rem .85rem;font-size:.8rem}
+
+/* TABLE */
+.table-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden;margin-bottom:1.5rem}
+.table-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;border-bottom:1px solid var(--borda);
+}
+.table-head h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom);font-weight:500}
+table{width:100%;border-collapse:collapse}
+th{
+  font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--texto-sec);padding:.7rem 1rem;text-align:left;
+  background:#fdf6ef;border-bottom:1px solid var(--borda);
+}
+td{padding:.7rem 1rem;font-size:.88rem;border-bottom:1px solid #f5ede8;color:var(--texto)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fdf6ef}
+
+/* BADGE */
+.badge{display:inline-block;padding:.25rem .7rem;border-radius:20px;font-size:.75rem;font-weight:500}
+.badge-green{background:#e8f5ee;color:var(--verde)}
+.badge-red{background:#fde8e8;color:var(--vermelho)}
+.badge-yellow{background:#fef3d0;color:var(--amarelo)}
+
+/* CHART */
+.chart-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
+.chart-card h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom);margin-bottom:1.2rem;font-weight:500}
+
+/* TABS */
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
+.tab{
+  padding:.5rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.85rem;
+  border:1.5px solid var(--borda);color:var(--texto-sec);background:#fff;transition:all .15s;
+}
+.tab.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
+
+/* PRODUTOS PAGE */
+.produto-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.8rem 1rem;border-bottom:1px solid #f5ede8;
+}
+.produto-item:last-child{border-bottom:none}
+.produto-nome{font-size:.9rem;font-weight:500;color:var(--texto)}
+.produto-cat{font-size:.75rem;color:var(--texto-sec);margin-top:.1rem}
+.produto-preco{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)}
+
+/* DESPESAS */
+.despesa-tipo{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
+.tipo-btn{
+  padding:.4rem .9rem;border-radius:20px;border:1.5px solid var(--borda);
+  font-size:.8rem;cursor:pointer;background:#fff;color:var(--texto-sec);transition:all .15s;
+}
+.tipo-btn.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:2.5rem;color:var(--texto-sec);font-size:.88rem}
+
+/* LAYOUT NOVO PEDIDO */
+.np-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;align-items:start}
+@media(max-width:1000px){.np-layout{grid-template-columns:1fr}}
+.np-left{}
+.np-right{}
+
+/* ABAS DO CARDÁPIO */
+.np-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.25rem}
+.np-tab{font-size:.75rem;font-weight:500;padding:.4rem .85rem;border-radius:20px;border:1.5px solid var(--borda);background:#fff;color:var(--texto-sec);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.np-tab:hover{border-color:var(--rosa);color:var(--rosa)}
+.np-tab.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
+.np-tab-content{display:none}
+.np-tab-content.active{display:block}
+
+/* STEPS */
+.np-step{margin-bottom:1.1rem}
+.np-step-label{font-size:.78rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec);margin-bottom:.5rem}
+
+/* OPÇÕES */
+.np-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.4rem}
+.np-grid-wide{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.np-opt{
+  border:1.5px solid var(--borda);border-radius:9px;padding:.55rem .75rem;
+  cursor:pointer;background:#fff;font-size:.84rem;color:var(--texto);
+  transition:all .15s;position:relative;user-select:none;line-height:1.3;
+}
+.np-opt:hover{border-color:var(--rosa);background:var(--rosa-light)}
+.np-opt.selected{border-color:var(--rosa);background:var(--rosa-light);color:var(--rosa-dark)}
+.np-opt.selected::after{content:'✓';position:absolute;top:.3rem;right:.5rem;font-size:.7rem;color:var(--rosa);font-weight:700}
+.np-opt-sub{font-size:.72rem;color:var(--texto-sec);margin-top:.15rem}
+.np-badge{display:inline-block;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .45rem;border-radius:20px;font-weight:500;margin-right:.3rem;vertical-align:middle}
+.np-badge.trad{background:var(--rosa-light);color:var(--rosa-dark)}
+.np-badge.esp{background:#f0e6d3;color:#8c6a3e}
+.np-badge.prem{background:#f5f0e6;color:#7a6a3e}
+
+/* PREVIEW */
+.np-preview{background:#fdf6ef;border:1px solid var(--borda);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;margin-top:.5rem;display:none;color:var(--texto-sec)}
+.np-preview strong{color:var(--rosa-dark)}
+
+/* CARRINHO */
+.carrinho-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden}
+.carrinho-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--borda);background:#fdf6ef}
+#carrinho-itens{max-height:320px;overflow-y:auto}
+.item-carrinho{display:flex;align-items:flex-start;gap:.6rem;padding:.65rem 1rem;border-bottom:1px solid #f5ede8}
+.item-carrinho:last-child{border-bottom:none}
+.item-carrinho-nome{font-size:.85rem;font-weight:500;color:var(--texto);line-height:1.3}
+.item-carrinho-sub{font-size:.75rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.4}
+.item-total{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--rosa);white-space:nowrap;min-width:60px;text-align:right;padding-top:.1rem}
+.item-del{background:none;border:none;color:var(--texto-sec);cursor:pointer;font-size:.9rem;padding:.1rem .25rem;opacity:.45;transition:opacity .15s;flex-shrink:0;margin-top:.1rem}
+.item-del:hover{opacity:1;color:var(--vermelho)}
+.carrinho-footer{padding:1rem 1.1rem;border-top:1px solid var(--borda);background:#fdf6ef}
+.carrinho-totais{margin-bottom:.5rem}
+.total-row{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;padding:.2rem 0;color:var(--texto-sec)}
+.desconto-row{padding:.35rem 0}
+.total-final{font-size:1rem;font-weight:500;color:var(--marrom);border-top:1px solid var(--borda);padding-top:.5rem;margin-top:.3rem}
+.total-final span:last-child{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--rosa)}
+
+/* QTY CONTROLS */
+.qty-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--borda);background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--texto-sec)}
+.qty-btn:hover{border-color:var(--rosa);color:var(--rosa)}
+.qty-num{font-size:.95rem;font-weight:500;min-width:26px;text-align:center;color:var(--texto)}
+
+/* MOBILE MENU */
+.menu-toggle{display:none;position:fixed;top:1rem;left:1rem;z-index:200;
+  background:var(--rosa);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;cursor:pointer;font-size:1.1rem}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:1rem;padding-top:3.5rem}
+  .menu-toggle{display:block}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:99}
+  .overlay.show{display:block}
+}
+
+/* PRINT / EXPORT */
+.action-bar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+
+/* NOTIFICATION */
+.notif{
+  position:fixed;top:1.5rem;right:1.5rem;background:var(--verde);color:#fff;
+  padding:.75rem 1.25rem;border-radius:10px;font-size:.88rem;z-index:999;
+  display:none;box-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+.notif.error{background:var(--vermelho)}
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- MOBILE TOGGLE -->
+<button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">✦ Lais Santos</div>
+    <div class="login-sub">CONFEITARIA · GESTÃO</div>
+    <input type="password" id="login-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="marca">Lais Santos<br>Confeitaria</div>
+      <div class="sub">Painel de Gestão</div>
+    </div>
+    <nav>
+      <a class="active" data-page="dashboard" onclick="showPage('dashboard')"><span class="icon">◈</span> Dashboard</a>
+      <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
+      <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
+      <a data-page="produtos" onclick="showPage('produtos')"><span class="icon">✦</span> Cardápio</a>
+      <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">⎋ Sair do painel</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p id="dash-data">Visão geral do seu negócio</p>
+      </div>
+      <div class="cards-row" id="dash-cards"></div>
+      <div class="chart-card">
+        <h2>Faturamento dos últimos 30 dias</h2>
+        <canvas id="chart-linha" height="80"></canvas>
+      </div>
+      <div class="cards-row" style="grid-template-columns:1fr 1fr">
+        <div class="chart-card">
+          <h2>Produtos mais vendidos</h2>
+          <canvas id="chart-produtos" height="140"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Receitas × Despesas (mês atual)</h2>
+          <canvas id="chart-barras" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="page" id="page-pedidos">
+      <div class="page-header">
+        <h1>Novo Pedido</h1>
+        <p>Selecione os produtos e preencha os dados do cliente</p>
+      </div>
+
+      <div class="np-layout">
+        <!-- COLUNA ESQUERDA: dados + cardápio -->
+        <div class="np-left">
+
+          <!-- Dados do cliente -->
+          <div class="form-card" style="margin-bottom:1.25rem">
+            <h2>Dados do pedido</h2>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Data</label><input type="date" id="ped-data"></div>
+              <div><label>Cliente</label><input type="text" id="ped-cliente" placeholder="Nome do cliente"></div>
+            </div>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp</option><option value="instagram">Instagram</option><option value="indicacao">Indicação</option><option value="loja">Loja</option><option value="google">Google</option><option value="outro">Outro</option></select></div>
+              <div><label>Status</label><select id="ped-status"><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
+            </div>
+            <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Entregar sábado às 10h, escrever Feliz Aniversário Ana..."></div>
+          </div>
+
+          <!-- Cardápio por abas -->
+          <div class="form-card" style="margin-bottom:0">
+            <h2>Cardápio</h2>
+            <div class="np-tabs" id="np-tabs">
+              <button class="np-tab active" onclick="npTab('dec',this)">🎂 Bolo Decorado</button>
+              <button class="np-tab" onclick="npTab('simples',this)">🍰 Bolo Simples</button>
+              <button class="np-tab" onclick="npTab('vulcao',this)">🌋 Vulcão</button>
+              <button class="np-tab" onclick="npTab('doces',this)">🍬 Doces</button>
+              <button class="np-tab" onclick="npTab('sob',this)">🍮 Sobremesas</button>
+              <button class="np-tab" onclick="npTab('kit',this)">🎉 Kit Festa</button>
+              <button class="np-tab" onclick="npTab('outros',this)">🧁 Cupcakes+</button>
+              <button class="np-tab" onclick="npTab('sal',this)">🥐 Salgados</button>
+            </div>
+
+            <!-- BOLO DECORADO -->
+            <div class="np-tab-content active" id="np-dec">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-dec-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-dec-tam">
+                  <div class="np-opt" data-preco="60" onclick="npSel(this,'np-dec-tam')"><div>PP · Bento</div><div class="np-opt-sub">~2 fatias · a partir de R$ 60</div></div>
+                  <div class="np-opt" data-preco="99" onclick="npSel(this,'np-dec-tam')"><div>P · 15cm</div><div class="np-opt-sub">8–10 fatias · a partir de R$ 99</div></div>
+                  <div class="np-opt" data-preco="198" onclick="npSel(this,'np-dec-tam')"><div>M · 18cm ⭐</div><div class="np-opt-sub">18–20 fatias · a partir de R$ 198</div></div>
+                  <div class="np-opt" data-preco="297" onclick="npSel(this,'np-dec-tam')"><div>G · 21cm</div><div class="np-opt-sub">28–30 fatias · a partir de R$ 297</div></div>
+                  <div class="np-opt" data-preco="396" onclick="npSel(this,'np-dec-tam')"><div>GG · 23cm</div><div class="np-opt-sub">38–40 fatias · a partir de R$ 396</div></div>
+                  <div class="np-opt" data-preco="495" onclick="npSel(this,'np-dec-tam')"><div>EX · 26cm</div><div class="np-opt-sub">48–50 fatias · a partir de R$ 495</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) <span style="font-weight:400;font-size:.75rem">— até 2</span></div>
+                <div class="np-grid np-grid-wide" id="np-dec-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Beijinho de coco</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Dois amores</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Mousse de chocolate</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de maracujá</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de limão</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Brigadeiro com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Doce de leite com ameixa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Dois amores com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Creme de coco com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Leite ninho com Nutella</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com Oreo</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Caramelo salgado c/ mousse</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Floresta Negra</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Pistache</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Kinder Bueno</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Ouro Branco / Sonho de Valsa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Nozes com praliné</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Doce de leite c/ praliné de nozes</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Marta Rocha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura</div>
+                <div class="np-grid np-grid-wide" id="np-dec-cob">
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Chantininho</div>
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Naked Cake</div>
+                  <div class="np-opt" data-extra="20" onclick="npSel(this,'np-dec-cob')">Chantininho Personalizado <span class="np-opt-sub">+R$20</span></div>
+                  <div class="np-opt" data-extra="25" onclick="npSel(this,'np-dec-cob')">Cobertura de Brigadeiro <span class="np-opt-sub">+R$25</span></div>
+                  <div class="np-opt" data-extra="40" onclick="npSel(this,'np-dec-cob')">Ganache de Chocolate <span class="np-opt-sub">+R$40</span></div>
+                  <div class="np-opt" data-extra="35" onclick="npSel(this,'np-dec-cob')">Ganache Saborizada <span class="np-opt-sub">+R$35</span></div>
+                </div>
+              </div>
+              <div id="np-dec-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddBolo()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- BOLO SIMPLES -->
+            <div class="np-tab-content" id="np-simples">
+              <div class="np-step"><div class="np-step-label">Sabor</div>
+                <div class="np-grid np-grid-wide" id="np-sim-sab">
+                  <div class="np-opt" data-m="40" data-g="60" onclick="npSel(this,'np-sim-sab')">Fubá<div class="np-opt-sub">M R$40 · G R$60</div></div>
+                  <div class="np-opt" data-m="32" data-g="58" onclick="npSel(this,'np-sim-sab')">Chocolate sem cobertura<div class="np-opt-sub">M R$32 · G R$58</div></div>
+                  <div class="np-opt" data-m="45" data-g="70" onclick="npSel(this,'np-sim-sab')">Chocolate com cobertura<div class="np-opt-sub">M R$45 · G R$70</div></div>
+                  <div class="np-opt" data-m="38" data-g="58" onclick="npSel(this,'np-sim-sab')">Formigueiro sem cobertura<div class="np-opt-sub">M R$38 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Formigueiro com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Fubá cremoso<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="65" onclick="npSel(this,'np-sim-sab')">Milho<div class="np-opt-sub">M R$45 · G R$65</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Toalha felpuda<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="58" onclick="npSel(this,'np-sim-sab')">Laranja<div class="np-opt-sub">M R$45 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="68" onclick="npSel(this,'np-sim-sab')">Cenoura com brigadeiro<div class="np-opt-sub">M R$50 · G R$68</div></div>
+                  <div class="np-opt" data-m="35" data-g="58" onclick="npSel(this,'np-sim-sab')">Mesclado<div class="np-opt-sub">M R$35 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Mesclado com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sim-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-sim-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-sim-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-sim-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSimples()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- VULCÃO -->
+            <div class="np-tab-content" id="np-vulcao">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-vul-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura</div>
+                <div class="np-grid np-grid-wide" id="np-vul-cob">
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Dois amores<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="65" data-g="90" onclick="npSel(this,'np-vul-cob')">Leite ninho com Nutella<div class="np-opt-sub">M R$65 · G R$90</div></div>
+                  <div class="np-opt" data-m="75" data-g="99" onclick="npSel(this,'np-vul-cob')">Cream cheese<div class="np-opt-sub">M R$75 · G R$99</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Cenoura com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-vul-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-vul-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-vul-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-vul-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddVulcao()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- DOCES -->
+            <div class="np-tab-content" id="np-doces">
+              <div class="np-step"><div class="np-step-label">Tipo</div>
+                <div class="np-grid np-grid-wide" id="np-doc-item">
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Tradicionais<div class="np-opt-sub">25un R$50 · 50un R$100 · 100un R$190</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Especiais<div class="np-opt-sub">25un R$75 · 50un R$120 · 100un R$220</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Caixa Degustação<div class="np-opt-sub">15 R$55 · 20 R$70 · 25 R$100</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas de Chocolate<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas com Frutas<div class="np-opt-sub">R$4,80/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Copinho de Chocolate c/ Cereja<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Bombom Negresco<div class="np-opt-sub">R$4,50/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufa Meio Amarga 50%<div class="np-opt-sub">Cento R$250</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem">
+                  <button class="qty-btn" onclick="npChgQ('doc',-5,5)">−</button>
+                  <span class="qty-num" id="np-q-doc">5</span>
+                  <button class="qty-btn" onclick="npChgQ('doc',5,5)">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SOBREMESAS -->
+            <div class="np-tab-content" id="np-sob">
+              <div class="np-step"><div class="np-step-label">Sobremesa</div>
+                <div class="np-grid np-grid-wide" id="np-sob-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa da Felicidade<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa Red Velvet<div class="np-opt-sub">P R$80 · M R$130 · G R$219</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Bombom Aberto<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Banoffee<div class="np-opt-sub">M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Torta<div class="np-opt-sub">8p R$129 · 13p R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Pudim de Leite Condensado<div class="np-opt-sub">M R$65 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sob-tam">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Pequeno (P)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Médio (M)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSobremesa()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- KIT FESTA -->
+            <div class="np-tab-content" id="np-kit">
+              <div class="np-step"><div class="np-step-label">Kit</div>
+                <div class="np-grid np-grid-wide" id="np-kit-tam">
+                  <div class="np-opt" data-preco="200" onclick="npSel(this,'np-kit-tam')">Kit P — R$200<div class="np-opt-sub">Bolo 15cm · 8-10 fatias · 70 docinhos</div></div>
+                  <div class="np-opt" data-preco="325" onclick="npSel(this,'np-kit-tam')">Kit M — R$325<div class="np-opt-sub">Bolo 18cm · 18-20 fatias · 100 docinhos</div></div>
+                  <div class="np-opt" data-preco="450" onclick="npSel(this,'np-kit-tam')">Kit G — R$450<div class="np-opt-sub">Bolo 21cm · 28-30 fatias · 150 docinhos</div></div>
+                  <div class="np-opt" data-preco="649" onclick="npSel(this,'np-kit-tam')">Kit GG — R$649<div class="np-opt-sub">Bolo 23cm · 38-40 fatias · 200 docinhos</div></div>
+                  <div class="np-opt" data-preco="815" onclick="npSel(this,'np-kit-tam')">Kit EX — R$815<div class="np-opt-sub">Bolo 26cm · 48-50 fatias · 250 docinhos</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-kit-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Baunilha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) — até 2</div>
+                <div class="np-grid np-grid-wide" id="np-kit-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Beijinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Choconinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Dois amores</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- CUPCAKES + -->
+            <div class="np-tab-content" id="np-outros">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-out-item">
+                  <div class="np-opt" data-unit="8.50" onclick="npSel(this,'np-out-item')">Cupcake Grande + Chantininho<div class="np-opt-sub">R$8,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Cupcake Grande + Brigadeiro<div class="np-opt-sub">R$12,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.50" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Chantininho<div class="np-opt-sub">R$6,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Brigadeiro<div class="np-opt-sub">R$9,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Pão de Mel Pequeno<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="10.00" onclick="npSel(this,'np-out-item')">Pão de Mel Grande<div class="np-opt-sub">R$10,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="8.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado P<div class="np-opt-sub">R$8,00/un</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado G<div class="np-opt-sub">R$12,00/un</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Pirulito Simples<div class="np-opt-sub">R$9,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="14.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Pasta e Papel de Arroz<div class="np-opt-sub">R$14,00/un</div></div>
+                  <div class="np-opt" data-unit="20.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Sprinkles<div class="np-opt-sub">R$20,00/un</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Brownie Simples 6x6cm<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Brownie Recheado 6x6cm<div class="np-opt-sub">R$12,00/un</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem">
+                  <button class="qty-btn" onclick="npChgQ('out',-1,1)">−</button>
+                  <span class="qty-num" id="np-q-out">1</span>
+                  <button class="qty-btn" onclick="npChgQ('out',1,1)">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddOutros()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SALGADOS -->
+            <div class="np-tab-content" id="np-sal">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-sal-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta de Frango Fria<div class="np-opt-sub">s/ geleia R$110/kg · c/ geleia R$129/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Pão Italiano<div class="np-opt-sub">M R$60 · G R$90</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Frango c/ catupiry<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Alho poró c/ queijo<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon e calabresa<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Carne seca c/ banana<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon c/ abacaxi<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche de Camarão<div class="np-opt-sub">600g R$100 · 1,1kg R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Frango<div class="np-opt-sub">R$80/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Carne moída<div class="np-opt-sub">R$80/kg</div></div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
+            </div>
+
+          </div><!-- /form-card cardápio -->
+        </div><!-- /np-left -->
+
+        <!-- COLUNA DIREITA: carrinho -->
+        <div class="np-right">
+          <div class="carrinho-card" style="position:sticky;top:1.5rem">
+            <div class="carrinho-header">
+              <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom)">🛒 Carrinho</span>
+              <span id="carr-badge" style="background:var(--rosa);color:#fff;font-size:.72rem;padding:.15rem .6rem;border-radius:20px">0 itens</span>
+            </div>
+
+            <div id="carrinho-itens"><div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div></div>
+
+            <div class="carrinho-footer">
+              <!-- Cobrança adicional -->
+              <div style="margin-bottom:.75rem;padding:.75rem;background:#fdf6ef;border-radius:9px;border:1px solid var(--borda)">
+                <div style="font-size:.75rem;color:var(--texto-sec);font-weight:500;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.04em">Cobrança adicional</div>
+                <div style="display:flex;gap:.5rem;align-items:center">
+                  <input type="text" id="extra-desc" placeholder="Descrição (ex: entrega, personalização)" style="flex:1;font-size:.82rem;padding:.45rem .6rem">
+                  <input type="number" id="extra-val" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.82rem;padding:.45rem .6rem" oninput="atualizarTotais()">
+                </div>
+              </div>
+
+              <div class="carrinho-totais">
+                <div class="total-row"><span>Subtotal</span><span id="subtotal-val">R$ 0,00</span></div>
+                <div class="total-row" id="extra-row" style="display:none"><span id="extra-label-show">—</span><span id="extra-val-show" style="color:var(--marrom)">R$ 0,00</span></div>
+                <div class="total-row desconto-row">
+                  <span>Desconto</span>
+                  <div style="display:flex;gap:.4rem;align-items:center">
+                    <input type="number" id="desconto-val" placeholder="0" min="0" step="0.01" style="width:70px;padding:.3rem .5rem;font-size:.82rem" oninput="atualizarTotais()">
+                    <select id="desconto-tipo" style="padding:.3rem .4rem;font-size:.78rem;width:auto" onchange="atualizarTotais()">
+                      <option value="reais">R$</option>
+                      <option value="pct">%</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="total-row total-final"><span>Total</span><span id="total-final-val">R$ 0,00</span></div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;margin-top:1rem;padding:.9rem;font-size:.95rem" onclick="salvarPedido()">✓ Confirmar pedido</button>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:.5rem" onclick="limparCarrinho()">Limpar carrinho</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /np-layout -->
+
+      <!-- HISTÓRICO -->
+      <div class="table-card" style="margin-top:2rem">
+        <div class="table-head">
+          <h2>Histórico de pedidos</h2>
+          <input type="month" id="filtro-mes-ped" style="width:auto;padding:.4rem .6rem" onchange="renderPedidos()">
+        </div>
+        <div id="tabela-pedidos"></div>
+      </div>
+    </div>
+
+    <!-- DESPESAS -->
+    <div class="page" id="page-despesas">
+      <div class="page-header">
+        <h1>Despesas</h1>
+        <p>Controle suas compras e custos operacionais</p>
+      </div>
+      <div class="form-card">
+        <h2>Nova despesa</h2>
+        <div class="form-row">
+          <div><label>Data</label><input type="date" id="desp-data"></div>
+          <div><label>Descrição</label><input type="text" id="desp-desc" placeholder="Ex: Chocolate Harald 5kg"></div>
+          <div><label>Valor (R$)</label><input type="number" id="desp-valor" placeholder="0,00" step="0.01" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Categoria</label>
+            <select id="desp-cat">
+              <option value="ingredientes">Ingredientes</option>
+              <option value="embalagens">Embalagens</option>
+              <option value="utensilios">Utensílios</option>
+              <option value="marketing">Marketing / Publicidade</option>
+              <option value="energia">Energia / Gás</option>
+              <option value="entrega">Frete / Entrega</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div><label>Fornecedor (opcional)</label><input type="text" id="desp-forn" placeholder="Ex: Atacado Doce Vida"></div>
+          <div><label>Observação</label><input type="text" id="desp-obs" placeholder="Opcional"></div>
+        </div>
+        <button class="btn btn-primary" onclick="salvarDespesa()">Salvar despesa</button>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Histórico de despesas</h2>
+          <input type="month" id="filtro-mes-desp" style="width:auto;padding:.4rem .6rem" onchange="renderDespesas()">
+        </div>
+        <div id="tabela-despesas"></div>
+      </div>
+    </div>
+
+    <!-- PRODUTOS (CARDÁPIO) -->
+    <div class="page" id="page-produtos">
+      <div class="page-header">
+        <h1>Cardápio</h1>
+        <p>Gerencie seus produtos e preços</p>
+      </div>
+      <div class="form-card">
+        <h2>Adicionar produto</h2>
+        <div class="form-row">
+          <div><label>Nome do produto</label><input type="text" id="prod-nome" placeholder="Ex: Bolo Naked Cake"></div>
+          <div>
+            <label>Categoria</label>
+            <select id="prod-cat">
+              <option value="bolos">Bolos</option>
+              <option value="brigadeiros">Brigadeiros</option>
+              <option value="tortas">Tortas</option>
+              <option value="cupcakes">Cupcakes</option>
+              <option value="pascoa">Páscoa</option>
+              <option value="festas">Festas</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div><label>Preço (R$)</label><input type="number" id="prod-preco" placeholder="0,00" step="0.01" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div style="grid-column:1/-1"><label>Descrição (opcional)</label><input type="text" id="prod-desc" placeholder="Ex: Bolo de dois andares com recheio de morango"></div>
+        </div>
+        <button class="btn btn-primary" onclick="salvarProduto()">Adicionar ao cardápio</button>
+      </div>
+      <div class="table-card">
+        <div class="table-head"><h2>Produtos cadastrados</h2></div>
+        <div id="lista-produtos"></div>
+      </div>
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div class="page" id="page-relatorios">
+      <div class="page-header">
+        <h1>Relatórios</h1>
+        <p>Análise detalhada do seu faturamento</p>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="setRelTab('diario',this)">Diário</div>
+        <div class="tab" onclick="setRelTab('semanal',this)">Semanal</div>
+        <div class="tab" onclick="setRelTab('mensal',this)">Mensal</div>
+      </div>
+      <div id="rel-diario" class="rel-tab">
+        <div class="action-bar">
+          <label style="margin:0">Data:</label>
+          <input type="date" id="rel-dia" style="width:auto" onchange="renderRelDiario()">
+        </div>
+        <div class="cards-row" id="rel-diario-cards"></div>
+        <div class="table-card" id="rel-diario-tabela"></div>
+      </div>
+      <div id="rel-semanal" class="rel-tab" style="display:none">
+        <div class="action-bar">
+          <label style="margin:0">Semana de:</label>
+          <input type="date" id="rel-semana" style="width:auto" onchange="renderRelSemanal()">
+        </div>
+        <div class="cards-row" id="rel-semanal-cards"></div>
+        <div class="chart-card"><canvas id="chart-semana" height="80"></canvas></div>
+      </div>
+      <div id="rel-mensal" class="rel-tab" style="display:none">
+        <div class="action-bar">
+          <label style="margin:0">Mês:</label>
+          <input type="month" id="rel-mes" style="width:auto" onchange="renderRelMensal()">
+          <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">↓ Exportar CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportarJSON()">↓ Backup JSON</button>
+        </div>
+        <div class="cards-row" id="rel-mensal-cards"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="chart-card"><h2>Faturamento por dia</h2><canvas id="chart-mensal-dias" height="120"></canvas></div>
+          <div class="chart-card"><h2>Despesas por categoria</h2><canvas id="chart-mensal-desp" height="120"></canvas></div>
+        </div>
+        <div class="table-card" id="rel-mensal-top"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ========== DADOS ==========
+const SENHA = 'lais2024';
+let carrinho_init_done = false;
+
+function getData(key){try{return JSON.parse(localStorage.getItem('ls_'+key)||'[]')}catch{return[]}}
+function setData(key,val){localStorage.setItem('ls_'+key,JSON.stringify(val))}
+
+// ========== LOGIN ==========
+function doLogin(){
+  const v = document.getElementById('login-input').value;
+  if(v===SENHA){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    initApp();
+  } else {
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('login-input').value='';
+  }
+}
+function logout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-input').value='';
+}
+
+// ========== NAVEGAÇÃO ==========
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelector(`nav a[data-page="${id}"]`).classList.add('active');
+  if(id==='dashboard')renderDashboard();
+  if(id==='pedidos')renderPedidos();
+  if(id==='despesas')renderDespesas();
+  if(id==='produtos')renderProdutos();
+  if(id==='relatorios')initRelatorios();
+  if(window.innerWidth<=768)toggleMenu();
+}
+function toggleMenu(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ========== NOTIFICAÇÃO ==========
+function notif(msg,tipo='ok'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;
+  n.className='notif'+(tipo==='error'?' error':'');
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',2800);
+}
+
+// ========== UTILS ==========
+function fmtBRL(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function hoje(){return new Date().toISOString().split('T')[0]}
+function mesAtual(){return hoje().substring(0,7)}
+function inicioSemana(d){
+  const dt=new Date(d+'T12:00:00');
+  const day=dt.getDay();
+  const diff=dt.getDate()-day+(day===0?-6:1);
+  return new Date(dt.setDate(diff)).toISOString().split('T')[0];
+}
+
+// ========== PRODUTOS ==========
+function salvarProduto(){
+  const nome=document.getElementById('prod-nome').value.trim();
+  const cat=document.getElementById('prod-cat').value;
+  const preco=parseFloat(document.getElementById('prod-preco').value);
+  const desc=document.getElementById('prod-desc').value.trim();
+  if(!nome||!preco){notif('Preencha nome e preço','error');return}
+  const prods=getData('produtos');
+  prods.push({id:Date.now(),nome,cat,preco,desc});
+  setData('produtos',prods);
+  document.getElementById('prod-nome').value='';
+  document.getElementById('prod-preco').value='';
+  document.getElementById('prod-desc').value='';
+  renderProdutos();
+  notif('Produto adicionado ao cardápio ✦');
+}
+function deleteProduto(id){
+  if(!confirm('Remover este produto?'))return;
+  setData('produtos',getData('produtos').filter(p=>p.id!==id));
+  renderProdutos();
+}
+function renderProdutos(){
+  const prods=getData('produtos');
+  const cats={bolos:'Bolos',brigadeiros:'Brigadeiros',tortas:'Tortas',cupcakes:'Cupcakes',pascoa:'Páscoa',festas:'Festas',outros:'Outros'};
+  if(!prods.length){document.getElementById('lista-produtos').innerHTML='<div class="empty">Nenhum produto cadastrado ainda</div>';return}
+  const agrupado={};
+  prods.forEach(p=>{if(!agrupado[p.cat])agrupado[p.cat]=[];agrupado[p.cat].push(p)});
+  let html='';
+  for(const cat in agrupado){
+    html+=`<div style="padding:.6rem 1rem .2rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec);background:#fdf6ef">${cats[cat]||cat}</div>`;
+    agrupado[cat].forEach(p=>{
+      html+=`<div class="produto-item">
+        <div>
+          <div class="produto-nome">${p.nome}</div>
+          ${p.desc?`<div class="produto-cat">${p.desc}</div>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="produto-preco">${fmtBRL(p.preco)}</div>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduto(${p.id})">✕</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('lista-produtos').innerHTML=html;
+}
+// (select populado pelo carrinho)
+
+// ========== NOVO PEDIDO: CARDÁPIO ABAS ==========
+let npQtys = {doc:5, out:1};
+
+function npTab(id, el){
+  document.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('np-'+id).classList.add('active');
+}
+
+function npSel(el, gid){
+  document.querySelectorAll('#'+gid+' .np-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  npUpdatePreviewDec();npUpdatePreviewSim();npUpdatePreviewVul();
+}
+
+function npMulti(el, gid, max){
+  if(el.classList.contains('selected')){el.classList.remove('selected');npUpdatePreviewDec();return}
+  const sel=document.querySelectorAll('#'+gid+' .np-opt.selected');
+  if(sel.length>=max){notif('Máximo '+max+' recheios','error');return}
+  el.classList.add('selected');npUpdatePreviewDec();
+}
+
+function npChgQ(k,d,min){
+  const step=Math.abs(d);
+  npQtys[k]=Math.max(min, (npQtys[k]||min)+d);
+  document.getElementById('np-q-'+k).textContent=npQtys[k];
+}
+
+function npGetV(gid){
+  const el=document.querySelector('#'+gid+' .np-opt.selected');
+  return el?el.firstChild.textContent.trim():null;
+}
+function npGetEl(gid){return document.querySelector('#'+gid+' .np-opt.selected')}
+function npGetMulti(gid){return [...document.querySelectorAll('#'+gid+' .np-opt.selected')].map(e=>e.firstChild.textContent.trim())}
+
+// Previews
+function npPreviewEl(id,html){const e=document.getElementById(id);if(e){e.innerHTML=html;e.style.display=html?'block':'none'}}
+
+function npUpdatePreviewDec(){
+  const tam=npGetEl('np-dec-tam');const recs=npGetMulti('np-dec-rec');const cob=npGetEl('np-dec-cob');
+  if(!tam&&!recs.length&&!cob){npPreviewEl('np-dec-preview','');return}
+  const base=tam?parseFloat(tam.dataset.preco||0):0;
+  const extra=cob?parseFloat(cob.dataset.extra||0):0;
+  const tier=recs.some(r=>r.includes('Pistache')||r.includes('Kinder')||r.includes('Ouro')||r.includes('Nozes')||r.includes('praliné')||r.includes('Marta'))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','coco','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
+  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
+  const total=base+tierAdd[tier]+extra;
+  const label={trad:'Tradicional',esp:'Especial',prem:'Premium'};
+  let html=`<strong>Estimativa:</strong> R$ ${total.toLocaleString('pt-BR')}`;
+  if(recs.length) html+=` · Recheio ${label[tier]}`;
+  if(extra>0) html+=` · Cobertura +R$${extra}`;
+  npPreviewEl('np-dec-preview',html);
+}
+
+function npUpdatePreviewSim(){
+  const sab=npGetEl('np-sim-sab');const tam=npGetEl('np-sim-tam');
+  if(!sab||!tam)return;
+  const key=tam.dataset.key;
+  const v=sab.dataset[key];
+  if(v) npPreviewEl('np-sim-preview',`<strong>Valor:</strong> R$ ${parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2})}`);
+}
+
+function npUpdatePreviewVul(){
+  const cob=npGetEl('np-vul-cob');const tam=npGetEl('np-vul-tam');
+  if(!cob||!tam)return;
+  const key=tam.dataset.key;
+  const v=cob.dataset[key];
+  if(v) npPreviewEl('np-vul-preview',`<strong>Valor:</strong> R$ ${parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2})}`);
+}
+
+// ADD functions
+function npAddBolo(){
+  const mas=npGetV('np-dec-mas'),tam=npGetEl('np-dec-tam'),recs=npGetMulti('np-dec-rec'),cob=npGetEl('np-dec-cob');
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
+  if(!cob){notif('Escolha a cobertura','error');return}
+  const base=parseFloat(tam.dataset.preco||0);
+  const extra=parseFloat(cob.dataset.extra||0);
+  const tier=recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
+  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
+  const total=base+tierAdd[tier]+extra;
+  const tamNome=tam.firstChild.textContent.trim();
+  const cobNome=cob.firstChild.textContent.trim();
+  npCarrAdd(`🎂 Bolo Decorado`,`Massa: ${mas} · Tamanho: ${tamNome} · Recheio: ${recs.join(' + ')} · Cobertura: ${cobNome}`,total);
+  ['np-dec-mas','np-dec-tam','np-dec-rec','np-dec-cob'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-dec-preview','');
+}
+
+function npAddSimples(){
+  const sab=npGetEl('np-sim-sab'),tam=npGetEl('np-sim-tam');
+  if(!sab){notif('Escolha o sabor','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  const key=tam.dataset.key;const preco=parseFloat(sab.dataset[key]||0);
+  npCarrAdd(`🍰 Bolo Simples`,`${sab.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  ['np-sim-sab','np-sim-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-sim-preview','');
+}
+
+function npAddVulcao(){
+  const mas=npGetV('np-vul-mas'),cob=npGetEl('np-vul-cob'),tam=npGetEl('np-vul-tam');
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!cob){notif('Escolha a cobertura','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  const key=tam.dataset.key;const preco=parseFloat(cob.dataset[key]||0);
+  npCarrAdd(`🌋 Bolo Vulcão`,`Massa: ${mas} · ${cob.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  ['np-vul-mas','np-vul-cob','np-vul-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-vul-preview','');
+}
+
+function npAddDoces(){
+  const item=npGetV('np-doc-item');if(!item){notif('Escolha o tipo','error');return}
+  const qty=npQtys['doc']||5;
+  npCarrAdd(`🍬 Doces`,`${item} · ${qty} unidades`,0);
+  document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
+  npQtys['doc']=5;document.getElementById('np-q-doc').textContent='5';
+}
+
+function npAddSobremesa(){
+  const item=npGetV('np-sob-item'),tam=npGetV('np-sob-tam');
+  if(!item){notif('Escolha a sobremesa','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  npCarrAdd(`🍮 Sobremesa`,`${item} · ${tam}`,0);
+  ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+}
+
+function npAddKit(){
+  const kit=npGetEl('np-kit-tam'),mas=npGetV('np-kit-mas'),recs=npGetMulti('np-kit-rec');
+  if(!kit){notif('Escolha o kit','error');return}
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
+  const preco=parseFloat(kit.dataset.preco||0);
+  npCarrAdd(`🎉 Kit Festa`,`${kit.firstChild.textContent.trim()} · Massa: ${mas} · Recheio: ${recs.join(' + ')}`,preco);
+  ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+}
+
+function npAddOutros(){
+  const item=npGetEl('np-out-item');if(!item){notif('Escolha o item','error');return}
+  const qty=npQtys['out']||1;const unit=parseFloat(item.dataset.unit||0);
+  npCarrAdd(`🧁 ${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada`,unit*qty);
+  document.querySelectorAll('#np-out-item .selected').forEach(e=>e.classList.remove('selected'));
+  npQtys['out']=1;document.getElementById('np-q-out').textContent='1';
+}
+
+function npAddSalgado(){
+  const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
+  npCarrAdd(`🥐 ${item}`,`Confirmar valor no pedido`,0);
+  document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
+}
+
+// ========== CARRINHO ==========
+let carrinho = [];
+
+function npCarrAdd(nome, detalhe, preco){
+  carrinho.push({id:Date.now(), nome, detalhe, preco});
+  renderCarrinho();
+  notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
+}
+
+function removerItem(id){
+  carrinho=carrinho.filter(i=>i.id!=id);
+  renderCarrinho();
+}
+
+function limparCarrinho(){
+  if(carrinho.length&&!confirm('Limpar todos os itens?'))return;
+  carrinho=[];renderCarrinho();
+}
+
+function calcTotais(){
+  const sub=carrinho.reduce((s,i)=>s+(i.preco||0),0);
+  const extraV=parseFloat(document.getElementById('extra-val')?.value)||0;
+  const dv=parseFloat(document.getElementById('desconto-val')?.value)||0;
+  const dt=document.getElementById('desconto-tipo')?.value||'reais';
+  const desc=dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const total=Math.max(0,sub+extraV-desc);
+  return{sub,extraV,desc,total};
+}
+
+function atualizarTotais(){
+  const{sub,extraV,desc,total}=calcTotais();
+  document.getElementById('subtotal-val').textContent=fmtBRL(sub);
+  const eRow=document.getElementById('extra-row');
+  const eDesc=document.getElementById('extra-desc')?.value.trim();
+  if(extraV>0){
+    document.getElementById('extra-label-show').textContent=eDesc||'Cobrança adicional';
+    document.getElementById('extra-val-show').textContent='+'+fmtBRL(extraV);
+    eRow.style.display='flex';
+  } else {eRow.style.display='none'}
+  document.getElementById('total-final-val').textContent=fmtBRL(total);
+}
+
+function renderCarrinho(){
+  const badge=document.getElementById('carr-badge');
+  badge.textContent=carrinho.length+(carrinho.length===1?' item':' itens');
+  const cont=document.getElementById('carrinho-itens');
+  if(!carrinho.length){cont.innerHTML='<div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div>';atualizarTotais();return}
+  cont.innerHTML=carrinho.map(item=>`
+    <div class="item-carrinho">
+      <div style="flex:1;min-width:0">
+        <div class="item-carrinho-nome">${item.nome}</div>
+        <div class="item-carrinho-sub">${item.detalhe}</div>
+      </div>
+      <div class="item-total">${item.preco>0?fmtBRL(item.preco):'—'}</div>
+      <button class="item-del" onclick="removerItem(${item.id})">✕</button>
+    </div>`).join('');
+  atualizarTotais();
+}
+
+// ========== PEDIDOS ==========
+function salvarPedido(){
+  const data=document.getElementById('ped-data').value;
+  const cliente=document.getElementById('ped-cliente').value.trim();
+  const status=document.getElementById('ped-status').value;
+  const canal=document.getElementById('ped-canal').value;
+  const obs=document.getElementById('ped-obs').value.trim();
+  const extraDesc=document.getElementById('extra-desc')?.value.trim();
+  const extraV=parseFloat(document.getElementById('extra-val')?.value)||0;
+  if(!data||!cliente){notif('Preencha data e cliente','error');return}
+  if(!carrinho.length){notif('Adicione ao menos um produto ao carrinho','error');return}
+  const{total}=calcTotais();
+  const produtosNomes=carrinho.map(i=>i.nome.replace(/^[^\w\s]+\s/,''));
+  const pedidos=getData('pedidos');
+  pedidos.push({id:Date.now(),data,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}});
+  setData('pedidos',pedidos);
+  carrinho=[];
+  renderCarrinho();
+  document.getElementById('extra-desc').value='';
+  document.getElementById('extra-val').value='';
+  document.getElementById('desconto-val').value='';
+  ['ped-data','ped-cliente','ped-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ped-data').value=hoje();
+  document.getElementById('ped-status').value='confirmado';
+  renderPedidos();
+  notif('Pedido registrado com sucesso ♡');
+}
+function deletePedido(id){
+  if(!confirm('Remover este pedido?'))return;
+  setData('pedidos',getData('pedidos').filter(p=>p.id!==id));
+  renderPedidos();
+}
+function renderPedidos(){
+  const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
+  if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
+  const statusLabel={confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
+  const statusClass={confirmado:'badge-green',entregue:'badge-green',pendente:'badge-yellow',cancelado:'badge-red'};
+  let html=`<table><thead><tr><th>Data</th><th>Cliente</th><th>Produtos</th><th>Canal</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody>`;
+  pedidos.forEach(p=>{
+    const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR');
+    html+=`<tr>
+      <td>${dt}</td>
+      <td style="font-weight:500">${p.cliente}</td>
+      <td style="font-size:.8rem;color:var(--texto-sec)">${p.produtos.length?p.produtos.join(', '):'—'}</td>
+      <td><span style="font-size:.78rem">${p.canal}</span></td>
+      <td style="font-family:'Playfair Display',serif;color:var(--rosa)">${fmtBRL(p.valor)}</td>
+      <td><span class="badge ${statusClass[p.status]}">${statusLabel[p.status]}</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deletePedido(${p.id})">✕</button></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('tabela-pedidos').innerHTML=html;
+}
+
+// ========== DESPESAS ==========
+function salvarDespesa(){
+  const data=document.getElementById('desp-data').value;
+  const desc=document.getElementById('desp-desc').value.trim();
+  const valor=parseFloat(document.getElementById('desp-valor').value);
+  const cat=document.getElementById('desp-cat').value;
+  const forn=document.getElementById('desp-forn').value.trim();
+  const obs=document.getElementById('desp-obs').value.trim();
+  if(!data||!desc||!valor){notif('Preencha data, descrição e valor','error');return}
+  const desp=getData('despesas');
+  desp.push({id:Date.now(),data,desc,valor,cat,forn,obs});
+  setData('despesas',desp);
+  ['desp-data','desp-desc','desp-valor','desp-forn','desp-obs'].forEach(id=>document.getElementById(id).value='');
+  renderDespesas();
+  notif('Despesa registrada');
+}
+function deleteDespesa(id){
+  if(!confirm('Remover esta despesa?'))return;
+  setData('despesas',getData('despesas').filter(d=>d.id!==id));
+  renderDespesas();
+}
+function renderDespesas(){
+  const mes=document.getElementById('filtro-mes-desp').value||mesAtual();
+  const desp=getData('despesas').filter(d=>d.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
+  if(!desp.length){document.getElementById('tabela-despesas').innerHTML='<div class="empty">Nenhuma despesa neste mês</div>';return}
+  const catLabel={ingredientes:'Ingredientes',embalagens:'Embalagens',utensilios:'Utensílios',marketing:'Marketing',energia:'Energia/Gás',entrega:'Frete/Entrega',outros:'Outros'};
+  let html=`<table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Fornecedor</th><th>Valor</th><th></th></tr></thead><tbody>`;
+  desp.forEach(d=>{
+    const dt=new Date(d.data+'T12:00:00').toLocaleDateString('pt-BR');
+    html+=`<tr>
+      <td>${dt}</td>
+      <td style="font-weight:500">${d.desc}</td>
+      <td><span class="badge badge-yellow">${catLabel[d.cat]||d.cat}</span></td>
+      <td style="font-size:.82rem;color:var(--texto-sec)">${d.forn||'—'}</td>
+      <td style="font-family:'Playfair Display',serif;color:var(--vermelho)">${fmtBRL(d.valor)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteDespesa(${d.id})">✕</button></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('tabela-despesas').innerHTML=html;
+}
+
+// ========== DASHBOARD ==========
+let chartLinha,chartProd,chartBarras;
+function renderDashboard(){
+  const pedidos=getData('pedidos');
+  const despesas=getData('despesas');
+  const mes=mesAtual();
+  const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
+  const despMes=despesas.filter(d=>d.data.startsWith(mes));
+  const fat=pedMes.reduce((s,p)=>s+p.valor,0);
+  const desp=despMes.reduce((s,d)=>s+d.valor,0);
+  const lucro=fat-desp;
+  const qPed=pedMes.length;
+  const ticket=qPed?fat/qPed:0;
+  const now=new Date();
+  document.getElementById('dash-data').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('dash-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento do mês</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Despesas do mês</div><div class="value red">${fmtBRL(desp)}</div></div>
+    <div class="card-stat"><div class="label">Lucro estimado</div><div class="value ${lucro>=0?'green':'red'}">${fmtBRL(lucro)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos no mês</div><div class="value">${qPed}</div></div>
+    <div class="card-stat"><div class="label">Ticket médio</div><div class="value">${fmtBRL(ticket)}</div></div>
+  `;
+
+  // Linha — últimos 30 dias
+  const dias30=[];const fat30=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    dias30.push(d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
+    fat30.push(pedidos.filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+  }
+  if(chartLinha)chartLinha.destroy();
+  chartLinha=new Chart(document.getElementById('chart-linha'),{
+    type:'line',data:{labels:dias30,datasets:[{label:'Faturamento',data:fat30,borderColor:'#c97fa0',backgroundColor:'rgba(201,127,160,.1)',tension:.4,fill:true,pointRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10,font:{size:10}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+  });
+
+  // Produtos mais vendidos
+  const contagem={};
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{contagem[pr]=(contagem[pr]||0)+1}));
+  const topProd=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(chartProd)chartProd.destroy();
+  chartProd=new Chart(document.getElementById('chart-produtos'),{
+    type:'doughnut',
+    data:{labels:topProd.map(x=>x[0]),datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#c97fa0','#e8b4cb','#f0d0de','#a0c8a8','#d4a017','#5c8c9c']}]},
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}}}
+  });
+
+  // Barras meses — últimos 6 meses
+  const meses6=[];const fat6=[];const desp6=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date();d.setMonth(d.getMonth()-i);
+    const m=d.toISOString().substring(0,7);
+    meses6.push(d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}));
+    fat6.push(pedidos.filter(p=>p.data.startsWith(m)&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+    desp6.push(despesas.filter(d=>d.data.startsWith(m)).reduce((s,d)=>s+d.valor,0));
+  }
+  if(chartBarras)chartBarras.destroy();
+  chartBarras=new Chart(document.getElementById('chart-barras'),{
+    type:'bar',data:{labels:meses6,datasets:[
+      {label:'Receita',data:fat6,backgroundColor:'rgba(201,127,160,.7)'},
+      {label:'Despesa',data:desp6,backgroundColor:'rgba(192,57,43,.5)'}
+    ]},
+    options:{responsive:true,plugins:{legend:{labels:{font:{size:10}}}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+  });
+}
+
+// ========== RELATÓRIOS ==========
+let chartSemana,chartMensalDias,chartMensalDesp;
+function initRelatorios(){
+  document.getElementById('rel-dia').value=hoje();
+  document.getElementById('rel-semana').value=hoje();
+  document.getElementById('rel-mes').value=mesAtual();
+  renderRelDiario();
+}
+function setRelTab(tab,el){
+  document.querySelectorAll('.rel-tab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rel-'+tab).style.display='block';
+  el.classList.add('active');
+  if(tab==='diario')renderRelDiario();
+  if(tab==='semanal')renderRelSemanal();
+  if(tab==='mensal')renderRelMensal();
+}
+function renderRelDiario(){
+  const dia=document.getElementById('rel-dia').value;
+  if(!dia)return;
+  const pedidos=getData('pedidos').filter(p=>p.data===dia&&p.status!=='cancelado');
+  const desp=getData('despesas').filter(d=>d.data===dia);
+  const fat=pedidos.reduce((s,p)=>s+p.valor,0);
+  const despVal=desp.reduce((s,d)=>s+d.valor,0);
+  document.getElementById('rel-diario-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${pedidos.length}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Resultado</div><div class="value ${fat-despVal>=0?'green':'red'}">${fmtBRL(fat-despVal)}</div></div>
+  `;
+  let html='';
+  if(!pedidos.length&&!desp.length){html='<div class="empty">Sem registros neste dia</div>'}
+  else{
+    if(pedidos.length){
+      html+=`<table><thead><tr><th>Cliente</th><th>Produtos</th><th>Canal</th><th>Valor</th></tr></thead><tbody>`;
+      pedidos.forEach(p=>{html+=`<tr><td>${p.cliente}</td><td style="font-size:.8rem">${p.produtos.join(', ')||'—'}</td><td>${p.canal}</td><td style="color:var(--rosa)">${fmtBRL(p.valor)}</td></tr>`});
+      html+='</tbody></table>';
+    }
+  }
+  document.getElementById('rel-diario-tabela').innerHTML=html;
+}
+function renderRelSemanal(){
+  const dia=document.getElementById('rel-semana').value;
+  if(!dia)return;
+  const ini=new Date(inicioSemana(dia)+'T12:00:00');
+  const dias=[];const labels=[];const fat7=[];const desp7=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(ini);d.setDate(ini.getDate()+i);
+    const ds=d.toISOString().split('T')[0];
+    dias.push(ds);
+    labels.push(d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'}));
+    fat7.push(getData('pedidos').filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+    desp7.push(getData('despesas').filter(d=>d.data===ds).reduce((s,d)=>s+d.valor,0));
+  }
+  const fat=fat7.reduce((a,b)=>a+b,0);
+  const despVal=desp7.reduce((a,b)=>a+b,0);
+  const nPed=getData('pedidos').filter(p=>dias.includes(p.data)&&p.status!=='cancelado').length;
+  document.getElementById('rel-semanal-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento semana</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${nPed}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Lucro estimado</div><div class="value ${fat-despVal>=0?'green':'red'}">${fmtBRL(fat-despVal)}</div></div>
+  `;
+  if(chartSemana)chartSemana.destroy();
+  chartSemana=new Chart(document.getElementById('chart-semana'),{
+    type:'bar',data:{labels,datasets:[
+      {label:'Faturamento',data:fat7,backgroundColor:'rgba(201,127,160,.7)'},
+      {label:'Despesas',data:desp7,backgroundColor:'rgba(192,57,43,.4)'}
+    ]},
+    options:{responsive:true,scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+  });
+}
+function renderRelMensal(){
+  const mes=document.getElementById('rel-mes').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
+  const desp=getData('despesas').filter(d=>d.data.startsWith(mes));
+  const fat=pedidos.reduce((s,p)=>s+p.valor,0);
+  const despVal=desp.reduce((s,d)=>s+d.valor,0);
+  const lucro=fat-despVal;
+  const nPed=pedidos.length;
+  const ticket=nPed?fat/nPed:0;
+  const margem=fat?((lucro/fat)*100):0;
+  document.getElementById('rel-mensal-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Lucro</div><div class="value ${lucro>=0?'green':'red'}">${fmtBRL(lucro)}</div></div>
+    <div class="card-stat"><div class="label">Margem</div><div class="value ${margem>=0?'green':'red'}">${margem.toFixed(1)}%</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${nPed}</div></div>
+    <div class="card-stat"><div class="label">Ticket médio</div><div class="value">${fmtBRL(ticket)}</div></div>
+  `;
+
+  // Dias do mês
+  const ano=parseInt(mes.split('-')[0]);const mm=parseInt(mes.split('-')[1]);
+  const nDias=new Date(ano,mm,0).getDate();
+  const diasLabels=[];const fatDias=[];
+  for(let i=1;i<=nDias;i++){
+    const ds=`${mes}-${String(i).padStart(2,'0')}`;
+    diasLabels.push(String(i));
+    fatDias.push(pedidos.filter(p=>p.data===ds).reduce((s,p)=>s+p.valor,0));
+  }
+  if(chartMensalDias)chartMensalDias.destroy();
+  chartMensalDias=new Chart(document.getElementById('chart-mensal-dias'),{
+    type:'bar',data:{labels:diasLabels,datasets:[{label:'Faturamento',data:fatDias,backgroundColor:'rgba(201,127,160,.7)'}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:9}}}}}
+  });
+
+  // Despesas por categoria
+  const catTotais={};
+  desp.forEach(d=>{catTotais[d.cat]=(catTotais[d.cat]||0)+d.valor});
+  const catLabel={ingredientes:'Ingredientes',embalagens:'Embalagens',utensilios:'Utensílios',marketing:'Marketing',energia:'Energia/Gás',entrega:'Frete',outros:'Outros'};
+  if(chartMensalDesp)chartMensalDesp.destroy();
+  if(Object.keys(catTotais).length){
+    chartMensalDesp=new Chart(document.getElementById('chart-mensal-desp'),{
+      type:'doughnut',
+      data:{labels:Object.keys(catTotais).map(k=>catLabel[k]||k),datasets:[{data:Object.values(catTotais),backgroundColor:['#c97fa0','#e8b4cb','#d4a017','#4a7c59','#5c8c9c','#c0392b','#8b4c69']}]},
+      options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}}}
+    });
+  }
+
+  // Top produtos
+  const contagem={};
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{contagem[pr]=(contagem[pr]||0)+1}));
+  const top=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  let html='<div class="table-head"><h2>Produtos mais vendidos no mês</h2></div>';
+  if(!top.length){html+='<div class="empty">Sem dados de produtos</div>'}
+  else{
+    html+=`<table><thead><tr><th>#</th><th>Produto</th><th>Qtd. pedidos</th></tr></thead><tbody>`;
+    top.forEach((x,i)=>{html+=`<tr><td style="color:var(--rosa);font-weight:500">${i+1}</td><td>${x[0]}</td><td>${x[1]}</td></tr>`});
+    html+='</tbody></table>';
+  }
+  document.getElementById('rel-mensal-top').innerHTML=html;
+}
+
+// ========== EXPORTAR ==========
+function exportarCSV(){
+  const mes=document.getElementById('rel-mes').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes));
+  let csv='Data,Cliente,Produtos,Canal,Valor,Status\n';
+  pedidos.forEach(p=>{csv+=`${p.data},"${p.cliente}","${p.produtos.join(';')}",${p.canal},${p.valor},${p.status}\n`});
+  download(`pedidos_${mes}.csv`,csv,'text/csv');
+}
+function exportarJSON(){
+  const backup={pedidos:getData('pedidos'),despesas:getData('despesas'),produtos:getData('produtos')};
+  download(`backup_lsconfeitaria_${hoje()}.json`,JSON.stringify(backup,null,2),'application/json');
+}
+function download(nome,conteudo,tipo){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo}));
+  a.download=nome;a.click();
+}
+
+// ========== INIT ==========
+function initApp(){
+  document.getElementById('filtro-mes-ped').value=mesAtual();
+  document.getElementById('filtro-mes-desp').value=mesAtual();
+  document.getElementById('ped-data').value=hoje();
+  document.getElementById('desp-data').value=hoje();
+  renderDashboard();
+  renderProdutos();
+}
+
+// Auto-login se já logado nesta sessão
+if(sessionStorage.getItem('ls_logado')){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  initApp();
+}
+// salva sessão ao fazer login
+const origLogin=doLogin;
+window.doLogin=function(){
+  const v=document.getElementById('login-input').value;
+  if(v===SENHA)sessionStorage.setItem('ls_logado','1');
+  origLogin();
+}
+</script>
+</body>
+</html>
