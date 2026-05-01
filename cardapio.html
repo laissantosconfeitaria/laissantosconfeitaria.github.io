@@ -511,7 +511,7 @@ var qtys = { doc: 5, out: 1 };
 var P_TRAD = { PP:60, P:99, M:198, G:297, GG:396, EX:495 };
 var P_ESP  = { PP:70, P:125, M:249, G:375, GG:499, EX:625 };
 var P_PREM = { PP:null, P:145, M:289, G:435, GG:579, EX:725 };
-var P_COB  = { 'Chantininho':0, 'Naked Cake':0, 'Chantininho Personalizado':20, 'Cobertura de Brigadeiro':25, 'Ganache de Chocolate':40, 'Ganache Saborizada':35 };
+var P_COB  = { 'Chantininho Personalizado':20, 'Chantininho':0, 'Naked Cake':0, 'Cobertura de Brigadeiro':25, 'Ganache de Chocolate':40, 'Ganache Saborizada':35 };
 
 var RECHEIO_TIPO = {
   'Brigadeiro gourmet 50% cacau':'trad','Beijinho de coco':'trad','Doce de leite artesanal':'trad',
@@ -648,10 +648,13 @@ function getTier(recs) {
 
 function getCobExtra(cob) {
   if (!cob) return 0;
+  var bestK = null, bestLen = -1;
   for (var k in P_COB) {
-    if (cob.indexOf(k) >= 0) return P_COB[k];
+    if (cob.indexOf(k) >= 0 && k.length > bestLen) {
+      bestK = k; bestLen = k.length;
+    }
   }
-  return 0;
+  return bestK !== null ? P_COB[bestK] : 0;
 }
 
 function findKey(obj, name) {
