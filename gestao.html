@@ -1028,10 +1028,43 @@ function npAddVulcao(){
   npPreviewEl('np-vul-preview','');
 }
 
+// Tabelas de preço
+const P_DOCES_TAB={
+  'Docinhos Tradicionais':{25:50,50:100,100:190},
+  'Docinhos Especiais':{25:75,50:120,100:220},
+  'Caixa Degustação':{15:55,20:70,25:100},
+  'Trufas de Chocolate':{un:4.00},
+  'Trufas com Frutas':{un:4.80},
+  'Copinho de Chocolate c/ Cereja':{un:4.00},
+  'Bombom Negresco':{un:4.50},
+  'Trufa Meio Amarga 50%':{fixo:250},
+};
+const P_SOB_TAB={
+  'Travessa da Felicidade':{P:80,M:130,G:199},
+  'Travessa Red Velvet':{P:80,M:130,G:219},
+  'Bombom Aberto':{P:80,M:130,G:199},
+  'Banoffee':{M:130,G:199},
+  'Torta':{P:129,M:199,G:199},
+  'Pudim de Leite Condensado':{M:65,G:85},
+};
+
 function npAddDoces(){
   const item=npGetV('np-doc-item');if(!item){notif('Escolha o tipo','error');return}
   const qty=npQtys['doc']||5;
-  npCarrAdd(`🍬 Doces`,`${item} · ${qty} unidades`,0);
+  let preco=0,detalhe=`${item} · ${qty} unidades`;
+  const key=Object.keys(P_DOCES_TAB).find(k=>item.includes(k));
+  if(key){
+    const t=P_DOCES_TAB[key];
+    if(t.fixo){preco=t.fixo;detalhe=`${item} (cento)`;}
+    else if(t.un){preco=t.un*qty;detalhe=`${item} · ${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`;}
+    else{
+      const tiers=Object.keys(t).map(Number).sort((a,b)=>a-b);
+      const best=tiers.filter(n=>n<=qty).pop()||tiers[0];
+      preco=t[best];
+      detalhe=`${item} · ${qty} unidades`;
+    }
+  }
+  npCarrAdd(`🍬 Doces`,detalhe,preco);
   document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
   npQtys['doc']=5;document.getElementById('np-q-doc').textContent='5';
 }
@@ -1040,7 +1073,14 @@ function npAddSobremesa(){
   const item=npGetV('np-sob-item'),tam=npGetV('np-sob-tam');
   if(!item){notif('Escolha a sobremesa','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
-  npCarrAdd(`🍮 Sobremesa`,`${item} · ${tam}`,0);
+  let preco=0;
+  const key=Object.keys(P_SOB_TAB).find(k=>item.includes(k));
+  if(key){
+    const t=P_SOB_TAB[key];
+    const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
+    preco=t[tk]||0;
+  }
+  npCarrAdd(`🍮 Sobremesa`,`${item} · ${tam}`,preco);
   ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
 }
 
@@ -1064,7 +1104,7 @@ function npAddOutros(){
 
 function npAddSalgado(){
   const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
-  npCarrAdd(`🥐 ${item}`,`Confirmar valor no pedido`,0);
+  npCarrAdd(`🥐 ${item}`,`Confirmar tamanho/peso e valor`,0);
   document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
 }
 
