@@ -339,7 +339,15 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufa Meio Amarga (cacau 50%)</div><div class="si-price">Cento R$ 250</div></div>
         </div>
       </div>
-      <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('doc',-1)">−</button><span class="qty-num" id="q-doc">1</span><button class="qty-btn" onclick="chgQ('doc',1)">+</button></div></div>
+      <div class="qty-wrap">
+        <span class="qty-label">Quantidade</span>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="chgQStep('doc',-5,5)">−</button>
+          <span class="qty-num" id="q-doc">5</span>
+          <button class="qty-btn" onclick="chgQStep('doc',5,5)">+</button>
+        </div>
+        <span style="font-size:0.75rem;color:var(--taupe);margin-left:0.5rem;">unidades (de 5 em 5)</span>
+      </div>
       <div class="price-preview" id="price-preview-doces"></div>
       <button class="add-btn" onclick="addDoces()">🍬 Adicionar ao carrinho</button>
     </div>
@@ -395,16 +403,16 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         </div>
       </div>
       <div class="step">
-        <div class="step-header"><div class="step-num">3</div><div class="step-label">Recheio</div></div>
+        <div class="step-header"><div class="step-num">3</div><div class="step-label">Recheio do bolo</div><span class="step-hint">ate 2 sabores</span></div>
         <div class="options-grid wide" id="g-kit-rec">
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Brigadeiro 50%</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Beijinho</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Doce de leite</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">4 leites</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Leite ninho</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Choconinho</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Prestígio</div></div>
-          <div class="opt-card" onclick="sel(this,'g-kit-rec')"><div class="opt-name">Dois amores</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Brigadeiro 50%</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Beijinho</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Doce de leite</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">4 leites</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Leite ninho</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Choconinho</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Prestígio</div></div>
+          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Dois amores</div></div>
         </div>
       </div>
       <div class="price-preview" id="price-preview-kit"></div>
@@ -493,7 +501,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
 
 <script>
 var cart = [];
-var qtys = { doc: 1, out: 1 };
+var qtys = { doc: 5, out: 1 };
 
 // ============================================================
 // TABELAS DE PRECOS
@@ -758,7 +766,7 @@ function updatePreviewVulcao() {
 function updatePreviewDoces() {
   var p = document.getElementById('price-preview-doces');
   if (!p) return;
-  var item = getV('g-doc-item'), qty = qtys['doc'] || 1;
+  var item = getV('g-doc-item'), qty = qtys['doc'] || 5;
   if (!item) { p.style.display = 'none'; return; }
   p.style.display = 'block';
   var rows = [], total = null;
@@ -768,11 +776,16 @@ function updatePreviewDoces() {
     if (typeof v === 'string') {
       rows.push([item, v]);
     } else {
-      // Table pricing
-      var keys = Object.keys(v).map(Number).sort(function(a,b){return a-b;});
-      rows.push([item + ' - opcoes:', '']);
-      keys.forEach(function(k) { rows.push(['  ' + k + ' unid', fmt(v[k])]); });
-      rows.push(['Quantidade solicitada', qty + ' unid']);
+      var tiers = Object.keys(v).map(Number).sort(function(a,b){return a-b;});
+      rows.push(['Tabela de precos:', '']);
+      tiers.forEach(function(t) { rows.push(['  ' + t + ' unid', fmt(v[t])]); });
+      rows.push(['Quantidade selecionada', qty + ' unid']);
+      // Best tier estimate
+      var bestTier = tiers[0];
+      for (var i = 0; i < tiers.length; i++) { if (qty >= tiers[i]) bestTier = tiers[i]; }
+      var valorBase = v[bestTier];
+      var valorEstimado = (qty > bestTier) ? Math.round((valorBase / bestTier) * qty) : valorBase;
+      total = fmt(valorEstimado);
     }
   } else {
     rows.push([item, 'consulte valor']);
@@ -816,7 +829,7 @@ function updatePreviewSobremesa() {
 function updatePreviewKit() {
   var p = document.getElementById('price-preview-kit');
   if (!p) return;
-  var kit = getV('g-kit-tam');
+  var kit = getV('g-kit-tam'), recs = getMulti('g-kit-rec');
   if (!kit) { p.style.display = 'none'; return; }
   p.style.display = 'block';
   var rows = [], total = null;
@@ -951,6 +964,16 @@ function chgQ(k, d) {
   if (k === 'out') updatePreviewOutros();
 }
 
+function chgQStep(k, step, min) {
+  var current = qtys[k] || min;
+  var next = current + step;
+  if (next < min) next = min;
+  qtys[k] = next;
+  document.getElementById('q-' + k).innerText = qtys[k];
+  if (k === 'doc') updatePreviewDoces();
+  if (k === 'out') updatePreviewOutros();
+}
+
 // ============================================================
 // ADD TO CART
 // ============================================================
@@ -1017,16 +1040,29 @@ function addVulcao() {
 }
 
 function addDoces() {
-  var v = getV('g-doc-item'), qty = qtys['doc'] || 1;
+  var v = getV('g-doc-item'), qty = qtys['doc'] || 5;
   if (!v) { showToast('Escolha um item!'); return; }
-  var key = findKey(P_DOCES, v), precoStr = '';
+  var key = findKey(P_DOCES, v), precoStr = '', estimativa = '';
   if (key) {
     var pv = P_DOCES[key];
-    precoStr = typeof pv === 'string' ? ' | Preco: ' + pv : ' | Qty: ' + qty;
+    if (typeof pv === 'string') {
+      precoStr = ' | Preco: ' + pv;
+    } else {
+      // Table pricing - find best quantity tier
+      var tiers = Object.keys(pv).map(Number).sort(function(a,b){return a-b;});
+      var bestTier = tiers[0];
+      for (var i = 0; i < tiers.length; i++) {
+        if (qty >= tiers[i]) bestTier = tiers[i];
+      }
+      var valorBase = pv[bestTier];
+      // Calculate proportional if qty differs from tier
+      var valorEstimado = (qty > bestTier) ? Math.round((valorBase / bestTier) * qty) : valorBase;
+      precoStr = ' | Qtd: ' + qty + ' | Estimativa: ' + fmt(valorEstimado);
+    }
   }
   cart.push({ name: 'Doces e Trufas', detail: v + precoStr });
   document.querySelectorAll('#g-doc-item .selected').forEach(function(e) { e.classList.remove('selected'); });
-  qtys['doc'] = 1; document.getElementById('q-doc').innerText = '1';
+  qtys['doc'] = 5; document.getElementById('q-doc').innerText = '5';
   var pp = document.getElementById('price-preview-doces'); if (pp) pp.style.display = 'none';
   updateCart(); showToast('Adicionado ao carrinho!');
   document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -1049,17 +1085,24 @@ function addSobremesa() {
 }
 
 function addKit() {
-  addGenericWithPrice('Kit Festa', [['g-kit-tam','Kit'],['g-kit-mas','Massa'],['g-kit-rec','Recheio']], function(v) {
-    var k = v['Kit'];
-    var tamKey = null;
-    if (k.indexOf('Kit EX') >= 0) tamKey = 'EX';
-    else if (k.indexOf('Kit GG') >= 0) tamKey = 'GG';
-    else if (k.indexOf('Kit G') >= 0) tamKey = 'G';
-    else if (k.indexOf('Kit M') >= 0) tamKey = 'M';
-    else if (k.indexOf('Kit P') >= 0) tamKey = 'P';
-    return tamKey && P_KIT[tamKey] ? fmt(P_KIT[tamKey]) : null;
+  var kit = getV('g-kit-tam'), mas = getV('g-kit-mas'), recs = getMulti('g-kit-rec');
+  if (!kit) { showToast('Escolha o kit!'); return; }
+  if (!mas) { showToast('Escolha a massa!'); return; }
+  if (!recs.length) { showToast('Escolha pelo menos 1 recheio!'); return; }
+  var tamKey = null;
+  if (kit.indexOf('Kit EX') >= 0) tamKey = 'EX';
+  else if (kit.indexOf('Kit GG') >= 0) tamKey = 'GG';
+  else if (kit.indexOf('Kit G') >= 0) tamKey = 'G';
+  else if (kit.indexOf('Kit M') >= 0) tamKey = 'M';
+  else if (kit.indexOf('Kit P') >= 0) tamKey = 'P';
+  var precoStr = tamKey && P_KIT[tamKey] ? ' | Estimativa: ' + fmt(P_KIT[tamKey]) : '';
+  cart.push({ name: 'Kit Festa', detail: 'Kit: ' + kit + ' | Massa: ' + mas + ' | Recheio: ' + recs.join(' + ') + precoStr });
+  ['g-kit-tam','g-kit-mas','g-kit-rec'].forEach(function(g) {
+    document.querySelectorAll('#' + g + ' .selected').forEach(function(e) { e.classList.remove('selected'); });
   });
   var pp = document.getElementById('price-preview-kit'); if (pp) pp.style.display = 'none';
+  updateCart(); showToast('Kit Festa adicionado!');
+  document.getElementById('cart-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
 function addCupcakes() {
