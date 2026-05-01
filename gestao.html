@@ -949,7 +949,10 @@ function npChgQ(k,d,min){
 
 function npGetV(gid){
   const el=document.querySelector('#'+gid+' .np-opt.selected');
-  return el?el.firstChild.textContent.trim():null;
+  if(!el) return null;
+  // Get only the direct text node, ignoring child divs (like np-opt-sub)
+  const txt=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join('').trim();
+  return txt || el.firstChild.textContent.trim();
 }
 function npGetEl(gid){return document.querySelector('#'+gid+' .np-opt.selected')}
 function npGetMulti(gid){return [...document.querySelectorAll('#'+gid+' .np-opt.selected')].map(e=>e.firstChild.textContent.trim())}
@@ -1048,15 +1051,33 @@ const P_SOB_TAB={
   'Pudim de Leite Condensado':{M:65,G:85},
 };
 
+function tabLookup(tabela, item){
+  if(!item) return null;
+  const norm = s => s.toLowerCase().trim();
+  const ni = norm(item);
+  // exact match first
+  for(const k of Object.keys(tabela)){
+    if(norm(k)===ni) return tabela[k];
+  }
+  // item contains key
+  for(const k of Object.keys(tabela)){
+    if(ni.includes(norm(k))) return tabela[k];
+  }
+  // key contains item
+  for(const k of Object.keys(tabela)){
+    if(norm(k).includes(ni)) return tabela[k];
+  }
+  return null;
+}
+
 function npAddDoces(){
   const item=npGetV('np-doc-item');if(!item){notif('Escolha o tipo','error');return}
   const qty=npQtys['doc']||5;
-  let preco=0,detalhe=`${item} · ${qty} unidades`;
-  const key=Object.keys(P_DOCES_TAB).find(k=>item.includes(k));
-  if(key){
-    const t=P_DOCES_TAB[key];
-    if(t.fixo){preco=t.fixo;detalhe=`${item} (cento)`;}
-    else if(t.un){preco=t.un*qty;detalhe=`${item} · ${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`;}
+  let preco=0, detalhe=`${item} · ${qty} unidades`;
+  const t=tabLookup(P_DOCES_TAB, item);
+  if(t){
+    if(t.fixo){ preco=t.fixo; detalhe=`${item} (cento)`; }
+    else if(t.un){ preco=t.un*qty; detalhe=`${item} · ${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`; }
     else{
       const tiers=Object.keys(t).map(Number).sort((a,b)=>a-b);
       const best=tiers.filter(n=>n<=qty).pop()||tiers[0];
@@ -1074,9 +1095,8 @@ function npAddSobremesa(){
   if(!item){notif('Escolha a sobremesa','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   let preco=0;
-  const key=Object.keys(P_SOB_TAB).find(k=>item.includes(k));
-  if(key){
-    const t=P_SOB_TAB[key];
+  const t=tabLookup(P_SOB_TAB, item);
+  if(t){
     const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
     preco=t[tk]||0;
   }
