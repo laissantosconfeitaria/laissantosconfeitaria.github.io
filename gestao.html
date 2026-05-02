@@ -9,47 +9,61 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --rosa:#c97fa0;
-  --rosa-light:#f7eaf0;
-  --rosa-dark:#8b4c69;
-  --creme:#fdf6ef;
-  --marrom:#5c3d2e;
-  --marrom-light:#8b6556;
-  --verde:#4a7c59;
-  --vermelho:#c0392b;
-  --amarelo:#d4a017;
-  --bg:#fdf6ef;
-  --card:#ffffff;
-  --texto:#3a2a1f;
-  --texto-sec:#7a6055;
-  --borda:#e8d8d0;
-  --sombra:0 2px 12px rgba(90,50,40,.08);
+  --rosa:#e891b8;
+  --rosa-dim:#c06890;
+  --rosa-glow:rgba(232,145,184,.15);
+  --verde:#5dbf7a;
+  --vermelho:#f06060;
+  --amarelo:#f0c040;
+  --azul:#60b8f0;
+
+  --bg:#0f0f13;
+  --bg2:#16161c;
+  --card:#1e1e27;
+  --card2:#252530;
+  --borda:#2e2e3d;
+  --borda2:#3a3a4d;
+
+  --texto:#f0eef8;
+  --texto-sec:#8880a8;
+  --texto-dim:#5a5578;
+
+  --sombra:0 4px 24px rgba(0,0,0,.4);
+  --sombra-rosa:0 0 20px rgba(232,145,184,.12);
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);min-height:100vh}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--borda2);border-radius:4px}
 
 /* LOGIN */
 #login-screen{
   display:flex;align-items:center;justify-content:center;
-  min-height:100vh;background:linear-gradient(135deg,#fdf6ef 0%,#f5e6f0 100%);
+  min-height:100vh;background:radial-gradient(ellipse at 50% 40%,#1a1020 0%,#0f0f13 70%);
 }
 .login-box{
   background:var(--card);border-radius:20px;padding:3rem 2.5rem;
-  box-shadow:0 8px 40px rgba(90,50,40,.12);max-width:380px;width:90%;text-align:center;
+  box-shadow:0 8px 60px rgba(0,0,0,.5),var(--sombra-rosa);
+  max-width:380px;width:90%;text-align:center;border:1px solid var(--borda);
 }
-.login-logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--rosa);margin-bottom:.3rem}
-.login-sub{font-size:.8rem;color:var(--texto-sec);margin-bottom:2rem;letter-spacing:.05em}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--rosa);margin-bottom:.3rem;text-shadow:0 0 30px rgba(232,145,184,.3)}
+.login-sub{font-size:.75rem;color:var(--texto-sec);margin-bottom:2rem;letter-spacing:.12em;text-transform:uppercase}
 .login-box input{
-  width:100%;padding:.75rem 1rem;border:1.5px solid var(--borda);border-radius:10px;
-  font-family:'DM Sans',sans-serif;font-size:.95rem;background:#fafafa;outline:none;
-  transition:border .2s;
+  width:100%;padding:.8rem 1rem;border:1.5px solid var(--borda);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;background:var(--bg2);outline:none;
+  transition:border .2s,box-shadow .2s;color:var(--texto);
 }
-.login-box input:focus{border-color:var(--rosa)}
+.login-box input:focus{border-color:var(--rosa);box-shadow:0 0 0 3px rgba(232,145,184,.1)}
 .login-box button{
-  width:100%;margin-top:1rem;padding:.8rem;background:var(--rosa);color:#fff;
-  border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;
-  font-weight:500;cursor:pointer;transition:background .2s;
+  width:100%;margin-top:1rem;padding:.85rem;
+  background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));
+  color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 20px rgba(232,145,184,.25);
 }
-.login-box button:hover{background:var(--rosa-dark)}
+.login-box button:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(232,145,184,.35)}
 .login-error{font-size:.82rem;color:var(--vermelho);margin-top:.5rem;display:none}
 
 /* APP */
@@ -58,30 +72,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);mi
 /* SIDEBAR */
 .sidebar{
   position:fixed;top:0;left:0;height:100vh;width:220px;
-  background:#fff;border-right:1px solid var(--borda);
+  background:var(--bg2);border-right:1px solid var(--borda);
   display:flex;flex-direction:column;z-index:100;
 }
-.sidebar-logo{
-  padding:1.5rem 1.2rem 1rem;border-bottom:1px solid var(--borda);
-}
-.sidebar-logo .marca{font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);line-height:1.2}
-.sidebar-logo .sub{font-size:.7rem;color:var(--texto-sec)}
+.sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid var(--borda)}
+.sidebar-logo .marca{font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);line-height:1.3;text-shadow:0 0 20px rgba(232,145,184,.2)}
+.sidebar-logo .sub{font-size:.68rem;color:var(--texto-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:.2rem}
 nav{flex:1;padding:1rem 0}
 nav a{
-  display:flex;align-items:center;gap:.75rem;padding:.65rem 1.2rem;
-  font-size:.88rem;color:var(--texto-sec);cursor:pointer;
+  display:flex;align-items:center;gap:.75rem;padding:.7rem 1.2rem;
+  font-size:.86rem;color:var(--texto-sec);cursor:pointer;
   border-left:3px solid transparent;transition:all .15s;text-decoration:none;
 }
-nav a:hover{background:var(--rosa-light);color:var(--rosa-dark)}
-nav a.active{background:var(--rosa-light);color:var(--rosa);border-left-color:var(--rosa);font-weight:500}
+nav a:hover{background:var(--rosa-glow);color:var(--rosa)}
+nav a.active{background:var(--rosa-glow);color:var(--rosa);border-left-color:var(--rosa);font-weight:500}
 nav a .icon{font-size:1rem;width:20px;text-align:center}
-.sidebar-footer{
-  padding:1rem 1.2rem;border-top:1px solid var(--borda);
-  font-size:.75rem;color:var(--texto-sec);
-}
+.sidebar-footer{padding:1rem 1.2rem;border-top:1px solid var(--borda)}
 .logout-btn{
   display:flex;align-items:center;gap:.5rem;cursor:pointer;
-  color:var(--texto-sec);transition:color .15s;background:none;border:none;
+  color:var(--texto-dim);transition:color .15s;background:none;border:none;
   font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.3rem 0;
 }
 .logout-btn:hover{color:var(--vermelho)}
@@ -91,46 +100,50 @@ nav a .icon{font-size:1rem;width:20px;text-align:center}
 .page{display:none}
 .page.active{display:block}
 
-.page-header{margin-bottom:1.75rem}
-.page-header h1{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--marrom);font-weight:500}
-.page-header p{font-size:.88rem;color:var(--texto-sec);margin-top:.2rem}
+.page-header{margin-bottom:1.75rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--texto);font-weight:500}
+.page-header p{font-size:.85rem;color:var(--texto-sec);margin-top:.2rem}
 
-/* CARDS */
+/* CARDS STAT */
 .cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
 .card-stat{
-  background:var(--card);border-radius:14px;padding:1.2rem;
+  background:var(--card);border-radius:14px;padding:1.25rem;
   box-shadow:var(--sombra);border:1px solid var(--borda);
+  transition:border-color .2s;
 }
-.card-stat .label{font-size:.75rem;color:var(--texto-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
-.card-stat .value{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--marrom);font-weight:500}
+.card-stat:hover{border-color:var(--borda2)}
+.card-stat .label{font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.card-stat .value{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--texto);font-weight:500}
 .card-stat .value.green{color:var(--verde)}
 .card-stat .value.red{color:var(--vermelho)}
-.card-stat .sub{font-size:.75rem;color:var(--texto-sec);margin-top:.2rem}
+.card-stat .sub{font-size:.72rem;color:var(--texto-sec);margin-top:.2rem}
 
 /* FORM CARDS */
 .form-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
-.form-card h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--marrom);margin-bottom:1.2rem;font-weight:500}
+.form-card h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto);margin-bottom:1.2rem;font-weight:500}
 .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.9rem;margin-bottom:.9rem}
-label{font-size:.82rem;color:var(--texto-sec);display:block;margin-bottom:.3rem}
+label{font-size:.78rem;color:var(--texto-sec);display:block;margin-bottom:.3rem;letter-spacing:.03em}
 input,select,textarea{
   width:100%;padding:.65rem .85rem;border:1.5px solid var(--borda);border-radius:9px;
-  font-family:'DM Sans',sans-serif;font-size:.9rem;background:#fafafa;outline:none;
-  transition:border .2s;color:var(--texto);
+  font-family:'DM Sans',sans-serif;font-size:.9rem;background:var(--bg2);outline:none;
+  transition:border .2s,box-shadow .2s;color:var(--texto);
 }
-input:focus,select:focus,textarea:focus{border-color:var(--rosa);background:#fff}
+input:focus,select:focus,textarea:focus{border-color:var(--rosa);box-shadow:0 0 0 3px rgba(232,145,184,.08);background:var(--bg)}
 textarea{resize:vertical;min-height:80px}
+select option{background:var(--card);color:var(--texto)}
 
+/* BUTTONS */
 .btn{
   padding:.65rem 1.4rem;border-radius:9px;border:none;cursor:pointer;
   font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;transition:all .2s;
 }
-.btn-primary{background:var(--rosa);color:#fff}
-.btn-primary:hover{background:var(--rosa-dark)}
+.btn-primary{background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));color:#fff;box-shadow:0 3px 12px rgba(232,145,184,.2)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(232,145,184,.3)}
 .btn-danger{background:var(--vermelho);color:#fff}
-.btn-danger:hover{background:#a93226}
-.btn-ghost{background:transparent;color:var(--rosa);border:1.5px solid var(--rosa)}
-.btn-ghost:hover{background:var(--rosa-light)}
-.btn-sm{padding:.4rem .85rem;font-size:.8rem}
+.btn-danger:hover{background:#d44}
+.btn-ghost{background:transparent;color:var(--rosa);border:1.5px solid var(--rosa-dim)}
+.btn-ghost:hover{background:var(--rosa-glow)}
+.btn-sm{padding:.38rem .8rem;font-size:.78rem}
 
 /* TABLE */
 .table-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden;margin-bottom:1.5rem}
@@ -138,141 +151,146 @@ textarea{resize:vertical;min-height:80px}
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 1.5rem;border-bottom:1px solid var(--borda);
 }
-.table-head h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom);font-weight:500}
+.table-head h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--texto);font-weight:500}
 table{width:100%;border-collapse:collapse}
-th{
-  font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;
-  color:var(--texto-sec);padding:.7rem 1rem;text-align:left;
-  background:#fdf6ef;border-bottom:1px solid var(--borda);
-}
-td{padding:.7rem 1rem;font-size:.88rem;border-bottom:1px solid #f5ede8;color:var(--texto)}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);padding:.75rem 1rem;text-align:left;background:var(--bg2);border-bottom:1px solid var(--borda)}
+td{padding:.75rem 1rem;font-size:.88rem;border-bottom:1px solid var(--borda);color:var(--texto)}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#fdf6ef}
+tr:hover td{background:rgba(255,255,255,.02)}
 
 /* BADGE */
-.badge{display:inline-block;padding:.25rem .7rem;border-radius:20px;font-size:.75rem;font-weight:500}
-.badge-green{background:#e8f5ee;color:var(--verde)}
-.badge-red{background:#fde8e8;color:var(--vermelho)}
-.badge-yellow{background:#fef3d0;color:var(--amarelo)}
+.badge{display:inline-block;padding:.25rem .75rem;border-radius:20px;font-size:.73rem;font-weight:500}
+.badge-green{background:rgba(93,191,122,.15);color:var(--verde);border:1px solid rgba(93,191,122,.25)}
+.badge-red{background:rgba(240,96,96,.15);color:var(--vermelho);border:1px solid rgba(240,96,96,.25)}
+.badge-yellow{background:rgba(240,192,64,.15);color:var(--amarelo);border:1px solid rgba(240,192,64,.25)}
+.badge-blue{background:rgba(96,184,240,.15);color:var(--azul);border:1px solid rgba(96,184,240,.25)}
+.badge-rosa{background:var(--rosa-glow);color:var(--rosa);border:1px solid rgba(232,145,184,.25)}
 
 /* CHART */
 .chart-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
-.chart-card h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom);margin-bottom:1.2rem;font-weight:500}
+.chart-card h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--texto);margin-bottom:1.2rem;font-weight:500}
 
-/* TABS */
+/* TABS (relatórios) */
 .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
-.tab{
-  padding:.5rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.85rem;
-  border:1.5px solid var(--borda);color:var(--texto-sec);background:#fff;transition:all .15s;
-}
-.tab.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
+.tab{padding:.5rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.85rem;border:1.5px solid var(--borda);color:var(--texto-sec);background:var(--card);transition:all .15s}
+.tab:hover{border-color:var(--borda2);color:var(--texto)}
+.tab.active{background:var(--rosa-glow);color:var(--rosa);border-color:var(--rosa-dim)}
 
-/* PRODUTOS PAGE */
-.produto-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.8rem 1rem;border-bottom:1px solid #f5ede8;
-}
+/* PRODUTOS */
+.produto-item{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--borda)}
 .produto-item:last-child{border-bottom:none}
 .produto-nome{font-size:.9rem;font-weight:500;color:var(--texto)}
-.produto-cat{font-size:.75rem;color:var(--texto-sec);margin-top:.1rem}
+.produto-cat{font-size:.73rem;color:var(--texto-sec);margin-top:.1rem}
 .produto-preco{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)}
 
-/* DESPESAS */
-.despesa-tipo{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
-.tipo-btn{
-  padding:.4rem .9rem;border-radius:20px;border:1.5px solid var(--borda);
-  font-size:.8rem;cursor:pointer;background:#fff;color:var(--texto-sec);transition:all .15s;
-}
-.tipo-btn.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
-
-/* EMPTY STATE */
-.empty{text-align:center;padding:2.5rem;color:var(--texto-sec);font-size:.88rem}
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem;color:var(--texto-dim);font-size:.88rem}
 
 /* LAYOUT NOVO PEDIDO */
 .np-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;align-items:start}
 @media(max-width:1000px){.np-layout{grid-template-columns:1fr}}
-.np-left{}
-.np-right{}
 
 /* ABAS DO CARDÁPIO */
 .np-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.25rem}
-.np-tab{font-size:.75rem;font-weight:500;padding:.4rem .85rem;border-radius:20px;border:1.5px solid var(--borda);background:#fff;color:var(--texto-sec);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
-.np-tab:hover{border-color:var(--rosa);color:var(--rosa)}
-.np-tab.active{background:var(--rosa);color:#fff;border-color:var(--rosa)}
+.np-tab{font-size:.75rem;font-weight:500;padding:.4rem .85rem;border-radius:20px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto-sec);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.np-tab:hover{border-color:var(--rosa-dim);color:var(--rosa)}
+.np-tab.active{background:var(--rosa-glow);color:var(--rosa);border-color:var(--rosa-dim)}
 .np-tab-content{display:none}
 .np-tab-content.active{display:block}
 
 /* STEPS */
 .np-step{margin-bottom:1.1rem}
-.np-step-label{font-size:.78rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec);margin-bottom:.5rem}
+.np-step-label{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem}
 
 /* OPÇÕES */
 .np-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.4rem}
 .np-grid-wide{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
 .np-opt{
   border:1.5px solid var(--borda);border-radius:9px;padding:.55rem .75rem;
-  cursor:pointer;background:#fff;font-size:.84rem;color:var(--texto);
+  cursor:pointer;background:var(--card2);font-size:.83rem;color:var(--texto-sec);
   transition:all .15s;position:relative;user-select:none;line-height:1.3;
 }
-.np-opt:hover{border-color:var(--rosa);background:var(--rosa-light)}
-.np-opt.selected{border-color:var(--rosa);background:var(--rosa-light);color:var(--rosa-dark)}
-.np-opt.selected::after{content:'✓';position:absolute;top:.3rem;right:.5rem;font-size:.7rem;color:var(--rosa);font-weight:700}
-.np-opt-sub{font-size:.72rem;color:var(--texto-sec);margin-top:.15rem}
-.np-badge{display:inline-block;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .45rem;border-radius:20px;font-weight:500;margin-right:.3rem;vertical-align:middle}
-.np-badge.trad{background:var(--rosa-light);color:var(--rosa-dark)}
-.np-badge.esp{background:#f0e6d3;color:#8c6a3e}
-.np-badge.prem{background:#f5f0e6;color:#7a6a3e}
+.np-opt:hover{border-color:var(--rosa-dim);color:var(--texto);background:var(--rosa-glow)}
+.np-opt.selected{border-color:var(--rosa);background:var(--rosa-glow);color:var(--rosa)}
+.np-opt.selected::after{content:'✓';position:absolute;top:.3rem;right:.5rem;font-size:.68rem;color:var(--rosa);font-weight:700}
+.np-opt-sub{font-size:.7rem;color:var(--texto-dim);margin-top:.15rem}
+.np-badge{display:inline-block;font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .45rem;border-radius:20px;font-weight:500;margin-right:.3rem;vertical-align:middle}
+.np-badge.trad{background:rgba(232,145,184,.12);color:var(--rosa)}
+.np-badge.esp{background:rgba(240,192,64,.12);color:var(--amarelo)}
+.np-badge.prem{background:rgba(96,184,240,.12);color:var(--azul)}
 
 /* PREVIEW */
-.np-preview{background:#fdf6ef;border:1px solid var(--borda);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;margin-top:.5rem;display:none;color:var(--texto-sec)}
-.np-preview strong{color:var(--rosa-dark)}
+.np-preview{background:var(--bg2);border:1px solid var(--borda2);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;margin-top:.5rem;display:none;color:var(--texto-sec)}
+.np-preview strong{color:var(--rosa)}
 
 /* CARRINHO */
 .carrinho-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden}
-.carrinho-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--borda);background:#fdf6ef}
+.carrinho-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--borda);background:var(--bg2)}
 #carrinho-itens{max-height:320px;overflow-y:auto}
-.item-carrinho{display:flex;align-items:flex-start;gap:.6rem;padding:.65rem 1rem;border-bottom:1px solid #f5ede8}
+.item-carrinho{display:flex;align-items:flex-start;gap:.6rem;padding:.65rem 1rem;border-bottom:1px solid var(--borda)}
 .item-carrinho:last-child{border-bottom:none}
 .item-carrinho-nome{font-size:.85rem;font-weight:500;color:var(--texto);line-height:1.3}
-.item-carrinho-sub{font-size:.75rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.4}
+.item-carrinho-sub{font-size:.73rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.4}
 .item-total{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--rosa);white-space:nowrap;min-width:60px;text-align:right;padding-top:.1rem}
-.item-del{background:none;border:none;color:var(--texto-sec);cursor:pointer;font-size:.9rem;padding:.1rem .25rem;opacity:.45;transition:opacity .15s;flex-shrink:0;margin-top:.1rem}
+.item-del{background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.1rem .25rem;opacity:.5;transition:all .15s;flex-shrink:0;margin-top:.1rem}
 .item-del:hover{opacity:1;color:var(--vermelho)}
-.carrinho-footer{padding:1rem 1.1rem;border-top:1px solid var(--borda);background:#fdf6ef}
+.carrinho-footer{padding:1rem 1.1rem;border-top:1px solid var(--borda);background:var(--bg2)}
 .carrinho-totais{margin-bottom:.5rem}
 .total-row{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;padding:.2rem 0;color:var(--texto-sec)}
 .desconto-row{padding:.35rem 0}
-.total-final{font-size:1rem;font-weight:500;color:var(--marrom);border-top:1px solid var(--borda);padding-top:.5rem;margin-top:.3rem}
+.total-final{font-size:1rem;font-weight:500;color:var(--texto);border-top:1px solid var(--borda);padding-top:.5rem;margin-top:.3rem}
 .total-final span:last-child{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--rosa)}
 
 /* QTY CONTROLS */
-.qty-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--borda);background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--texto-sec)}
+.qty-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--borda);background:var(--card2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--texto-sec)}
 .qty-btn:hover{border-color:var(--rosa);color:var(--rosa)}
 .qty-num{font-size:.95rem;font-weight:500;min-width:26px;text-align:center;color:var(--texto)}
 
+/* AGENDA */
+.agenda-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem}
+.agenda-dia{background:var(--card);border-radius:14px;border:1px solid var(--borda);overflow:hidden}
+.agenda-dia.hoje .agenda-dia-header{background:var(--rosa-glow);border-bottom-color:rgba(232,145,184,.3)}
+.agenda-dia.hoje .agenda-dia-label{color:var(--rosa)}
+.agenda-dia.passado{opacity:.5}
+.agenda-dia-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid var(--borda);background:var(--bg2)}
+.agenda-dia-label{font-size:.78rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec)}
+.agenda-dia-date{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)}
+.agenda-badge{background:var(--rosa-glow);color:var(--rosa);font-size:.7rem;padding:.15rem .55rem;border-radius:20px;font-weight:500;border:1px solid rgba(232,145,184,.2)}
+.agenda-pedido{padding:.7rem 1rem;border-bottom:1px solid var(--borda);cursor:pointer;transition:background .15s}
+.agenda-pedido:last-child{border-bottom:none}
+.agenda-pedido:hover{background:rgba(255,255,255,.03)}
+.agenda-pedido-nome{font-size:.88rem;font-weight:500;color:var(--texto)}
+.agenda-pedido-det{font-size:.75rem;color:var(--texto-sec);margin-top:.2rem;line-height:1.4}
+.agenda-pedido-val{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--rosa);margin-top:.25rem}
+.agenda-semana-nav{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem}
+.agenda-semana-nav button{background:var(--card);border:1px solid var(--borda);color:var(--texto-sec);border-radius:8px;padding:.4rem .85rem;cursor:pointer;font-size:.85rem;transition:all .15s;font-family:'DM Sans',sans-serif}
+.agenda-semana-nav button:hover{border-color:var(--rosa-dim);color:var(--rosa)}
+.agenda-semana-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)}
+
 /* MOBILE MENU */
 .menu-toggle{display:none;position:fixed;top:1rem;left:1rem;z-index:200;
-  background:var(--rosa);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;cursor:pointer;font-size:1.1rem}
-
+  background:var(--rosa-dim);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;cursor:pointer;font-size:1.1rem}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);transition:transform .25s}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0;padding:1rem;padding-top:3.5rem}
   .menu-toggle{display:block}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:99}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
   .overlay.show{display:block}
 }
 
-/* PRINT / EXPORT */
+/* ACTION BAR */
 .action-bar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
 
 /* NOTIFICATION */
 .notif{
-  position:fixed;top:1.5rem;right:1.5rem;background:var(--verde);color:#fff;
+  position:fixed;top:1.5rem;right:1.5rem;
+  background:var(--card);color:var(--verde);
+  border:1px solid rgba(93,191,122,.3);
   padding:.75rem 1.25rem;border-radius:10px;font-size:.88rem;z-index:999;
-  display:none;box-shadow:0 4px 20px rgba(0,0,0,.15);
+  display:none;box-shadow:var(--sombra);
 }
-.notif.error{background:var(--vermelho)}
+.notif.error{color:var(--vermelho);border-color:rgba(240,96,96,.3)}
 </style>
 </head>
 <body>
@@ -305,6 +323,7 @@ tr:hover td{background:#fdf6ef}
     </div>
     <nav>
       <a class="active" data-page="dashboard" onclick="showPage('dashboard')"><span class="icon">◈</span> Dashboard</a>
+      <a data-page="agenda" onclick="showPage('agenda')"><span class="icon">📅</span> Agenda</a>
       <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
       <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
       <a data-page="produtos" onclick="showPage('produtos')"><span class="icon">✦</span> Cardápio</a>
@@ -361,7 +380,7 @@ tr:hover td{background:#fdf6ef}
             </div>
             <div class="form-row" style="margin-bottom:.75rem">
               <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp</option><option value="instagram">Instagram</option><option value="indicacao">Indicação</option><option value="loja">Loja</option><option value="google">Google</option><option value="outro">Outro</option></select></div>
-              <div><label>Status</label><select id="ped-status"><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
+              <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
             </div>
             <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Entregar sábado às 10h, escrever Feliz Aniversário Ana..."></div>
           </div>
@@ -804,8 +823,36 @@ tr:hover td{background:#fdf6ef}
       </div>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
+    <!-- AGENDA -->
+    <div class="page" id="page-agenda">
+      <div class="page-header">
+        <div>
+          <h1>Agenda</h1>
+          <p>Pedidos agendados e confirmados por data</p>
+        </div>
+      </div>
+
+      <!-- HOJE E PRÓXIMOS DIAS -->
+      <div class="agenda-semana-nav">
+        <button onclick="agendaNavSemana(-1)">← Semana anterior</button>
+        <span class="agenda-semana-label" id="agenda-semana-label"></span>
+        <button onclick="agendaNavSemana(1)">Próxima semana →</button>
+        <button class="btn btn-ghost btn-sm" onclick="agendaIrHoje()">Hoje</button>
+      </div>
+
+      <div class="agenda-grid" id="agenda-grid"></div>
+
+      <!-- PRÓXIMOS 30 DIAS sem data específica -->
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Todos os pedidos agendados</h2>
+          <span id="agenda-total-badge" class="badge badge-rosa"></span>
+        </div>
+        <div id="agenda-lista-completa"></div>
+      </div>
+    </div>
+
+
 
 <script>
 // ========== DADOS ==========
@@ -840,6 +887,7 @@ function showPage(id){
   document.getElementById('page-'+id).classList.add('active');
   document.querySelector(`nav a[data-page="${id}"]`).classList.add('active');
   if(id==='dashboard')renderDashboard();
+  if(id==='agenda')renderAgenda();
   if(id==='pedidos')renderPedidos();
   if(id==='despesas')renderDespesas();
   if(id==='produtos')renderProdutos();
@@ -1223,8 +1271,8 @@ function renderPedidos(){
   const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
   const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
   if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
-  const statusLabel={confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
-  const statusClass={confirmado:'badge-green',entregue:'badge-green',pendente:'badge-yellow',cancelado:'badge-red'};
+  const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
+  const statusClass={agendado:'badge-blue',confirmado:'badge-green',entregue:'badge-green',pendente:'badge-yellow',cancelado:'badge-red'};
   let html=`<table><thead><tr><th>Data</th><th>Cliente</th><th>Produtos</th><th>Canal</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody>`;
   pedidos.forEach(p=>{
     const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR');
@@ -1317,8 +1365,8 @@ function renderDashboard(){
   }
   if(chartLinha)chartLinha.destroy();
   chartLinha=new Chart(document.getElementById('chart-linha'),{
-    type:'line',data:{labels:dias30,datasets:[{label:'Faturamento',data:fat30,borderColor:'#c97fa0',backgroundColor:'rgba(201,127,160,.1)',tension:.4,fill:true,pointRadius:2}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10,font:{size:10}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+    type:'line',data:{labels:dias30,datasets:[{label:'Faturamento',data:fat30,borderColor:'#e891b8',backgroundColor:'rgba(232,145,184,.08)',tension:.4,fill:true,pointRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10,font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}}}}
   });
 
   // Produtos mais vendidos
@@ -1328,9 +1376,10 @@ function renderDashboard(){
   if(chartProd)chartProd.destroy();
   chartProd=new Chart(document.getElementById('chart-produtos'),{
     type:'doughnut',
-    data:{labels:topProd.map(x=>x[0]),datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#c97fa0','#e8b4cb','#f0d0de','#a0c8a8','#d4a017','#5c8c9c']}]},
-    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}}}
+    data:{labels:topProd.map(x=>x[0]),datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#e891b8','#c06890','#60b8f0','#5dbf7a','#f0c040','#f06060']}]},
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12,color:'#8880a8'}}}}
   });
+
 
   // Barras meses — últimos 6 meses
   const meses6=[];const fat6=[];const desp6=[];
@@ -1344,10 +1393,10 @@ function renderDashboard(){
   if(chartBarras)chartBarras.destroy();
   chartBarras=new Chart(document.getElementById('chart-barras'),{
     type:'bar',data:{labels:meses6,datasets:[
-      {label:'Receita',data:fat6,backgroundColor:'rgba(201,127,160,.7)'},
-      {label:'Despesa',data:desp6,backgroundColor:'rgba(192,57,43,.5)'}
+      {label:'Receita',data:fat6,backgroundColor:'rgba(232,145,184,.7)'},
+      {label:'Despesa',data:desp6,backgroundColor:'rgba(240,96,96,.5)'}
     ]},
-    options:{responsive:true,plugins:{legend:{labels:{font:{size:10}}}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+    options:{responsive:true,plugins:{legend:{labels:{font:{size:10},color:'#8880a8'}}},scales:{x:{ticks:{font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}}}}
   });
 }
 
@@ -1512,7 +1561,124 @@ function initApp(){
   renderProdutos();
 }
 
-// Auto-login se já logado nesta sessão
+
+// ========== AGENDA ==========
+let agendaBaseDate = new Date();
+
+function agendaIrHoje(){ agendaBaseDate = new Date(); renderAgenda(); }
+
+function agendaNavSemana(d){
+  agendaBaseDate = new Date(agendaBaseDate);
+  agendaBaseDate.setDate(agendaBaseDate.getDate() + d*7);
+  renderAgenda();
+}
+
+function renderAgenda(){
+  const pedidos = getData('pedidos');
+  // Pedidos relevantes: agendado, confirmado, pendente (não entregue/cancelado)
+  const relevantes = pedidos.filter(p=>['agendado','confirmado','pendente'].includes(p.status));
+
+  // Semana atual (7 dias a partir do baseDate, começando na segunda)
+  const base = new Date(agendaBaseDate);
+  const dow = base.getDay();
+  const monday = new Date(base);
+  monday.setDate(base.getDate() - (dow===0?6:dow-1));
+
+  const dias = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    dias.push(d);
+  }
+
+  const ini = dias[0].toISOString().split('T')[0];
+  const fim = dias[6].toISOString().split('T')[0];
+  document.getElementById('agenda-semana-label').textContent =
+    `${dias[0].toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} – ${dias[6].toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}`;
+
+  const hojeStr = new Date().toISOString().split('T')[0];
+
+  // Renderizar grid de 7 dias
+  let gridHtml = '';
+  dias.forEach(dia=>{
+    const ds = dia.toISOString().split('T')[0];
+    const pedDia = relevantes.filter(p=>p.data===ds);
+    const isHoje = ds===hojeStr;
+    const isPassado = ds<hojeStr;
+    const nomeDia = dia.toLocaleDateString('pt-BR',{weekday:'long'});
+    const dataDia = dia.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const clsExtra = isHoje?' hoje':isPassado?' passado':'';
+
+    gridHtml += `<div class="agenda-dia${clsExtra}">
+      <div class="agenda-dia-header">
+        <div>
+          <div class="agenda-dia-label">${nomeDia}${isHoje?' · Hoje':''}</div>
+          <div class="agenda-dia-date">${dataDia}</div>
+        </div>
+        ${pedDia.length?`<span class="agenda-badge">${pedDia.length} pedido${pedDia.length>1?'s':''}</span>`:''}
+      </div>`;
+
+    if(!pedDia.length){
+      gridHtml += `<div class="empty" style="padding:1.2rem;font-size:.8rem">Livre ✓</div>`;
+    } else {
+      pedDia.forEach(p=>{
+        const statusColors={agendado:'var(--azul)',confirmado:'var(--verde)',pendente:'var(--amarelo)'};
+        const cor=statusColors[p.status]||'var(--texto-sec)';
+        gridHtml += `<div class="agenda-pedido">
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <span style="width:7px;height:7px;border-radius:50%;background:${cor};flex-shrink:0;display:inline-block"></span>
+            <span class="agenda-pedido-nome">${p.cliente}</span>
+          </div>
+          <div class="agenda-pedido-det">${p.produtos.slice(0,2).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>
+          ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.15rem">📝 ${p.obs}</div>`:''}
+          <div class="agenda-pedido-val">${fmtBRL(p.valor)}</div>
+        </div>`;
+      });
+    }
+    gridHtml += `</div>`;
+  });
+  document.getElementById('agenda-grid').innerHTML = gridHtml;
+
+  // Lista completa de agendados (todos os futuros)
+  const futuros = relevantes
+    .filter(p=>p.data>=hojeStr)
+    .sort((a,b)=>a.data.localeCompare(b.data));
+
+  document.getElementById('agenda-total-badge').textContent =
+    futuros.length + ' pedido' + (futuros.length!==1?'s':'');
+
+  if(!futuros.length){
+    document.getElementById('agenda-lista-completa').innerHTML='<div class="empty">Nenhum pedido agendado</div>';
+    return;
+  }
+
+  const statusLabel={agendado:'Agendado',confirmado:'Confirmado',pendente:'Pendente'};
+  const statusCls={agendado:'badge-blue',confirmado:'badge-green',pendente:'badge-yellow'};
+
+  let listaHtml = `<table><thead><tr>
+    <th>Data</th><th>Cliente</th><th>Produtos</th><th>Obs</th><th>Valor</th><th>Status</th>
+  </tr></thead><tbody>`;
+
+  futuros.forEach(p=>{
+    const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const diasRestantes = Math.round((new Date(p.data+'T12:00:00')-new Date())/(1000*60*60*24));
+    const prazo = diasRestantes===0?'<span style="color:var(--amarelo);font-size:.72rem"> · hoje</span>':
+                  diasRestantes===1?'<span style="color:var(--rosa);font-size:.72rem"> · amanhã</span>':
+                  diasRestantes<=3?`<span style="color:var(--amarelo);font-size:.72rem"> · em ${diasRestantes}d</span>`:'';
+    listaHtml += `<tr>
+      <td><span style="font-weight:500">${dt}</span>${prazo}</td>
+      <td style="font-weight:500">${p.cliente}</td>
+      <td style="font-size:.8rem;color:var(--texto-sec)">${p.produtos.slice(0,2).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2}`:''}</td>
+      <td style="font-size:.78rem;color:var(--texto-dim)">${p.obs||'—'}</td>
+      <td style="font-family:'Playfair Display',serif;color:var(--rosa)">${fmtBRL(p.valor)}</td>
+      <td><span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span></td>
+    </tr>`;
+  });
+  listaHtml += '</tbody></table>';
+  document.getElementById('agenda-lista-completa').innerHTML = listaHtml;
+}
+
+
 if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
