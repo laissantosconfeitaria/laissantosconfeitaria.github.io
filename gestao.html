@@ -397,6 +397,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <button class="np-tab" onclick="npTab('kit',this)">🎉 Kit Festa</button>
               <button class="np-tab" onclick="npTab('outros',this)">🧁 Cupcakes+</button>
               <button class="np-tab" onclick="npTab('sal',this)">🥐 Salgados</button>
+              <button class="np-tab" onclick="npTab('unit',this)">🏷️ Unitários</button>
             </div>
 
             <!-- BOLO DECORADO -->
@@ -650,7 +651,50 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
             </div>
 
-          </div><!-- /form-card cardápio -->
+            <!-- UNITÁRIOS -->
+            <div class="np-tab-content" id="np-unit">
+              <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda2);padding:1rem;margin-bottom:1rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Venda unitária com valor livre</div>
+
+                <div style="margin-bottom:.75rem">
+                  <label>Nome do item</label>
+                  <input type="text" id="unit-nome" placeholder="Ex: Fatia de bolo Red Velvet, Pudim individual, Bombom de morango...">
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+                  <div>
+                    <label>Valor unitário (R$)</label>
+                    <input type="number" id="unit-preco" placeholder="0,00" step="0.01" min="0" oninput="unitAtualizarTotal()">
+                  </div>
+                  <div>
+                    <label>Quantidade</label>
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-top:.3rem">
+                      <button class="qty-btn" onclick="unitChgQ(-1)">−</button>
+                      <span class="qty-num" id="unit-qty">1</span>
+                      <button class="qty-btn" onclick="unitChgQ(1)">+</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;background:var(--card);border-radius:8px;border:1px solid var(--borda);margin-bottom:.85rem">
+                  <span style="font-size:.82rem;color:var(--texto-sec)">Total do item</span>
+                  <span id="unit-total" style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)">R$ 0,00</span>
+                </div>
+
+                <button class="btn btn-primary" style="width:100%" onclick="npAddUnit()">+ Adicionar ao carrinho</button>
+              </div>
+
+              <!-- Itens unitários salvos no cardápio -->
+              <div style="margin-top:.5rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Unitários salvos no cardápio</div>
+                <div id="unit-cardapio-lista"></div>
+                <div style="display:flex;gap:.5rem;margin-top:.6rem">
+                  <input type="text" id="unit-salvar-nome" placeholder="Nome para salvar no cardápio" style="flex:1;font-size:.85rem">
+                  <input type="number" id="unit-salvar-preco" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.85rem">
+                  <button class="btn btn-ghost btn-sm" onclick="unitSalvarCardapio()">Salvar</button>
+                </div>
+              </div>
+            </div>
         </div><!-- /np-left -->
 
         <!-- COLUNA DIREITA: carrinho -->
@@ -1052,6 +1096,7 @@ function npTab(id, el){
   document.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('np-'+id).classList.add('active');
+  if(id==='unit') renderUnitCardapio();
 }
 
 function npSel(el, gid){
@@ -1252,6 +1297,83 @@ function npAddSalgado(){
   const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
   npCarrAdd(`${item}`,`Confirmar tamanho/peso e valor`,0);
   document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
+}
+
+// ========== UNITÁRIOS ==========
+let unitQty = 1;
+
+function unitChgQ(d){
+  unitQty = Math.max(1, unitQty + d);
+  document.getElementById('unit-qty').textContent = unitQty;
+  unitAtualizarTotal();
+}
+
+function unitAtualizarTotal(){
+  const preco = parseFloat(document.getElementById('unit-preco').value)||0;
+  const total = preco * unitQty;
+  document.getElementById('unit-total').textContent = fmtBRL(total);
+}
+
+function npAddUnit(){
+  const nome = document.getElementById('unit-nome').value.trim();
+  const preco = parseFloat(document.getElementById('unit-preco').value)||0;
+  if(!nome){notif('Digite o nome do item','error');return}
+  if(!preco){notif('Digite o valor do item','error');return}
+  const total = preco * unitQty;
+  const det = unitQty > 1 ? `${unitQty} un · ${fmtBRL(preco)} cada` : fmtBRL(preco);
+  npCarrAdd(nome, det, total);
+  document.getElementById('unit-nome').value='';
+  document.getElementById('unit-preco').value='';
+  unitQty=1;
+  document.getElementById('unit-qty').textContent='1';
+  document.getElementById('unit-total').textContent='R$ 0,00';
+}
+
+function unitSalvarCardapio(){
+  const nome = document.getElementById('unit-salvar-nome').value.trim();
+  const preco = parseFloat(document.getElementById('unit-salvar-preco').value)||0;
+  if(!nome||!preco){notif('Preencha nome e valor para salvar','error');return}
+  const prods = getData('produtos');
+  prods.push({id:Date.now(), nome, cat:'unitarios', preco, desc:'Venda unitária'});
+  setData('produtos', prods);
+  document.getElementById('unit-salvar-nome').value='';
+  document.getElementById('unit-salvar-preco').value='';
+  renderUnitCardapio();
+  notif('Item salvo no cardápio ✦');
+}
+
+function renderUnitCardapio(){
+  const prods = getData('produtos').filter(p=>p.cat==='unitarios');
+  const cont = document.getElementById('unit-cardapio-lista');
+  if(!cont) return;
+  if(!prods.length){
+    cont.innerHTML='<div style="font-size:.8rem;color:var(--texto-dim);padding:.4rem 0">Nenhum item salvo ainda</div>';
+    return;
+  }
+  cont.innerHTML = prods.map(p=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;background:var(--card2);border-radius:8px;margin-bottom:.35rem;border:1px solid var(--borda);cursor:pointer"
+         onclick="unitCarregarSalvo('${p.nome.replace(/'/g,"\\'")}',${p.preco})">
+      <div>
+        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${p.nome}</div>
+        <div style="font-size:.73rem;color:var(--texto-sec)">${fmtBRL(p.preco)} · toque para usar</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-family:'Playfair Display',serif;font-size:.95rem;color:var(--rosa)">${fmtBRL(p.preco)}</span>
+        <button onclick="event.stopPropagation();unitDeletar(${p.id})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.85rem;opacity:.5" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.5;this.style.color='var(--texto-dim)'">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function unitCarregarSalvo(nome, preco){
+  document.getElementById('unit-nome').value = nome;
+  document.getElementById('unit-preco').value = preco;
+  unitAtualizarTotal();
+  document.getElementById('unit-nome').focus();
+}
+
+function unitDeletar(id){
+  setData('produtos', getData('produtos').filter(p=>p.id!==id));
+  renderUnitCardapio();
 }
 
 // ========== CARRINHO ==========
