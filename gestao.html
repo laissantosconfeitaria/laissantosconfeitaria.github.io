@@ -297,6 +297,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   display:none;box-shadow:var(--sombra);
 }
 .notif.error{color:var(--vermelho);border-color:rgba(240,96,96,.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
@@ -326,6 +327,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="sidebar-logo">
       <div class="marca">Lais Santos<br>Confeitaria</div>
       <div class="sub">Painel de Gestão</div>
+      <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.5 · mai/26</span>
+      </div>
     </div>
     <nav>
       <a class="active" data-page="dashboard" onclick="showPage('dashboard')"><span class="icon">◈</span> Dashboard</a>
@@ -995,6 +1000,8 @@ let carrinho_init_done = false;
 
 function getData(key){try{return JSON.parse(localStorage.getItem('ls_'+key)||'[]')}catch{return[]}}
 function setData(key,val){localStorage.setItem('ls_'+key,JSON.stringify(val))}
+// Remove emojis e espaços extras de nomes de produtos
+function normP(n){return(n||'').replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{27FF}]\s*/gu,'').trim()}
 
 // ========== LOGIN ==========
 function doLogin(){
@@ -1507,7 +1514,7 @@ function renderPedidos(){
   let html='';
   pedidos.forEach(p=>{
     const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
-    const prods=p.produtos.length?p.produtos.slice(0,3).join(', ')+(p.produtos.length>3?' +mais':''):'—';
+    const prods=p.produtos.length?p.produtos.slice(0,3).map(normP).join(', ')+(p.produtos.length>3?' +mais':''):'—';
     html+=`
     <div style="padding:1rem;border-bottom:1px solid var(--borda)">
       <!-- Linha 1: data + canal + valor -->
@@ -1951,7 +1958,7 @@ function renderAgenda(){
             <span style="width:7px;height:7px;border-radius:50%;background:${cor};flex-shrink:0;display:inline-block"></span>
             <span class="agenda-pedido-nome">${p.cliente}</span>
           </div>
-          <div class="agenda-pedido-det">${p.produtos.slice(0,2).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>
+          <div class="agenda-pedido-det">${p.produtos.slice(0,2).map(normP).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>
           ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.15rem">📝 ${p.obs}</div>`:''}
           <div class="agenda-pedido-val">${fmtBRL(p.valor)}</div>
         </div>`;
@@ -1998,7 +2005,7 @@ function renderAgenda(){
         <span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span>
       </div>
       <div style="font-size:.95rem;font-weight:500;color:var(--texto);margin-bottom:.2rem">${p.cliente}</div>
-      <div style="font-size:.78rem;color:var(--texto-sec);margin-bottom:.2rem">${p.produtos.slice(0,3).join(', ')}${p.produtos.length>3?' +mais':''}</div>
+      <div style="font-size:.78rem;color:var(--texto-sec);margin-bottom:.2rem">${p.produtos.slice(0,3).map(normP).join(', ')}${p.produtos.length>3?' +mais':''}</div>
       ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-bottom:.2rem">📝 ${p.obs}</div>`:''}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem">
         <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
@@ -2147,7 +2154,30 @@ if(sessionStorage.getItem('ls_logado')){
 </script>
 <script>
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    reg.update();
+    reg.addEventListener('updatefound',()=>{
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange',()=>{
+        if(newWorker.state==='installed' && navigator.serviceWorker.controller){
+          // Mostra aviso de atualização disponível
+          const badge = document.getElementById('versao-badge');
+          if(badge){
+            badge.style.background='rgba(240,192,64,.15)';
+            badge.style.borderColor='rgba(240,192,64,.3)';
+            badge.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:var(--amarelo);display:inline-block;animation:pulse 1s infinite"></span>
+              <span style="font-size:.65rem;color:var(--amarelo);letter-spacing:.04em;cursor:pointer" onclick="atualizarApp()">↻ Atualização disponível</span>`;
+          }
+          navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());
+          newWorker.postMessage({type:'SKIP_WAITING'});
+        }
+      });
+    });
+  }).catch(()=>{});
+}
+
+function atualizarApp(){
+  window.location.reload(true);
 }
 
 // ========== NOTIFICAÇÕES ==========
