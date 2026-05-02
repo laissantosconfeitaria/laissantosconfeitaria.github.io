@@ -1498,22 +1498,38 @@ function renderPedidos(){
   const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
   const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
   if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
-  const statusClass={agendado:'badge-blue',confirmado:'badge-rosa',entregue:'badge-green',pendente:'badge-yellow',cancelado:'badge-red'};
+
+  const statusIcon={agendado:'📅',confirmado:'✓',entregue:'✅',pendente:'⏳',cancelado:'✕'};
   const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
-  let html=`<table><thead><tr><th>Data</th><th>Cliente</th><th>Produtos</th><th>Canal</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody>`;
+  const statusClass={agendado:'badge-blue',confirmado:'badge-rosa',entregue:'badge-green',pendente:'badge-yellow',cancelado:'badge-red'};
+  const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍',outro:'📌'};
+
+  let html='';
   pedidos.forEach(p=>{
-    const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR');
-    html+=`<tr>
-      <td>${dt}</td>
-      <td style="font-weight:500">${p.cliente}</td>
-      <td style="font-size:.8rem;color:var(--texto-sec)">${p.produtos.length?p.produtos.slice(0,2).join(', ')+(p.produtos.length>2?' +'+(p.produtos.length-2)+' mais':''):'—'}</td>
-      <td><span style="font-size:.78rem;color:var(--texto-sec)">${p.canal}</span></td>
-      <td style="font-family:'Playfair Display',serif;color:var(--rosa)">${fmtBRL(p.valor)}</td>
-      <td>
+    const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
+    const prods=p.produtos.length?p.produtos.slice(0,3).join(', ')+(p.produtos.length>3?' +mais':''):'—';
+    html+=`
+    <div style="padding:1rem;border-bottom:1px solid var(--borda)">
+      <!-- Linha 1: data + canal + valor -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <span style="font-size:.78rem;color:var(--texto-dim)">${dt}</span>
+          <span style="font-size:.75rem;color:var(--texto-dim)">${canalIcon[p.canal]||'📌'} ${p.canal}</span>
+        </div>
+        <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
+      </div>
+      <!-- Linha 2: cliente + produtos -->
+      <div style="margin-bottom:.65rem">
+        <div style="font-size:.95rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
+        <div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>
+        ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.15rem">📝 ${p.obs}</div>`:''}
+      </div>
+      <!-- Linha 3: status + ações -->
+      <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
         <select onchange="alterarStatus(${p.id},this.value)" style="
-          padding:.3rem .5rem;font-size:.75rem;border-radius:7px;cursor:pointer;
+          flex:1;min-width:130px;padding:.4rem .6rem;font-size:.8rem;border-radius:8px;
           border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);
-          font-family:'DM Sans',sans-serif;width:auto;
+          font-family:'DM Sans',sans-serif;
         ">
           <option value="agendado"   ${p.status==='agendado'  ?'selected':''}>📅 Agendado</option>
           <option value="confirmado" ${p.status==='confirmado'?'selected':''}>✓ Confirmado</option>
@@ -1521,11 +1537,19 @@ function renderPedidos(){
           <option value="pendente"   ${p.status==='pendente'  ?'selected':''}>⏳ Pendente</option>
           <option value="cancelado"  ${p.status==='cancelado' ?'selected':''}>✕ Cancelado</option>
         </select>
-      </td>
-      <td><button class="btn btn-ghost btn-sm" onclick="abrirModal(${p.id})" style="margin-right:.3rem">✏️</button><button class="btn btn-danger btn-sm" onclick="deletePedido(${p.id})">✕</button></td>
-    </tr>`;
+        <button onclick="abrirModal(${p.id})" style="
+          padding:.4rem .8rem;border-radius:8px;border:1.5px solid var(--borda);
+          background:var(--bg2);color:var(--texto-sec);cursor:pointer;font-size:.82rem;
+          font-family:'DM Sans',sans-serif;white-space:nowrap;
+        ">✏️ Editar</button>
+        <button onclick="deletePedido(${p.id})" style="
+          padding:.4rem .7rem;border-radius:8px;border:1.5px solid rgba(240,96,96,.3);
+          background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.82rem;
+          font-family:'DM Sans',sans-serif;
+        ">✕</button>
+      </div>
+    </div>`;
   });
-  html+='</tbody></table>';
   document.getElementById('tabela-pedidos').innerHTML=html;
 }
 
@@ -1555,19 +1579,33 @@ function renderDespesas(){
   const desp=getData('despesas').filter(d=>d.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
   if(!desp.length){document.getElementById('tabela-despesas').innerHTML='<div class="empty">Nenhuma despesa neste mês</div>';return}
   const catLabel={ingredientes:'Ingredientes',embalagens:'Embalagens',utensilios:'Utensílios',marketing:'Marketing',energia:'Energia/Gás',entrega:'Frete/Entrega',outros:'Outros'};
-  let html=`<table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Fornecedor</th><th>Valor</th><th></th></tr></thead><tbody>`;
+  const catIcon={ingredientes:'🧁',embalagens:'📦',utensilios:'🔧',marketing:'📣',energia:'⚡',entrega:'🚗',outros:'📌'};
+  let html='';
   desp.forEach(d=>{
-    const dt=new Date(d.data+'T12:00:00').toLocaleDateString('pt-BR');
-    html+=`<tr>
-      <td>${dt}</td>
-      <td style="font-weight:500">${d.desc}</td>
-      <td><span class="badge badge-yellow">${catLabel[d.cat]||d.cat}</span></td>
-      <td style="font-size:.82rem;color:var(--texto-sec)">${d.forn||'—'}</td>
-      <td style="font-family:'Playfair Display',serif;color:var(--vermelho)">${fmtBRL(d.valor)}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteDespesa(${d.id})">✕</button></td>
-    </tr>`;
+    const dt=new Date(d.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
+    html+=`
+    <div style="padding:1rem;border-bottom:1px solid var(--borda)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
+            <span style="font-size:.75rem;color:var(--texto-dim)">${dt}</span>
+            <span style="font-size:.72rem;background:rgba(240,192,64,.12);color:var(--amarelo);border:1px solid rgba(240,192,64,.2);border-radius:20px;padding:.1rem .55rem">${catIcon[d.cat]||'📌'} ${catLabel[d.cat]||d.cat}</span>
+          </div>
+          <div style="font-size:.92rem;font-weight:500;color:var(--texto)">${d.desc}</div>
+          ${d.forn?`<div style="font-size:.76rem;color:var(--texto-sec);margin-top:.15rem">🏪 ${d.forn}</div>`:''}
+          ${d.obs?`<div style="font-size:.75rem;color:var(--texto-dim);margin-top:.1rem">${d.obs}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0">
+          <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--vermelho)">${fmtBRL(d.valor)}</span>
+          <button onclick="deleteDespesa(${d.id})" style="
+            padding:.3rem .65rem;border-radius:7px;border:1.5px solid rgba(240,96,96,.3);
+            background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.78rem;
+            font-family:'DM Sans',sans-serif;
+          ">✕ Remover</button>
+        </div>
+      </div>
+    </div>`;
   });
-  html+='</tbody></table>';
   document.getElementById('tabela-despesas').innerHTML=html;
 }
 
