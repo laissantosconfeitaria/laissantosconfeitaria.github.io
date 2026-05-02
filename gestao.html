@@ -941,8 +941,9 @@ function setData(key,val){localStorage.setItem('ls_'+key,JSON.stringify(val))}
 
 // ========== LOGIN ==========
 function doLogin(){
-  const v = document.getElementById('login-input').value;
+  const v=document.getElementById('login-input').value;
   if(v===SENHA){
+    sessionStorage.setItem('ls_logado','1');
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='block';
     initApp();
@@ -1939,13 +1940,6 @@ if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
   initApp();
-}
-// salva sessão ao fazer login
-const origLogin=doLogin;
-window.doLogin=function(){
-  const v=document.getElementById('login-input').value;
-  if(v===SENHA)sessionStorage.setItem('ls_logado','1');
-  origLogin();
 }
 </script>
 </body>
