@@ -1,4 +1,4 @@
-const CACHE = 'ls-gestao-v3';
+const CACHE = 'ls-gestao-v4';
 const ASSETS = [
   'https://laissantosconfeitaria.github.io/gestao.html',
   'https://laissantosconfeitaria.github.io/icon-192.png',
@@ -23,6 +23,11 @@ self.addEventListener('activate', e => {
     )
   );
   self.clients.claim();
+});
+
+// Permite atualização imediata via postMessage
+self.addEventListener('message', e => {
+  if(e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // Intercepta requisições: cache primeiro, rede como fallback
