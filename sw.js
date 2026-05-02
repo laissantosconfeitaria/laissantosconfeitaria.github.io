@@ -1,4 +1,4 @@
-const CACHE = 'ls-gestao-v2';
+const CACHE = 'ls-gestao-v3';
 const ASSETS = [
   'https://laissantosconfeitaria.github.io/gestao.html',
   'https://laissantosconfeitaria.github.io/icon-192.png',
@@ -40,3 +40,18 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+
+// Abre o app ao clicar na notificação
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({type:'window', includeUncontrolled:true}).then(list => {
+      for(const client of list){
+        if(client.url.includes('gestao.html') && 'focus' in client)
+          return client.focus();
+      }
+      return clients.openWindow('https://laissantosconfeitaria.github.io/gestao.html');
+    })
+  );
+});
+
