@@ -339,6 +339,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button id="pwa-install-btn" onclick="instalarPWA()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--rosa);background:var(--rosa-glow);border:1px solid rgba(232,145,184,.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
         ⬇ Instalar como app
       </button>
+      <button id="notif-perm-btn" onclick="pedirPermissaoNotif()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--azul);background:rgba(96,184,240,.1);border:1px solid rgba(96,184,240,.25);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
+        🔔 Ativar notificações
+      </button>
       <button class="logout-btn" onclick="logout()">⎋ Sair do painel</button>
     </div>
   </div>
@@ -1823,6 +1826,7 @@ function initApp(){
   document.getElementById('desp-data').value=hoje();
   renderDashboard();
   renderProdutos();
+  initNotificacoes();
 }
 
 
@@ -1920,7 +1924,7 @@ function renderAgenda(){
   const statusCls={agendado:'badge-blue',confirmado:'badge-green',pendente:'badge-yellow'};
 
   let listaHtml = `<table><thead><tr>
-    <th>Data</th><th>Cliente</th><th>Produtos</th><th>Obs</th><th>Valor</th><th>Status</th>
+    <th>Data</th><th>Cliente</th><th>Produtos</th><th>Obs</th><th>Valor</th><th>Status</th><th>📅</th>
   </tr></thead><tbody>`;
 
   futuros.forEach(p=>{
@@ -1929,6 +1933,11 @@ function renderAgenda(){
     const prazo = diasRestantes===0?'<span style="color:var(--amarelo);font-size:.72rem"> · hoje</span>':
                   diasRestantes===1?'<span style="color:var(--rosa);font-size:.72rem"> · amanhã</span>':
                   diasRestantes<=3?`<span style="color:var(--amarelo);font-size:.72rem"> · em ${diasRestantes}d</span>`:'';
+    // Google Calendar URL
+    const gcDate = p.data.replace(/-/g,'');
+    const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).join(', ')}`);
+    const gcDesc = encodeURIComponent(`Cliente: ${p.cliente}\nProdutos: ${p.produtos.join(', ')}\nValor: ${fmtBRL(p.valor)}${p.obs?'\nObs: '+p.obs:''}`);
+    const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDate}/${gcDate}&details=${gcDesc}`;
     listaHtml += `<tr>
       <td><span style="font-weight:500">${dt}</span>${prazo}</td>
       <td style="font-weight:500">${p.cliente}</td>
@@ -1936,6 +1945,7 @@ function renderAgenda(){
       <td style="font-size:.78rem;color:var(--texto-dim)">${p.obs||'—'}</td>
       <td style="font-family:'Playfair Display',serif;color:var(--rosa)">${fmtBRL(p.valor)}</td>
       <td><span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span></td>
+      <td><a href="${gcUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(96,184,240,.12);color:var(--azul);border:1px solid rgba(96,184,240,.25);border-radius:6px;padding:.25rem .55rem;font-size:.72rem;text-decoration:none;white-space:nowrap" title="Adicionar ao Google Agenda">＋ Google</a></td>
     </tr>`;
   });
   listaHtml += '</tbody></table>';
@@ -2080,6 +2090,158 @@ if(sessionStorage.getItem('ls_logado')){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+
+// ========== NOTIFICAÇÕES ==========
+function verificarBotaoNotif(){
+  const btn = document.getElementById('notif-perm-btn');
+  if(!btn) return;
+  if(!('Notification' in window)){btn.style.display='none';return}
+  if(Notification.permission === 'granted'){
+    btn.style.display='none';
+    agendarNotificacoes();
+  } else if(Notification.permission !== 'denied'){
+    btn.style.display='flex';
+  } else {
+    btn.style.display='none';
+  }
+}
+
+function pedirPermissaoNotif(){
+  if(!('Notification' in window)){
+    notif('Seu navegador não suporta notificações','error');return;
+  }
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted'){
+      notif('Notificações ativadas! 🔔');
+      document.getElementById('notif-perm-btn').style.display='none';
+      agendarNotificacoes();
+      // Mostra uma notificação de teste
+      setTimeout(()=>dispararNotif(
+        '🎂 Lais Santos Confeitaria',
+        'Notificações ativadas com sucesso! Você receberá alertas às 9h, 17h e 22h.'
+      ), 1000);
+    } else {
+      notif('Permissão negada. Ative nas configurações do celular.','error');
+    }
+  });
+}
+
+function dispararNotif(titulo, corpo, tag='ls-gestao'){
+  if(Notification.permission !== 'granted') return;
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.ready.then(sw=>{
+      sw.showNotification(titulo,{
+        body: corpo,
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: tag,
+        requireInteraction: false,
+        vibrate: [200,100,200]
+      });
+    }).catch(()=>{
+      new Notification(titulo,{body:corpo,icon:'/icon-192.png'});
+    });
+  } else {
+    new Notification(titulo,{body:corpo,icon:'/icon-192.png'});
+  }
+}
+
+function gerarMensagemNotif(hora){
+  const pedidos = getData('pedidos');
+  const hoje = new Date().toISOString().split('T')[0];
+  const amanha = new Date(Date.now()+86400000).toISOString().split('T')[0];
+
+  const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
+  const pedAmanha = pedidos.filter(p=>p.data===amanha && ['agendado','confirmado'].includes(p.status));
+  const fatHoje = pedidos.filter(p=>p.data===hoje && p.status==='entregue').reduce((s,p)=>s+p.valor,0);
+
+  if(hora === 9){
+    if(pedHoje.length > 0){
+      const nomes = pedHoje.map(p=>p.cliente).join(', ');
+      return {
+        titulo: `🌅 Bom dia! ${pedHoje.length} pedido${pedHoje.length>1?'s':''} hoje`,
+        corpo: `${nomes}${pedAmanha.length?` · Amanhã: ${pedAmanha.length} pedido${pedAmanha.length>1?'s':''}`:''}`
+      };
+    }
+    return {
+      titulo: '🌅 Bom dia, Lais!',
+      corpo: pedAmanha.length ? `Você tem ${pedAmanha.length} pedido${pedAmanha.length>1?'s':''} para amanhã 🎂` : 'Nenhum pedido agendado para hoje. Boas vendas! 🌸'
+    };
+  }
+
+  if(hora === 17){
+    return {
+      titulo: '☀️ Lembrete da tarde',
+      corpo: `Lembrou de registrar todos os pedidos e despesas de hoje? ${fatHoje>0?'Faturamento: '+fmtBRL(fatHoje):''}`
+    };
+  }
+
+  if(hora === 22){
+    const semRegistro = pedHoje.filter(p=>p.status==='agendado').length;
+    return {
+      titulo: '🌙 Fechamento do dia',
+      corpo: semRegistro > 0
+        ? `${semRegistro} pedido${semRegistro>1?'s':''} ainda como Agendado. Lembre de atualizar o status!`
+        : `Boa noite! ${fatHoje>0?'Faturamento hoje: '+fmtBRL(fatHoje)+' 🎂':'Não esqueça de registrar despesas do dia.'}`
+    };
+  }
+
+  return {titulo:'🎂 Lais Santos Confeitaria', corpo:'Lembrete de gestão'};
+}
+
+function agendarNotificacoes(){
+  if(Notification.permission !== 'granted') return;
+
+  // Limpa intervalos anteriores
+  if(window._notifInterval) clearInterval(window._notifInterval);
+
+  // Verifica a cada minuto se chegou o horário
+  window._notifInterval = setInterval(()=>{
+    const agora = new Date();
+    const h = agora.getHours();
+    const m = agora.getMinutes();
+    const chave = `notif_${agora.toISOString().split('T')[0]}_${h}`;
+
+    if((h===9||h===17||h===22) && m===0){
+      // Só dispara uma vez por hora por dia
+      if(!sessionStorage.getItem(chave)){
+        sessionStorage.setItem(chave,'1');
+        const msg = gerarMensagemNotif(h);
+        dispararNotif(msg.titulo, msg.corpo, `ls-${h}h`);
+      }
+    }
+  }, 30000); // verifica a cada 30 segundos
+
+  // Salva preferência
+  localStorage.setItem('ls_notif_ativa','1');
+}
+
+// Reativar notificações ao abrir o app se já tinha permissão
+function initNotificacoes(){
+  verificarBotaoNotif();
+  if(Notification.permission==='granted' && localStorage.getItem('ls_notif_ativa')==='1'){
+    agendarNotificacoes();
+    // Notificação de boas-vindas com resumo do dia
+    setTimeout(()=>{
+      const agora = new Date();
+      const h = agora.getHours();
+      if(h >= 7 && h <= 23){
+        const pedidos = getData('pedidos');
+        const hoje = agora.toISOString().split('T')[0];
+        const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
+        if(pedHoje.length > 0){
+          dispararNotif(
+            `🎂 ${pedHoje.length} pedido${pedHoje.length>1?'s':''} para hoje`,
+            pedHoje.map(p=>p.cliente).join(', '),
+            'ls-abertura'
+          );
+        }
+      }
+    }, 3000);
+  }
+}
+
+
 
 // ========== PWA INSTALL ==========
 let pwaInstallPrompt = null;
