@@ -1712,9 +1712,15 @@ function renderRelDiario(){
   if(!pedidos.length&&!desp.length){html='<div class="empty">Sem registros neste dia</div>'}
   else{
     if(pedidos.length){
-      html+=`<table><thead><tr><th>Cliente</th><th>Produtos</th><th>Canal</th><th>Valor</th></tr></thead><tbody>`;
-      pedidos.forEach(p=>{html+=`<tr><td>${p.cliente}</td><td style="font-size:.8rem">${p.produtos.join(', ')||'—'}</td><td>${p.canal}</td><td style="color:var(--rosa)">${fmtBRL(p.valor)}</td></tr>`});
-      html+='</tbody></table>';
+      pedidos.forEach(p=>{
+        html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--borda)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.9rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
+            <div style="font-size:.76rem;color:var(--texto-sec);margin-top:.15rem">${p.produtos.join(', ')||'—'} · ${p.canal}</div>
+          </div>
+          <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);flex-shrink:0;margin-left:.75rem">${fmtBRL(p.valor)}</span>
+        </div>`;
+      });
     }
   }
   document.getElementById('rel-diario-tabela').innerHTML=html;
@@ -1805,9 +1811,19 @@ function renderRelMensal(){
   let html='<div class="table-head"><h2>Produtos mais vendidos no mês</h2></div>';
   if(!top.length){html+='<div class="empty">Sem dados de produtos</div>'}
   else{
-    html+=`<table><thead><tr><th>#</th><th>Produto</th><th>Qtd. pedidos</th></tr></thead><tbody>`;
-    top.forEach((x,i)=>{html+=`<tr><td style="color:var(--rosa);font-weight:500">${i+1}</td><td>${x[0]}</td><td>${x[1]}</td></tr>`});
-    html+='</tbody></table>';
+    top.forEach((x,i)=>{
+      const w = Math.round((x[1]/top[0][1])*100);
+      html+=`<div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--borda)">
+        <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa);min-width:22px;text-align:center">${i+1}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.88rem;font-weight:500;color:var(--texto);margin-bottom:.25rem">${x[0]}</div>
+          <div style="height:4px;background:var(--borda);border-radius:2px">
+            <div style="height:4px;background:var(--rosa);border-radius:2px;width:${w}%"></div>
+          </div>
+        </div>
+        <span style="font-size:.88rem;font-weight:500;color:var(--texto-sec);flex-shrink:0">${x[1]} ped.</span>
+      </div>`;
+    });
   }
   document.getElementById('rel-mensal-top').innerHTML=html;
 }
@@ -1961,32 +1977,37 @@ function renderAgenda(){
   const statusLabel={agendado:'Agendado',confirmado:'Confirmado',pendente:'Pendente'};
   const statusCls={agendado:'badge-blue',confirmado:'badge-green',pendente:'badge-yellow'};
 
-  let listaHtml = `<table><thead><tr>
-    <th>Data</th><th>Cliente</th><th>Produtos</th><th>Obs</th><th>Valor</th><th>Status</th><th>📅</th>
-  </tr></thead><tbody>`;
-
+  let listaHtml = '';
   futuros.forEach(p=>{
     const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
     const diasRestantes = Math.round((new Date(p.data+'T12:00:00')-new Date())/(1000*60*60*24));
-    const prazo = diasRestantes===0?'<span style="color:var(--amarelo);font-size:.72rem"> · hoje</span>':
-                  diasRestantes===1?'<span style="color:var(--rosa);font-size:.72rem"> · amanhã</span>':
-                  diasRestantes<=3?`<span style="color:var(--amarelo);font-size:.72rem"> · em ${diasRestantes}d</span>`:'';
-    // Google Calendar URL
+    const prazoLabel = diasRestantes===0?'hoje':diasRestantes===1?'amanhã':diasRestantes<=3?`em ${diasRestantes}d`:`em ${diasRestantes}d`;
+    const prazoColor = diasRestantes===0?'var(--amarelo)':diasRestantes===1?'var(--rosa)':diasRestantes<=3?'var(--amarelo)':'var(--texto-dim)';
     const gcDate = p.data.replace(/-/g,'');
     const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).join(', ')}`);
     const gcDesc = encodeURIComponent(`Cliente: ${p.cliente}\nProdutos: ${p.produtos.join(', ')}\nValor: ${fmtBRL(p.valor)}${p.obs?'\nObs: '+p.obs:''}`);
     const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDate}/${gcDate}&details=${gcDesc}`;
-    listaHtml += `<tr>
-      <td><span style="font-weight:500">${dt}</span>${prazo}</td>
-      <td style="font-weight:500">${p.cliente}</td>
-      <td style="font-size:.8rem;color:var(--texto-sec)">${p.produtos.slice(0,2).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2}`:''}</td>
-      <td style="font-size:.78rem;color:var(--texto-dim)">${p.obs||'—'}</td>
-      <td style="font-family:'Playfair Display',serif;color:var(--rosa)">${fmtBRL(p.valor)}</td>
-      <td><span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span></td>
-      <td><a href="${gcUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(96,184,240,.12);color:var(--azul);border:1px solid rgba(96,184,240,.25);border-radius:6px;padding:.25rem .55rem;font-size:.72rem;text-decoration:none;white-space:nowrap" title="Adicionar ao Google Agenda">＋ Google</a></td>
-    </tr>`;
+
+    listaHtml += `
+    <div style="padding:1rem;border-bottom:1px solid var(--borda)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem">
+        <div>
+          <span style="font-size:.8rem;font-weight:500;color:var(--texto-sec)">${dt}</span>
+          <span style="font-size:.75rem;color:${prazoColor};margin-left:.4rem">· ${prazoLabel}</span>
+        </div>
+        <span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span>
+      </div>
+      <div style="font-size:.95rem;font-weight:500;color:var(--texto);margin-bottom:.2rem">${p.cliente}</div>
+      <div style="font-size:.78rem;color:var(--texto-sec);margin-bottom:.2rem">${p.produtos.slice(0,3).join(', ')}${p.produtos.length>3?' +mais':''}</div>
+      ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-bottom:.2rem">📝 ${p.obs}</div>`:''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem">
+        <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
+        <a href="${gcUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(96,184,240,.12);color:var(--azul);border:1px solid rgba(96,184,240,.25);border-radius:8px;padding:.4rem .85rem;font-size:.8rem;text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:500">
+          📅 + Google Agenda
+        </a>
+      </div>
+    </div>`;
   });
-  listaHtml += '</tbody></table>';
   document.getElementById('agenda-lista-completa').innerHTML = listaHtml;
 }
 
