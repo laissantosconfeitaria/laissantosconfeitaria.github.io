@@ -1131,7 +1131,7 @@ function npAddBolo(){
   const total=base+tierAdd[tier]+extra;
   const tamNome=tam.firstChild.textContent.trim();
   const cobNome=cob.firstChild.textContent.trim();
-  npCarrAdd(`🎂 Bolo Decorado`,`Massa: ${mas} · Tamanho: ${tamNome} · Recheio: ${recs.join(' + ')} · Cobertura: ${cobNome}`,total);
+  npCarrAdd(`Bolo Decorado`,`Massa: ${mas} · Tamanho: ${tamNome} · Recheio: ${recs.join(' + ')} · Cobertura: ${cobNome}`,total);
   ['np-dec-mas','np-dec-tam','np-dec-rec','np-dec-cob'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-dec-preview','');
 }
@@ -1141,7 +1141,7 @@ function npAddSimples(){
   if(!sab){notif('Escolha o sabor','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   const key=tam.dataset.key;const preco=parseFloat(sab.dataset[key]||0);
-  npCarrAdd(`🍰 Bolo Simples`,`${sab.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  npCarrAdd(`Bolo Simples`,`${sab.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
   ['np-sim-sab','np-sim-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-sim-preview','');
 }
@@ -1152,7 +1152,7 @@ function npAddVulcao(){
   if(!cob){notif('Escolha a cobertura','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   const key=tam.dataset.key;const preco=parseFloat(cob.dataset[key]||0);
-  npCarrAdd(`🌋 Bolo Vulcão`,`Massa: ${mas} · ${cob.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas} · ${cob.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
   ['np-vul-mas','np-vul-cob','np-vul-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-vul-preview','');
 }
@@ -1211,7 +1211,7 @@ function npAddDoces(){
       detalhe=`${item} · ${qty} unidades`;
     }
   }
-  npCarrAdd(`🍬 Doces`,detalhe,preco);
+  npCarrAdd(`Doces`,detalhe,preco);
   document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
   npQtys['doc']=5;document.getElementById('np-q-doc').textContent='5';
 }
@@ -1226,7 +1226,7 @@ function npAddSobremesa(){
     const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
     preco=t[tk]||0;
   }
-  npCarrAdd(`🍮 Sobremesa`,`${item} · ${tam}`,preco);
+  npCarrAdd(`Sobremesa`,`${item} · ${tam}`,preco);
   ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
 }
 
@@ -1236,21 +1236,21 @@ function npAddKit(){
   if(!mas){notif('Escolha a massa','error');return}
   if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
   const preco=parseFloat(kit.dataset.preco||0);
-  npCarrAdd(`🎉 Kit Festa`,`${kit.firstChild.textContent.trim()} · Massa: ${mas} · Recheio: ${recs.join(' + ')}`,preco);
+  npCarrAdd(`Kit Festa`,`${kit.firstChild.textContent.trim()} · Massa: ${mas} · Recheio: ${recs.join(' + ')}`,preco);
   ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
 }
 
 function npAddOutros(){
   const item=npGetEl('np-out-item');if(!item){notif('Escolha o item','error');return}
   const qty=npQtys['out']||1;const unit=parseFloat(item.dataset.unit||0);
-  npCarrAdd(`🧁 ${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada`,unit*qty);
+  npCarrAdd(`${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada`,unit*qty);
   document.querySelectorAll('#np-out-item .selected').forEach(e=>e.classList.remove('selected'));
   npQtys['out']=1;document.getElementById('np-q-out').textContent='1';
 }
 
 function npAddSalgado(){
   const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
-  npCarrAdd(`🥐 ${item}`,`Confirmar tamanho/peso e valor`,0);
+  npCarrAdd(`${item}`,`Confirmar tamanho/peso e valor`,0);
   document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
 }
 
@@ -1474,8 +1474,9 @@ function renderDashboard(){
   });
 
   // Produtos mais vendidos
+  const normNome=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
   const contagem={};
-  pedidos.forEach(p=>p.produtos.forEach(pr=>{contagem[pr]=(contagem[pr]||0)+1}));
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{const k=normNome(pr);contagem[k]=(contagem[k]||0)+1}));
   const topProd=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,6);
   if(chartProd)chartProd.destroy();
   chartProd=new Chart(document.getElementById('chart-produtos'),{
@@ -1624,8 +1625,9 @@ function renderRelMensal(){
   }
 
   // Top produtos
+  const normNome2=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
   const contagem={};
-  pedidos.forEach(p=>p.produtos.forEach(pr=>{contagem[pr]=(contagem[pr]||0)+1}));
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{const k=normNome2(pr);contagem[k]=(contagem[k]||0)+1}));
   const top=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,8);
   let html='<div class="table-head"><h2>Produtos mais vendidos no mês</h2></div>';
   if(!top.length){html+='<div class="empty">Sem dados de produtos</div>'}
