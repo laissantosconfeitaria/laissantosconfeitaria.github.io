@@ -1,6 +1,8 @@
-const CACHE = 'ls-gestao-v1';
+const CACHE = 'ls-gestao-v2';
 const ASSETS = [
-  '/gestao.html',
+  'https://laissantosconfeitaria.github.io/gestao.html',
+  'https://laissantosconfeitaria.github.io/icon-192.png',
+  'https://laissantosconfeitaria.github.io/icon-512.png',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
