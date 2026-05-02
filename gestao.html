@@ -813,6 +813,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <input type="month" id="rel-mes" style="width:auto" onchange="renderRelMensal()">
           <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">↓ Exportar CSV</button>
           <button class="btn btn-ghost btn-sm" onclick="exportarJSON()">↓ Backup JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importar-json').click()">↑ Importar JSON</button>
+          <input type="file" id="importar-json" accept=".json" style="display:none" onchange="importarJSON(this)">
         </div>
         <div class="cards-row" id="rel-mensal-cards"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
@@ -1544,6 +1546,32 @@ function exportarCSV(){
 function exportarJSON(){
   const backup={pedidos:getData('pedidos'),despesas:getData('despesas'),produtos:getData('produtos')};
   download(`backup_lsconfeitaria_${hoje()}.json`,JSON.stringify(backup,null,2),'application/json');
+}
+function importarJSON(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const backup=JSON.parse(e.target.result);
+      if(!backup.pedidos&&!backup.despesas&&!backup.produtos){
+        notif('Arquivo inválido — não é um backup do sistema','error');return;
+      }
+      const totalPed=(backup.pedidos||[]).length;
+      const totalDesp=(backup.despesas||[]).length;
+      const totalProd=(backup.produtos||[]).length;
+      if(!confirm(`Importar backup?\n\n• ${totalPed} pedidos\n• ${totalDesp} despesas\n• ${totalProd} produtos\n\nOs dados atuais serão substituídos.`)){return;}
+      if(backup.pedidos) setData('pedidos',backup.pedidos);
+      if(backup.despesas) setData('despesas',backup.despesas);
+      if(backup.produtos) setData('produtos',backup.produtos);
+      notif(`Backup importado! ${totalPed} pedidos, ${totalDesp} despesas, ${totalProd} produtos`);
+      renderDashboard();
+      input.value='';
+    }catch(err){
+      notif('Erro ao ler o arquivo. Verifique se é um backup válido.','error');
+    }
+  };
+  reader.readAsText(file);
 }
 function download(nome,conteudo,tipo){
   const a=document.createElement('a');
