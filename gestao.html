@@ -336,6 +336,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
     </nav>
     <div class="sidebar-footer">
+      <button id="pwa-install-btn" onclick="instalarPWA()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--rosa);background:var(--rosa-glow);border:1px solid rgba(232,145,184,.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
+        ⬇ Instalar como app
+      </button>
       <button class="logout-btn" onclick="logout()">⎋ Sair do painel</button>
     </div>
   </div>
@@ -2076,6 +2079,37 @@ if(sessionStorage.getItem('ls_logado')){
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// ========== PWA INSTALL ==========
+let pwaInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaInstallPrompt = e;
+  // Mostra botão de instalação na sidebar
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'flex';
+});
+
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'none';
+  notif('App instalado com sucesso! ✓');
+});
+
+function instalarPWA(){
+  if(pwaInstallPrompt){
+    pwaInstallPrompt.prompt();
+    pwaInstallPrompt.userChoice.then(r => {
+      if(r.outcome === 'accepted') notif('Instalando o app... ✓');
+      pwaInstallPrompt = null;
+      document.getElementById('pwa-install-btn').style.display='none';
+    });
+  } else {
+    // Fallback: instruções manuais
+    alert('Para instalar:\n\nAndroid: toque nos 3 pontinhos (⋮) → "Adicionar à tela inicial"\n\niPhone: toque em Compartilhar → "Adicionar à Tela de Início"');
+  }
 }
 </script>
 </body>
