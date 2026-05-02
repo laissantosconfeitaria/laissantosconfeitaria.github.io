@@ -87,8 +87,9 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   .resumo-box { background: var(--cream); border: 1px solid var(--blush); border-radius: 0.8rem; padding: 1rem 1.2rem; font-size: 0.82rem; color: var(--dark); font-family: monospace; white-space: pre-wrap; line-height: 1.7; display: none; margin-top: 1rem; max-height: 280px; overflow-y: auto; }
 
   /* BUTTONS */
-  .btn-wa { width: 100%; padding: 0.9rem; border-radius: 0.8rem; border: none; background: #25d366; color: #fff; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
-  .btn-wa:hover { background: #1da851; transform: translateY(-2px); }
+  .btn-wa { width: 100%; padding: 1rem; border-radius: 0.8rem; border: none; background: #25d366; color: #fff; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.05em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: all 0.2s; box-shadow: 0 4px 16px rgba(37,211,102,0.3); }
+  .btn-wa::before { content: ''; display: inline-block; width: 20px; height: 20px; background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22white%22><path d=%22M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z%22/></svg>') no-repeat center/contain; }
+  .btn-wa:hover { background: #1da851; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,0.4); }
   .btn-copy { width: 100%; padding: 0.9rem; border-radius: 0.8rem; border: 1.5px solid var(--rose); background: transparent; color: var(--rose-dark); font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
   .btn-copy:hover { background: var(--rose-light); transform: translateY(-2px); }
   .btn-copy.copied { background: var(--green-light, #e8f5ee); border-color: #4caf82; color: #2e7d52; }
@@ -152,6 +153,20 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   .preview-total { display: flex; justify-content: space-between; align-items: center; font-size: 1rem; font-weight: 500; color: var(--dark); padding: 0.6rem 0 0.2rem; margin-top: 0.3rem; }
   .preview-total span:last-child { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--rose-dark); }
   .preview-note { font-size: 0.72rem; color: var(--taupe); font-style: italic; margin-top: 0.3rem; }
+
+
+  /* CART SUMMARY */
+  .cart-summary { background: var(--cream); border: 1px solid var(--blush); border-radius: 0.8rem; padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
+  .cs-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--dark); margin-bottom: 0.8rem; font-weight: 400; }
+  .cs-item { padding: 0.6rem 0; border-bottom: 0.5px solid var(--blush); }
+  .cs-item:last-child { border-bottom: none; }
+  .cs-item-name { font-size: 0.88rem; font-weight: 500; color: var(--dark); }
+  .cs-item-detail { font-size: 0.78rem; color: var(--taupe); margin-top: 0.15rem; line-height: 1.5; }
+  .cs-item-price { font-size: 0.85rem; color: var(--rose-dark); font-weight: 500; margin-top: 0.2rem; }
+  .cs-total { display: flex; justify-content: space-between; align-items: center; padding-top: 0.8rem; margin-top: 0.4rem; border-top: 1px solid var(--blush); }
+  .cs-total-label { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--taupe); }
+  .cs-total-value { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--rose-dark); font-weight: 300; }
+  .cs-note { font-size: 0.72rem; color: var(--taupe); font-style: italic; margin-top: 0.3rem; text-align: right; }
 
 </style>
 </head>
@@ -483,16 +498,13 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
     <div class="cart-empty"><span class="cart-empty-icon"></span><p>Seu carrinho está vazio.<br>Monte seu pedido acima!</p></div>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none">
-    <label class="obs-label">Observações / data do evento</label>
-    <textarea class="cart-obs" id="cart-obs" placeholder="Ex: Aniversário no dia 15/06, escrever Feliz Aniversário Ana..."></textarea>
-    <div class="cart-actions">
-      
-      <button class="btn-copy" id="btn-copy" onclick="copyPedido()">Copiar pedido</button>
-      <div class="resumo-box" id="resumo-box"></div>
-      <a id="btn-wa-confirm" href="#" class="btn-wa" onclick="openWA(event)" style="display:none; text-decoration:none; margin-top:0.2rem;">💬 Enviar pedido pelo WhatsApp</a>
-      <button class="btn-clear" onclick="clearCart()">🗑 Limpar carrinho</button>
-    </div>
-  </div>
+          <div id="cart-summary" style="display:none;"></div>
+        <label class="obs-label" style="margin-top:1rem;">Observacoes / data do evento</label>
+        <textarea class="cart-obs" id="cart-obs" placeholder="Ex: Aniversario no dia 15/06, escrever Feliz Aniversario Ana..."></textarea>
+        <div class="cart-actions">
+          <button class="btn-wa" onclick="sendWA()">Enviar pedido pelo WhatsApp</button>
+          <button class="btn-clear" onclick="clearCart()">Limpar carrinho</button>
+        </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1137,58 +1149,107 @@ function removeItem(i) { cart.splice(i, 1); updateCart(); }
 function clearCart() {
   cart = [];
   document.getElementById('cart-obs').value = '';
-  var rb = document.getElementById('resumo-box'); if (rb) rb.style.display = 'none';
-  var wb = document.getElementById('btn-wa-confirm'); if (wb) wb.style.display = 'none';
+  var s = document.getElementById('cart-summary'); if (s) s.style.display = 'none';
   updateCart();
 }
 
 function buildMessage() {
   var obs = document.getElementById('cart-obs').value.trim();
   var nl = String.fromCharCode(10);
-  var msg = 'Ola, Lais! Gostaria de fazer um pedido:' + nl + nl;
+  var msg = 'Ola, Lais! Segue meu pedido:' + nl + nl;
   cart.forEach(function(item, i) {
-    msg += (i+1) + '. ' + item.name + nl + '   ' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + nl + nl;
+    var p = parseDetail(item.detail);
+    msg += (i+1) + '. ' + item.name + nl;
+    msg += '   ' + p.detail + nl;
+    if (p.price) msg += '   Estimativa: ' + p.price + nl;
+    msg += nl;
   });
   if (obs) msg += 'Observacoes: ' + obs + nl + nl;
-  msg += 'Aguardo seu retorno para confirmar os detalhes!';
+  msg += 'Aguardo seu retorno para confirmar!';
   return msg;
 }
 
-function copyPedido() {
-  if (!cart.length) return;
+
+
+function sendWA() {
+  if (!cart.length) { showToast('Adicione itens ao carrinho!'); return; }
   var msg = buildMessage();
-  var box = document.getElementById('resumo-box');
-  box.innerText = msg; box.style.display = 'block';
-  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  var waBtn = document.getElementById('btn-wa-confirm'); if (waBtn) waBtn.style.display = 'flex';
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(msg).then(function() {
-      var btn = document.getElementById('btn-copy');
-      btn.innerText = 'Copiado!'; btn.classList.add('copied');
-      showToast('Pedido copiado! Abra o WhatsApp e cole.');
-      setTimeout(function() { btn.innerText = 'Copiar pedido'; btn.classList.remove('copied'); }, 3500);
-    }).catch(function() { showToast('Selecione o texto acima e copie manualmente!'); });
-  } else { showToast('Selecione o texto acima e copie manualmente!'); }
+  window.open('https://wa.me/5565992094491?text=' + encodeURIComponent(msg), '_blank');
 }
 
-function openWA(e) {
-  e.preventDefault();
-  window.open('https://wa.me/5565992094491?text=Ola%2C+Lais%21+Escolhi+meu+pedido+no+site+e+gostaria+de+confirmar+os+detalhes', '_blank');
+function parseDetail(detail) {
+  // Separate price from detail string
+  var parts = detail.split('|');
+  var price = null;
+  var cleanParts = parts.filter(function(p) {
+    var t = p.trim();
+    if (t.indexOf('Estimativa:') >= 0 || t.indexOf('Preco:') >= 0) {
+      var v = t.replace('Estimativa:', '').replace('Preco:', '').trim();
+      price = v;
+      return false;
+    }
+    return true;
+  });
+  return { detail: cleanParts.join(' · ').trim(), price: price };
 }
 
 function updateCart() {
   var body = document.getElementById('cart-body');
   var footer = document.getElementById('cart-footer');
   var badge = document.getElementById('cart-badge');
+  var summary = document.getElementById('cart-summary');
   badge.innerText = cart.length + (cart.length === 1 ? ' item' : ' itens');
+
   if (!cart.length) {
     body.innerHTML = '<div class="cart-empty"><p>Seu carrinho esta vazio. Monte seu pedido acima!</p></div>';
-    footer.style.display = 'none'; return;
+    footer.style.display = 'none';
+    return;
   }
+
   footer.style.display = 'block';
+
+  // Cart items list (editable)
   body.innerHTML = '<div class="cart-items">' + cart.map(function(item, i) {
-    return '<div class="cart-item"><div class="ci-info"><div class="ci-name">' + item.name + '</div><div class="ci-detail">' + item.detail.replace(/[|]/g, String.fromCharCode(183)) + '</div></div><button class="ci-remove" onclick="removeItem(' + i + ')">X</button></div>';
+    var p = parseDetail(item.detail);
+    return '<div class="cart-item">' +
+      '<div class="ci-info">' +
+        '<div class="ci-name">' + item.name + '</div>' +
+        '<div class="ci-detail">' + p.detail + '</div>' +
+        (p.price ? '<div style="font-size:0.8rem;color:var(--rose-dark);font-weight:500;margin-top:0.2rem;">' + p.price + '</div>' : '') +
+      '</div>' +
+      '<button class="ci-remove" onclick="removeItem(' + i + ')" title="Remover">X</button>' +
+    '</div>';
   }).join('') + '</div>';
+
+  // Visual summary
+  if (summary) {
+    var hasPrice = cart.some(function(item) { return parseDetail(item.detail).price; });
+    var summaryHTML = '<div class="cart-summary"><div class="cs-title">Resumo do pedido</div>';
+    var totalEstimado = 0;
+    var allHavePrice = true;
+    cart.forEach(function(item, i) {
+      var p = parseDetail(item.detail);
+      summaryHTML += '<div class="cs-item">';
+      summaryHTML += '<div class="cs-item-name">' + (i+1) + '. ' + item.name + '</div>';
+      summaryHTML += '<div class="cs-item-detail">' + p.detail + '</div>';
+      if (p.price) {
+        summaryHTML += '<div class="cs-item-price">' + p.price + '</div>';
+        var num = parseFloat(p.price.replace('R$','').replace(/ /g,'').replace('.','').replace(',','.').trim());
+        if (!isNaN(num)) totalEstimado += num;
+        else allHavePrice = false;
+      } else {
+        allHavePrice = false;
+      }
+      summaryHTML += '</div>';
+    });
+    if (totalEstimado > 0) {
+      summaryHTML += '<div class="cs-total"><span class="cs-total-label">Total estimado</span><span class="cs-total-value">R$ ' + totalEstimado.toFixed(0) + '</span></div>';
+      summaryHTML += '<div class="cs-note">Valor final confirmado pela Lais no WhatsApp</div>';
+    }
+    summaryHTML += '</div>';
+    summary.innerHTML = summaryHTML;
+    summary.style.display = 'block';
+  }
 }
 
 function showToast(msg) {
