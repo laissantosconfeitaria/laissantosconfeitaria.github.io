@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestão – Lais Santos Confeitaria</title>
+<meta name="theme-color" content="#0f0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LS Gestão">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -748,6 +754,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div id="tabela-pedidos"></div>
       </div>
     </div>
+    </div><!-- /page-pedidos -->
 
     <!-- DESPESAS -->
     <div class="page" id="page-despesas">
@@ -2064,6 +2071,11 @@ if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
   initApp();
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 </script>
 </body>
