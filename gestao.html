@@ -854,7 +854,79 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
 
+<!-- MODAL EDITAR PEDIDO -->
+<div id="modal-editar" style="display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1">
+      <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)">✏️ Editar pedido</span>
+      <button onclick="fecharModal()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
+    </div>
+    <div style="padding:1.25rem">
+      <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Data</label><input type="date" id="edit-data"></div>
+        <div><label>Cliente</label><input type="text" id="edit-cliente" placeholder="Nome do cliente"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Status</label>
+          <select id="edit-status">
+            <option value="agendado">📅 Agendado</option>
+            <option value="confirmado">✓ Confirmado</option>
+            <option value="entregue">✅ Entregue</option>
+            <option value="pendente">⏳ Pendente</option>
+            <option value="cancelado">✕ Cancelado</option>
+          </select>
+        </div>
+        <div><label>Canal</label>
+          <select id="edit-canal">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="instagram">Instagram</option>
+            <option value="indicacao">Indicação</option>
+            <option value="loja">Loja</option>
+            <option value="google">Google</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem"><label>Observações</label><input type="text" id="edit-obs" placeholder="Ex: Entregar às 10h, escrever Feliz Aniversário..."></div>
 
+      <!-- Itens -->
+      <div style="font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem">Itens do pedido</div>
+      <div id="edit-itens" style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);margin-bottom:.75rem;min-height:48px"></div>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+        <input type="text" id="edit-av-nome" placeholder="Adicionar item avulso" style="flex:1;font-size:.85rem">
+        <input type="number" id="edit-av-val" placeholder="R$" step="0.01" min="0" style="width:85px;font-size:.85rem">
+        <button class="btn btn-ghost btn-sm" onclick="editAddAvulso()">+ Add</button>
+      </div>
+
+      <!-- Ajustes -->
+      <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);padding:.85rem;margin-bottom:1rem">
+        <div style="font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Ajustes de valor</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
+          <input type="text" id="edit-extra-desc" placeholder="Cobrança adicional (ex: entrega)" style="flex:1;font-size:.82rem">
+          <input type="number" id="edit-extra-val" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.82rem" oninput="editAtualizarTotal()">
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span style="font-size:.82rem;color:var(--texto-sec);white-space:nowrap">Desconto:</span>
+          <input type="number" id="edit-desc-val" placeholder="0" min="0" step="0.01" style="width:80px;font-size:.82rem" oninput="editAtualizarTotal()">
+          <select id="edit-desc-tipo" style="font-size:.78rem;padding:.3rem .4rem;width:auto" onchange="editAtualizarTotal()">
+            <option value="reais">R$</option>
+            <option value="pct">%</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--rosa-glow);border-radius:10px;border:1px solid rgba(232,145,184,.2);margin-bottom:1.25rem">
+        <span style="font-size:.88rem;color:var(--texto-sec)">Total do pedido</span>
+        <span id="edit-total" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--rosa)">R$ 0,00</span>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn btn-primary" style="flex:1;padding:.85rem" onclick="salvarEdicao()">Salvar alterações</button>
+        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ========== DADOS ==========
@@ -1311,7 +1383,7 @@ function renderPedidos(){
           <option value="cancelado"  ${p.status==='cancelado' ?'selected':''}>✕ Cancelado</option>
         </select>
       </td>
-      <td><button class="btn btn-danger btn-sm" onclick="deletePedido(${p.id})">✕</button></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="abrirModal(${p.id})" style="margin-right:.3rem">✏️</button><button class="btn btn-danger btn-sm" onclick="deletePedido(${p.id})">✕</button></td>
     </tr>`;
   });
   html+='</tbody></table>';
@@ -1733,7 +1805,134 @@ function renderAgenda(){
 }
 
 
-if(sessionStorage.getItem('ls_logado')){
+// ========== EDITAR PEDIDO ==========
+let editId = null;
+let editItens = [];
+
+function abrirModal(id){
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+  editId = id;
+  editItens = p.itens ? p.itens.map(i=>({...i})) : p.produtos.map(n=>({nome:n,detalhe:'',preco:0}));
+
+  document.getElementById('edit-data').value = p.data;
+  document.getElementById('edit-cliente').value = p.cliente;
+  document.getElementById('edit-status').value = p.status;
+  document.getElementById('edit-canal').value = p.canal||'whatsapp';
+  document.getElementById('edit-obs').value = p.obs||'';
+  document.getElementById('edit-extra-desc').value = p.extra?.desc||'';
+  document.getElementById('edit-extra-val').value = p.extra?.val||'';
+  document.getElementById('edit-desc-val').value = p.desconto||'';
+  document.getElementById('edit-desc-tipo').value = p.descontoTipo||'reais';
+  document.getElementById('edit-av-nome').value = '';
+  document.getElementById('edit-av-val').value = '';
+
+  renderEditItens();
+  const modal = document.getElementById('modal-editar');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal(){
+  document.getElementById('modal-editar').style.display = 'none';
+  document.body.style.overflow = '';
+  editId = null;
+  editItens = [];
+}
+
+function renderEditItens(){
+  const cont = document.getElementById('edit-itens');
+  if(!editItens.length){
+    cont.innerHTML = '<div class="empty" style="padding:1rem;font-size:.82rem">Nenhum item</div>';
+    editAtualizarTotal();
+    return;
+  }
+  cont.innerHTML = editItens.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-bottom:1px solid var(--borda)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${item.nome}</div>
+        ${item.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec)">${item.detalhe}</div>`:''}
+      </div>
+      <input type="number" value="${item.preco||0}" min="0" step="0.01"
+        style="width:80px;font-size:.82rem;padding:.3rem .5rem;text-align:right"
+        oninput="editItens[${i}].preco=parseFloat(this.value)||0;editAtualizarTotal()">
+      <button onclick="editRemoverItem(${i})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.1rem .3rem;opacity:.6" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.6;this.style.color='var(--texto-dim)'">✕</button>
+    </div>`).join('');
+  editAtualizarTotal();
+}
+
+function editRemoverItem(i){
+  editItens.splice(i,1);
+  renderEditItens();
+}
+
+function editAddAvulso(){
+  const nome = document.getElementById('edit-av-nome').value.trim();
+  const preco = parseFloat(document.getElementById('edit-av-val').value)||0;
+  if(!nome){notif('Digite o nome do item','error');return}
+  editItens.push({nome, detalhe:'', preco});
+  document.getElementById('edit-av-nome').value='';
+  document.getElementById('edit-av-val').value='';
+  renderEditItens();
+}
+
+function editAtualizarTotal(){
+  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
+  const extraV = parseFloat(document.getElementById('edit-extra-val')?.value)||0;
+  const dv = parseFloat(document.getElementById('edit-desc-val')?.value)||0;
+  const dt = document.getElementById('edit-desc-tipo')?.value||'reais';
+  const desc = dt==='pct' ? (sub+extraV)*(dv/100) : dv;
+  const total = Math.max(0, sub+extraV-desc);
+  document.getElementById('edit-total').textContent = fmtBRL(total);
+}
+
+function salvarEdicao(){
+  if(!editId) return;
+  const data = document.getElementById('edit-data').value;
+  const cliente = document.getElementById('edit-cliente').value.trim();
+  if(!data||!cliente){notif('Preencha data e cliente','error');return}
+
+  const extraDesc = document.getElementById('edit-extra-desc').value.trim();
+  const extraV = parseFloat(document.getElementById('edit-extra-val').value)||0;
+  const dv = parseFloat(document.getElementById('edit-desc-val').value)||0;
+  const dt = document.getElementById('edit-desc-tipo').value;
+  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
+  const desc = dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const total = Math.max(0, sub+extraV-desc);
+
+  const pedidos = getData('pedidos');
+  const idx = pedidos.findIndex(p=>p.id==editId);
+  if(idx<0) return;
+
+  pedidos[idx] = {
+    ...pedidos[idx],
+    data,
+    cliente,
+    status: document.getElementById('edit-status').value,
+    canal: document.getElementById('edit-canal').value,
+    obs: document.getElementById('edit-obs').value.trim(),
+    valor: total,
+    itens: editItens,
+    produtos: editItens.map(i=>i.nome),
+    extra: {desc:extraDesc, val:extraV},
+    desconto: dv,
+    descontoTipo: dt,
+  };
+  setData('pedidos', pedidos);
+  fecharModal();
+  renderPedidos();
+  if(document.getElementById('page-agenda').classList.contains('active')) renderAgenda();
+  if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+  notif('Pedido atualizado ✓');
+}
+
+// Fechar modal clicando fora
+document.getElementById('modal-editar').addEventListener('click', function(e){
+  if(e.target===this) fecharModal();
+});
+
+
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
   initApp();
