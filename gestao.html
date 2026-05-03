@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.4 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.5 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -936,6 +936,59 @@ tr:hover td{background:rgba(255,255,255,.02)}
           </div>
         </div>
       </div><!-- /np-layout -->
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONCLUSÃO DO PEDIDO -->
+<div id="modal-conclusao" style="display:none;position:fixed;inset:0;z-index:550;align-items:center;justify-content:center;background:rgba(0,0,0,.75);padding:1rem">
+  <div style="background:var(--card);border-radius:20px;border:1px solid var(--borda);width:100%;max-width:420px;box-shadow:var(--sombra);overflow:hidden">
+
+    <!-- Topo comemorativo -->
+    <div style="background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));padding:1.5rem;text-align:center">
+      <div style="font-size:2.2rem;margin-bottom:.4rem">🎂</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;font-weight:500">Pedido registrado!</div>
+      <div id="conclusao-resumo" style="font-size:.82rem;color:rgba(255,255,255,.85);margin-top:.3rem"></div>
+    </div>
+
+    <!-- Itens do pedido -->
+    <div id="conclusao-itens" style="padding:1rem 1.25rem;border-bottom:1px solid var(--borda);max-height:200px;overflow-y:auto;background:var(--bg2)"></div>
+
+    <!-- Ações -->
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.75rem">
+
+      <!-- + Google Agenda -->
+      <a id="conclusao-gc-link" href="#" target="_blank" onclick="conclusaoGoogleClick()" style="
+        display:flex;align-items:center;justify-content:center;gap:.6rem;
+        background:rgba(96,184,240,.1);color:var(--azul);
+        border:1.5px solid rgba(96,184,240,.3);border-radius:12px;
+        padding:.9rem;font-family:'DM Sans',sans-serif;font-size:.92rem;
+        font-weight:500;text-decoration:none;cursor:pointer;
+      ">
+        📅 Adicionar ao Google Agenda
+      </a>
+
+      <!-- Gerar confirmação WhatsApp -->
+      <button onclick="conclusaoWhatsApp()" style="
+        display:flex;align-items:center;justify-content:center;gap:.6rem;
+        background:rgba(37,211,102,.1);color:#25D366;
+        border:1.5px solid rgba(37,211,102,.3);border-radius:12px;
+        padding:.9rem;font-family:'DM Sans',sans-serif;font-size:.92rem;
+        font-weight:500;cursor:pointer;width:100%;
+      ">
+        💬 Gerar confirmação para WhatsApp
+      </button>
+
+      <!-- Finalizar -->
+      <button onclick="fecharModalConclusao()" style="
+        display:flex;align-items:center;justify-content:center;
+        background:var(--bg2);color:var(--texto-sec);
+        border:1.5px solid var(--borda);border-radius:12px;
+        padding:.75rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
+        cursor:pointer;width:100%;
+      ">
+        ✓ Finalizar
+      </button>
     </div>
   </div>
 </div>
@@ -1613,7 +1666,88 @@ function renderCarrinho(){
   atualizarTotais();
 }
 
-// ========== MODAL NOVO PEDIDO ==========
+// ========== MODAL CONCLUSÃO ==========
+let conclusaoPedidoId = null;
+
+function abrirModalConclusao(id){
+  conclusaoPedidoId = id;
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+
+  // Resumo no topo
+  const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+  document.getElementById('conclusao-resumo').textContent =
+    `${p.cliente} · ${dt}${p.hora?' às '+p.hora:''} · ${fmtBRL(p.valor)}`;
+
+  // Itens detalhados
+  const itensHtml = p.itens && p.itens.length
+    ? p.itens.map(i=>`
+        <div style="padding:.5rem 0;border-bottom:1px solid var(--borda)">
+          <div style="font-size:.88rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+          ${i.detalhe?`<div style="margin-top:.25rem">${fmtDetalhe(i.detalhe)}</div>`:''}
+          ${i.preco>0?`<div style="font-size:.78rem;color:var(--rosa);margin-top:.15rem">${fmtBRL(i.preco)}</div>`:''}
+        </div>`).join('')
+    : p.produtos.map(pr=>`<div style="padding:.4rem 0;font-size:.88rem;color:var(--texto);border-bottom:1px solid var(--borda)">${normP(pr)}</div>`).join('');
+  document.getElementById('conclusao-itens').innerHTML = itensHtml || '<div class="empty">—</div>';
+
+  // Monta URL Google Calendar
+  const gcDateBase = p.data.replace(/-/g,'');
+  let gcDates;
+  if(p.hora){
+    const [hh,mm] = p.hora.split(':');
+    const hEnd = String((parseInt(hh)+1)%24).padStart(2,'0');
+    gcDates = `${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+  } else {
+    gcDates = `${gcDateBase}/${gcDateBase}`;
+  }
+  const gcItensDetalhe = p.itens && p.itens.length
+    ? p.itens.map(i=>{
+        const nome = normP(i.nome);
+        const det = i.detalhe ? '\n' + i.detalhe.split('\n').map(l=>'    '+l).join('\n') : '';
+        return `• ${nome}${det}`;
+      }).join('\n')
+    : p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+  const gcDescTexto = [
+    `👤 Cliente: ${p.cliente}`,
+    ``,`🎂 Encomenda:`,gcItensDetalhe,``,
+    `💰 Valor: ${fmtBRL(p.valor)}`,
+    p.extra&&p.extra.val>0?`   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}`:null,
+    p.hora?`⏰ Horário: ${p.hora}`:null,
+    p.local?`📍 Local: ${p.local}`:null,
+    p.obs?`📝 Obs: ${p.obs}`:null,
+    ``,`📱 Canal: ${p.canal||'—'}`,`📊 Status: ${p.status}`,
+  ].filter(l=>l!==null).join('\n');
+  const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+  const gcDesc = encodeURIComponent(gcDescTexto);
+  const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDates}&details=${gcDesc}`;
+  document.getElementById('conclusao-gc-link').href = gcUrl;
+
+  const modal = document.getElementById('modal-conclusao');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function conclusaoGoogleClick(){
+  notif('Abrindo Google Agenda... 📅');
+}
+
+function conclusaoWhatsApp(){
+  fecharModalConclusao();
+  setTimeout(()=>abrirConfirmacao(conclusaoPedidoId), 200);
+}
+
+function fecharModalConclusao(){
+  document.getElementById('modal-conclusao').style.display = 'none';
+  document.body.style.overflow = '';
+  notif('Pedido finalizado ♡');
+}
+
+document.getElementById('modal-conclusao').addEventListener('click', function(e){
+  if(e.target===this) fecharModalConclusao();
+});
+
+
 function abrirModalNovoPedido(){
   document.getElementById('ped-data').value = hoje();
   document.getElementById('ped-status').value = 'agendado';
@@ -1654,8 +1788,9 @@ function salvarPedido(){
   if(!carrinho.length){notif('Adicione ao menos um produto ao carrinho','error');return}
   const{total}=calcTotais();
   const produtosNomes=carrinho.map(i=>i.nome.replace(/^[^\w\s]+\s/,''));
+  const novoPedido={id:Date.now(),data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}};
   const pedidos=getData('pedidos');
-  pedidos.push({id:Date.now(),data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}});
+  pedidos.push(novoPedido);
   setData('pedidos',pedidos);
   carrinho=[];
   renderCarrinho();
@@ -1669,7 +1804,7 @@ function salvarPedido(){
   document.getElementById('ped-local').value='retirada';
   renderPedidos();
   fecharModalNovoPedido();
-  notif('Pedido registrado com sucesso ♡');
+  abrirModalConclusao(novoPedido.id);
 }
 function deletePedido(id){
   if(!confirm('Remover este pedido?'))return;
