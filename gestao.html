@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.1 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.2 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -553,9 +553,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="np-tab-content" id="np-doces">
               <div class="np-step"><div class="np-step-label">Tipo</div>
                 <div class="np-grid np-grid-wide" id="np-doc-item">
-                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Tradicionais<div class="np-opt-sub">25un R$50 · 50un R$100 · 100un R$190</div></div>
-                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Especiais<div class="np-opt-sub">25un R$75 · 50un R$120 · 100un R$220</div></div>
-                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Caixa Degustação<div class="np-opt-sub">15 R$55 · 20 R$70 · 25 R$100</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Tradicionais<div class="np-opt-sub">25un R$50 · 50un R$100 · 100un R$190 · +100=+R$190</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Especiais<div class="np-opt-sub">25un R$75 · 50un R$120 · 100un R$220 · +100=+R$220</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Caixa Degustação<div class="np-opt-sub">15un R$55 · 20un R$70 · 25un R$100</div></div>
                   <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas de Chocolate<div class="np-opt-sub">R$4,00/un</div></div>
                   <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas com Frutas<div class="np-opt-sub">R$4,80/un</div></div>
                   <div class="np-opt" onclick="npSel(this,'np-doc-item')">Copinho de Chocolate c/ Cereja<div class="np-opt-sub">R$4,00/un</div></div>
@@ -565,12 +565,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
               </div>
               <div class="np-step">
                 <div class="np-step-label">Quantidade</div>
-                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem">
-                  <button class="qty-btn" onclick="npChgQ('doc',-5,5)">−</button>
-                  <span class="qty-num" id="np-q-doc">5</span>
-                  <button class="qty-btn" onclick="npChgQ('doc',5,5)">+</button>
-                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem;flex-wrap:wrap">
+                  <button class="qty-btn" onclick="npChgQ('doc',-25,25);npPreviewDoces()">−</button>
+                  <span class="qty-num" id="np-q-doc">25</span>
+                  <button class="qty-btn" onclick="npChgQ('doc',25,25);npPreviewDoces()">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades (múltiplos de 25)</span>
                 </div>
+                <div id="np-doc-preview" style="margin-top:.5rem;font-size:.82rem;color:var(--rosa);font-weight:500"></div>
               </div>
               <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
             </div>
@@ -1186,7 +1187,7 @@ function renderProdutos(){
 // (select populado pelo carrinho)
 
 // ========== NOVO PEDIDO: CARDÁPIO ABAS ==========
-let npQtys = {doc:5, out:1};
+let npQtys = {doc:25, out:1};
 
 function npTab(id, el){
   document.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
@@ -1200,6 +1201,25 @@ function npSel(el, gid){
   document.querySelectorAll('#'+gid+' .np-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
   npUpdatePreviewDec();npUpdatePreviewSim();npUpdatePreviewVul();
+  if(gid==='np-doc-item') npPreviewDoces();
+}
+
+function npPreviewDoces(){
+  const item = npGetV('np-doc-item');
+  const qty = npQtys['doc']||25;
+  const prev = document.getElementById('np-doc-preview');
+  if(!prev) return;
+  if(!item){prev.textContent='';return}
+  const t = tabLookup(P_DOCES_TAB, item);
+  if(!t){prev.textContent='';return}
+  if(t.fixo){ prev.textContent=`Total: ${fmtBRL(t.fixo)}`; return; }
+  if(t.un){ prev.textContent=`Total: ${fmtBRL(t.un*qty)} (${qty} un × R$${t.un.toFixed(2).replace('.',',')})`; return; }
+  const calc = calcPrecoDoces(t, qty);
+  if(calc.mult){
+    prev.textContent=`Total: ${fmtBRL(calc.preco)} (${calc.vezes}× ${calc.unitBase}un)`;
+  } else {
+    prev.textContent=`Total: ${fmtBRL(calc.preco)} (${qty} unidades)`;
+  }
 }
 
 function npMulti(el, gid, max){
@@ -1331,19 +1351,39 @@ const P_SOB_TAB={
   'Pudim de Leite Condensado':{M:65,G:85},
 };
 
+function calcPrecoDoces(t, qty){
+  // Para quantidades com tabela de tiers, calcula o preço proporcional
+  const tiers = Object.keys(t).map(Number).sort((a,b)=>a-b);
+  const maxTier = tiers[tiers.length-1];
+  const precoMaxTier = t[maxTier];
+  
+  if(qty <= tiers[0]){
+    // Menor que o mínimo, cobra o mínimo
+    return {preco: t[tiers[0]], base: tiers[0]};
+  }
+  
+  // Verifica se qty é múltiplo do tier máximo
+  if(qty > maxTier){
+    // Ex: 200un = 2x100un = 2x190 = R$380
+    const vezes = Math.ceil(qty / maxTier);
+    return {preco: vezes * precoMaxTier, base: qty, mult: true, vezes, unitBase: maxTier};
+  }
+  
+  // Encontra o tier exato ou mais próximo
+  const best = tiers.filter(n=>n<=qty).pop() || tiers[0];
+  return {preco: t[best], base: best};
+}
+
 function tabLookup(tabela, item){
   if(!item) return null;
   const norm = s => s.toLowerCase().trim();
   const ni = norm(item);
-  // exact match first
   for(const k of Object.keys(tabela)){
     if(norm(k)===ni) return tabela[k];
   }
-  // item contains key
   for(const k of Object.keys(tabela)){
     if(ni.includes(norm(k))) return tabela[k];
   }
-  // key contains item
   for(const k of Object.keys(tabela)){
     if(norm(k).includes(ni)) return tabela[k];
   }
@@ -1352,22 +1392,30 @@ function tabLookup(tabela, item){
 
 function npAddDoces(){
   const item=npGetV('np-doc-item');if(!item){notif('Escolha o tipo','error');return}
-  const qty=npQtys['doc']||5;
-  let preco=0, detalhe=`${item} · ${qty} unidades`;
+  const qty=npQtys['doc']||25;
+  let preco=0, detalhe=`${qty} unidades`;
   const t=tabLookup(P_DOCES_TAB, item);
   if(t){
-    if(t.fixo){ preco=t.fixo; detalhe=`${item} (cento)`; }
-    else if(t.un){ preco=t.un*qty; detalhe=`${item} · ${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`; }
-    else{
-      const tiers=Object.keys(t).map(Number).sort((a,b)=>a-b);
-      const best=tiers.filter(n=>n<=qty).pop()||tiers[0];
-      preco=t[best];
-      detalhe=`${item} · ${qty} unidades`;
+    if(t.fixo){
+      preco=t.fixo;
+      detalhe=`cento · ${fmtBRL(t.fixo)}`;
+    } else if(t.un){
+      preco=t.un*qty;
+      detalhe=`${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`;
+    } else {
+      const calc = calcPrecoDoces(t, qty);
+      preco = calc.preco;
+      if(calc.mult){
+        detalhe=`${qty} un · ${calc.vezes}x${calc.unitBase}un = ${fmtBRL(preco)}`;
+      } else {
+        detalhe=`${qty} unidades`;
+      }
     }
   }
-  npCarrAdd(`Doces`,detalhe,preco);
+  npCarrAdd(item, detalhe, preco);
   document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
-  npQtys['doc']=5;document.getElementById('np-q-doc').textContent='5';
+  npQtys['doc']=25;
+  document.getElementById('np-q-doc').textContent='25';
 }
 
 function npAddSobremesa(){
