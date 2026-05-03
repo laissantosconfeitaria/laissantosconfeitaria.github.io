@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.9 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.0 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -1037,17 +1037,25 @@ function normP(n){return(n||'').replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{27FF}]\
 // Formata detalhe estruturado (multiline) em HTML com labels destacados
 function fmtDetalhe(detalhe){
   if(!detalhe) return '';
-  return detalhe.split('\n').map(linha=>{
+  // Converte formato antigo (separado por ·) para estruturado
+  let texto = detalhe;
+  if(!texto.includes('\n') && texto.includes('·')){
+    texto = texto.split('·').map(p=>p.trim()).join('\n');
+  }
+  // Converte formato "Massa: X · Tamanho: Y" se ainda houver
+  texto = texto.replace(/ · /g, '\n');
+  
+  return texto.split('\n').filter(l=>l.trim()).map(linha=>{
     const idx = linha.indexOf(':');
-    if(idx>0 && idx<20){
-      const label = linha.substring(0,idx);
+    if(idx>0 && idx<25){
+      const label = linha.substring(0,idx).trim();
       const valor = linha.substring(idx+1).trim();
-      return `<div style="display:flex;gap:.35rem;flex-wrap:wrap">
-        <span style="color:var(--texto-dim);font-size:.72rem;white-space:nowrap">${label}:</span>
-        <span style="color:var(--texto);font-size:.78rem;font-weight:500">${valor}</span>
+      return `<div style="display:flex;gap:.4rem;align-items:baseline;padding:.1rem 0">
+        <span style="color:var(--texto-dim);font-size:.72rem;white-space:nowrap;min-width:70px">${label}:</span>
+        <span style="color:var(--texto);font-size:.82rem;font-weight:500;line-height:1.4">${valor}</span>
       </div>`;
     }
-    return `<div style="font-size:.76rem;color:var(--texto-sec)">${linha}</div>`;
+    return `<div style="font-size:.8rem;color:var(--texto-sec);padding:.1rem 0">${linha}</div>`;
   }).join('');
 }
 
@@ -1194,7 +1202,16 @@ function npGetV(gid){
   return txt || el.firstChild.textContent.trim();
 }
 function npGetEl(gid){return document.querySelector('#'+gid+' .np-opt.selected')}
-function npGetMulti(gid){return [...document.querySelectorAll('#'+gid+' .np-opt.selected')].map(e=>e.firstChild.textContent.trim())}
+function npGetMulti(gid){
+  return [...document.querySelectorAll('#'+gid+' .np-opt.selected')].map(e=>{
+    // Pega só nós de texto diretos, ignorando badges e sub-divs
+    const txt = [...e.childNodes]
+      .filter(n=>n.nodeType===3)
+      .map(n=>n.textContent.trim())
+      .join('').trim();
+    return txt || e.firstChild.textContent.trim();
+  });
+}
 
 // Previews
 function npPreviewEl(id,html){const e=document.getElementById(id);if(e){e.innerHTML=html;e.style.display=html?'block':'none'}}
@@ -1963,33 +1980,59 @@ function abrirConfirmacao(id){
   const p = pedidos.find(x=>x.id==id);
   if(!p) return;
 
-  // Monta linha de produto
-  const linhasProduto = p.itens && p.itens.length
-    ? p.itens.map(i=>{
-        const nome = normP(i.nome);
-        if(i.detalhe){
-          const det = i.detalhe.split('\n').map(l=>l.trim()).filter(Boolean).join(', ');
-          return `${nome}: ${det}`;
-        }
-        return nome;
-      }).join('\n* ')
-    : p.produtos.map(normP).join('\n* ');
+  // Monta linhas de produto com todos os detalhes
+  let linhasProduto = '';
+  if(p.itens && p.itens.length){
+    linhasProduto = p.itens.map(i=>{
+      const nome = normP(i.nome);
+      if(i.detalhe){
+        // Normaliza separadores
+        const det = i.detalhe.replace(/ · /g,'\n').replace(/·/g,'\n');
+        const linhas = det.split('\n').filter(l=>l.trim());
+        const detFormatado = linhas.map(l=>{
+          const idx = l.indexOf(':');
+          if(idx>0){
+            const label = l.substring(0,idx).trim();
+            const valor = l.substring(idx+1).trim();
+            return `   ${label}: ${valor}`;
+          }
+          return `   ${l.trim()}`;
+        }).join('\n');
+        return `${nome}\n${detFormatado}`;
+      }
+      return nome;
+    }).join('\n\n* ');
+  } else {
+    linhasProduto = p.produtos.map(normP).join('\n* ');
+  }
 
   const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
 
-  const texto = `Olá, ${p.cliente}! 😊
+  // Extrai horário e local das observações se tiver
+  let horario = 'a combinar';
+  let local = 'a combinar';
+  if(p.obs){
+    const obsLower = p.obs.toLowerCase();
+    const matchH = p.obs.match(/(\d{1,2}h\d{0,2}|\d{1,2}:\d{2}|\d{1,2}\s*hrs?)/i);
+    if(matchH) horario = matchH[0];
+    if(obsLower.includes('retirada')) local = 'Retirada';
+    else if(obsLower.includes('entrega')) local = 'Entrega';
+  }
+
+  const texto =
+`Olá, ${p.cliente}! 😊
 
 Segue a confirmação da sua encomenda:
 
 * Produto: ${linhasProduto}
-* Data da entrega: ${dt}
-* Horário previsto: ${p.obs&&p.obs.toLowerCase().includes('h')?p.obs.split(' ').find(w=>w.match(/\d+h/))||'a combinar':'a combinar'}
-* Local de entrega/retirada: ${p.obs&&(p.obs.toLowerCase().includes('entrega')||p.obs.toLowerCase().includes('retirada'))?p.obs:'a combinar'}
-* Valor: ${fmtBRL(p.valor)}
+* Data de entrega: ${dt}
+* Horário previsto: ${horario}
+* Local de entrega/retirada: ${local}
+* Valor: ${fmtBRL(p.valor)}${p.extra&&p.extra.val>0?`\n* Adicional (${p.extra.desc||'extra'}): ${fmtBRL(p.extra.val)}`:''}
 
-Pagamento: 50% antecipado e o restante no ato da entrega ou retirada.
+- Pagamento: 50% antecipado e o restante no ato da entrega ou retirada.
 
-Por favor, confira se todas as informações estão corretas. Caso deseje ajustar algo, é só me avisar! 🎂
+${p.obs?`📝 Obs: ${p.obs}\n\n`:''}Por favor, confira se todas as informações estão corretas. Caso deseje ajustar algo, é só me avisar! 🎂
 
 📲 Aproveite e já me siga no Instagram: www.instagram.com/laissantosconfeitaria
 Lá eu posto novidades, sabores e inspirações de bolos!
