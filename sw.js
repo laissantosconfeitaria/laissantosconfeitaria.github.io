@@ -1,4 +1,4 @@
-const CACHE = 'ls-gestao-v17';
+const CACHE = 'ls-gestao-v18';
 const ASSETS = [
   'https://laissantosconfeitaria.github.io/gestao.html',
   'https://laissantosconfeitaria.github.io/icon-192.png',
@@ -7,7 +7,6 @@ const ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
 
-// Instala e faz cache dos arquivos principais
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(ASSETS)).catch(() => {})
@@ -15,7 +14,6 @@ self.addEventListener('install', e => {
   self.skipWaiting();
 });
 
-// Ativa e limpa caches antigos
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -25,18 +23,35 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Permite atualização imediata via postMessage
 self.addEventListener('message', e => {
   if(e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-// Intercepta requisições: cache primeiro, rede como fallback
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+
+  // Nunca intercepta o próprio service worker ou arquivos de script de worker
+  if(url.pathname.endsWith('sw.js')) return;
+
+  // Só intercepta GET
+  if(e.request.method !== 'GET') return;
+
+  // Navegação (HTML): sempre busca da rede primeiro, cache como fallback
+  if(e.request.mode === 'navigate'){
+    e.respondWith(
+      fetch(e.request).catch(() =>
+        caches.match('https://laissantosconfeitaria.github.io/gestao.html')
+      )
+    );
+    return;
+  }
+
+  // Demais recursos: cache primeiro, rede como fallback
   e.respondWith(
     caches.match(e.request).then(cached => {
-      if (cached) return cached;
+      if(cached) return cached;
       return fetch(e.request).then(response => {
-        if (response && response.status === 200) {
+        if(response && response.status === 200){
           const clone = response.clone();
           caches.open(CACHE).then(cache => cache.put(e.request, clone));
         }
@@ -46,7 +61,6 @@ self.addEventListener('fetch', e => {
   );
 });
 
-// Abre o app ao clicar na notificação
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   e.waitUntil(
@@ -59,4 +73,3 @@ self.addEventListener('notificationclick', e => {
     })
   );
 });
-
