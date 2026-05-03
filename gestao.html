@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.0 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.1 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -396,10 +396,21 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <div><label>Cliente</label><input type="text" id="ped-cliente" placeholder="Nome do cliente"></div>
             </div>
             <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Horário de entrega</label><input type="time" id="ped-hora" placeholder="Ex: 18:00"></div>
+              <div>
+                <label>Local</label>
+                <select id="ped-local">
+                  <option value="retirada">Retirada</option>
+                  <option value="entrega">Entrega</option>
+                  <option value="a combinar">A combinar</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:.75rem">
               <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp</option><option value="instagram">Instagram</option><option value="indicacao">Indicação</option><option value="loja">Loja</option><option value="google">Google</option><option value="outro">Outro</option></select></div>
               <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
             </div>
-            <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Entregar sábado às 10h, escrever Feliz Aniversário Ana..."></div>
+            <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
           </div>
 
           <!-- Cardápio por abas -->
@@ -932,6 +943,16 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div><label>Cliente</label><input type="text" id="edit-cliente" placeholder="Nome do cliente"></div>
       </div>
       <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Horário de entrega</label><input type="time" id="edit-hora"></div>
+        <div><label>Local</label>
+          <select id="edit-local">
+            <option value="retirada">Retirada</option>
+            <option value="entrega">Entrega</option>
+            <option value="a combinar">A combinar</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:.9rem">
         <div><label>Status</label>
           <select id="edit-status">
             <option value="agendado">📅 Agendado</option>
@@ -952,7 +973,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           </select>
         </div>
       </div>
-      <div style="margin-bottom:1.25rem"><label>Observações</label><input type="text" id="edit-obs" placeholder="Ex: Entregar às 10h, escrever Feliz Aniversário..."></div>
+      <div style="margin-bottom:1.25rem"><label>Observações</label><input type="text" id="edit-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
 
       <!-- Itens -->
       <div style="font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem">Itens do pedido</div>
@@ -1530,6 +1551,8 @@ function salvarPedido(){
   const status=document.getElementById('ped-status').value;
   const canal=document.getElementById('ped-canal').value;
   const obs=document.getElementById('ped-obs').value.trim();
+  const hora=document.getElementById('ped-hora').value||'';
+  const local=document.getElementById('ped-local').value||'a combinar';
   const extraDesc=document.getElementById('extra-desc')?.value.trim();
   const extraV=parseFloat(document.getElementById('extra-val')?.value)||0;
   if(!data||!cliente){notif('Preencha data e cliente','error');return}
@@ -1537,16 +1560,18 @@ function salvarPedido(){
   const{total}=calcTotais();
   const produtosNomes=carrinho.map(i=>i.nome.replace(/^[^\w\s]+\s/,''));
   const pedidos=getData('pedidos');
-  pedidos.push({id:Date.now(),data,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}});
+  pedidos.push({id:Date.now(),data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}});
   setData('pedidos',pedidos);
   carrinho=[];
   renderCarrinho();
   document.getElementById('extra-desc').value='';
   document.getElementById('extra-val').value='';
   document.getElementById('desconto-val').value='';
+  document.getElementById('ped-hora').value='';
   ['ped-data','ped-cliente','ped-obs'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('ped-data').value=hoje();
   document.getElementById('ped-status').value='confirmado';
+  document.getElementById('ped-local').value='retirada';
   renderPedidos();
   notif('Pedido registrado com sucesso ♡');
 }
@@ -1588,8 +1613,8 @@ function renderPedidos(){
       <!-- Linha 1: data + canal + valor -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
         <div style="display:flex;align-items:center;gap:.6rem">
-          <span style="font-size:.78rem;color:var(--texto-dim)">${dt}</span>
-          <span style="font-size:.75rem;color:var(--texto-dim)">${canalIcon[p.canal]||'📌'} ${p.canal}</span>
+          <span style="font-size:.78rem;color:var(--texto-dim)">${dt}${p.hora?` · ⏰ ${p.hora}`:''}</span>
+          <span style="font-size:.75rem;color:var(--texto-dim)">${canalIcon[p.canal]||'📌'} ${p.canal}${p.local?' · '+p.local:''}</span>
         </div>
         <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
       </div>
@@ -2008,13 +2033,15 @@ function abrirConfirmacao(id){
 
   const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
 
-  // Extrai horário e local das observações se tiver
-  let horario = 'a combinar';
-  let local = 'a combinar';
-  if(p.obs){
-    const obsLower = p.obs.toLowerCase();
+  // Usa hora e local salvos no pedido, com fallback para observações
+  let horario = p.hora || 'a combinar';
+  let local = p.local || 'a combinar';
+  if(horario==='a combinar' && p.obs){
     const matchH = p.obs.match(/(\d{1,2}h\d{0,2}|\d{1,2}:\d{2}|\d{1,2}\s*hrs?)/i);
     if(matchH) horario = matchH[0];
+  }
+  if(local==='a combinar' && p.obs){
+    const obsLower = p.obs.toLowerCase();
     if(obsLower.includes('retirada')) local = 'Retirada';
     else if(obsLower.includes('entrega')) local = 'Entrega';
   }
@@ -2138,6 +2165,7 @@ function renderAgenda(){
           <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
             <span style="width:7px;height:7px;border-radius:50%;background:${cor};flex-shrink:0;display:inline-block"></span>
             <span class="agenda-pedido-nome">${p.cliente}</span>
+            ${p.hora?`<span style="font-size:.72rem;color:var(--azul);margin-left:auto">⏰ ${p.hora}</span>`:''}
           </div>
           <div class="agenda-pedido-det" style="font-size:.76rem;line-height:1.5">${detItens}</div>
           ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.25rem">📝 ${p.obs}</div>`:''}
@@ -2171,7 +2199,16 @@ function renderAgenda(){
     const diasRestantes = Math.round((new Date(p.data+'T12:00:00')-new Date())/(1000*60*60*24));
     const prazoLabel = diasRestantes===0?'hoje':diasRestantes===1?'amanhã':diasRestantes<=3?`em ${diasRestantes}d`:`em ${diasRestantes}d`;
     const prazoColor = diasRestantes===0?'var(--amarelo)':diasRestantes===1?'var(--rosa)':diasRestantes<=3?'var(--amarelo)':'var(--texto-dim)';
-    const gcDate = p.data.replace(/-/g,'');
+    const gcDateBase = p.data.replace(/-/g,'');
+    // Monta data/hora para Google Calendar (formato: YYYYMMDDTHHmmss)
+    let gcDates;
+    if(p.hora){
+      const [hh,mm] = p.hora.split(':');
+      const hEnd = String((parseInt(hh)+1)%24).padStart(2,'0');
+      gcDates = `${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+    } else {
+      gcDates = `${gcDateBase}/${gcDateBase}`;
+    }
     // Monta descrição completa para o Google Agenda
     const gcItensDetalhe = p.itens && p.itens.length
       ? p.itens.map(i=>{
@@ -2195,7 +2232,7 @@ function renderAgenda(){
     ].filter(l=>l!==null).join('\n');
     const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
     const gcDesc = encodeURIComponent(gcDescTexto);
-    const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDate}/${gcDate}&details=${gcDesc}`;
+    const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDates}&details=${gcDesc}`;
 
     listaHtml += `
     <div style="padding:1rem;border-bottom:1px solid var(--borda)">
@@ -2203,6 +2240,8 @@ function renderAgenda(){
         <div>
           <span style="font-size:.8rem;font-weight:500;color:var(--texto-sec)">${dt}</span>
           <span style="font-size:.75rem;color:${prazoColor};margin-left:.4rem">· ${prazoLabel}</span>
+          ${p.hora?`<div style="font-size:.78rem;color:var(--azul);margin-top:.15rem">⏰ ${p.hora}${p.local?' · '+p.local:''}</div>`:''}
+          ${!p.hora&&p.local?`<div style="font-size:.78rem;color:var(--texto-dim);margin-top:.15rem">${p.local}</div>`:''}
         </div>
         <span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span>
       </div>
@@ -2243,6 +2282,8 @@ function abrirModal(id){
   editItens = p.itens ? p.itens.map(i=>({...i})) : p.produtos.map(n=>({nome:n,detalhe:'',preco:0}));
 
   document.getElementById('edit-data').value = p.data;
+  document.getElementById('edit-hora').value = p.hora||'';
+  document.getElementById('edit-local').value = p.local||'retirada';
   document.getElementById('edit-cliente').value = p.cliente;
   document.getElementById('edit-status').value = p.status;
   document.getElementById('edit-canal').value = p.canal||'whatsapp';
@@ -2334,6 +2375,8 @@ function salvarEdicao(){
   pedidos[idx] = {
     ...pedidos[idx],
     data,
+    hora: document.getElementById('edit-hora').value||'',
+    local: document.getElementById('edit-local').value||'retirada',
     cliente,
     status: document.getElementById('edit-status').value,
     canal: document.getElementById('edit-canal').value,
