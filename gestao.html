@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.2 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.3 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -1130,13 +1130,25 @@ function notif(msg,tipo='ok'){
 
 // ========== UTILS ==========
 function fmtBRL(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function hoje(){return new Date().toISOString().split('T')[0]}
+function dataLocal(d){
+  // Retorna YYYY-MM-DD no fuso horário LOCAL do dispositivo
+  const dt = d || new Date();
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const dia = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dia}`;
+}
+function mesLocal(d){
+  const dt = d || new Date();
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+function hoje(){return dataLocal()}
 function mesAtual(){return hoje().substring(0,7)}
 function inicioSemana(d){
   const dt=new Date(d+'T12:00:00');
   const day=dt.getDay();
   const diff=dt.getDate()-day+(day===0?-6:1);
-  return new Date(dt.setDate(diff)).toISOString().split('T')[0];
+  return dataLocal(new Date(dt.setDate(diff)));
 }
 
 // ========== PRODUTOS ==========
@@ -1799,7 +1811,7 @@ function renderDashboard(){
   const dias30=[];const fat30=[];
   for(let i=29;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i);
-    const ds=d.toISOString().split('T')[0];
+    const ds=dataLocal(d);
     dias30.push(d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
     fat30.push(pedidos.filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
   }
@@ -1826,7 +1838,7 @@ function renderDashboard(){
   const meses6=[];const fat6=[];const desp6=[];
   for(let i=5;i>=0;i--){
     const d=new Date();d.setMonth(d.getMonth()-i);
-    const m=d.toISOString().substring(0,7);
+    const m=mesLocal(d);
     meses6.push(d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}));
     fat6.push(pedidos.filter(p=>p.data.startsWith(m)&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
     desp6.push(despesas.filter(d=>d.data.startsWith(m)).reduce((s,d)=>s+d.valor,0));
@@ -1895,7 +1907,7 @@ function renderRelSemanal(){
   const dias=[];const labels=[];const fat7=[];const desp7=[];
   for(let i=0;i<7;i++){
     const d=new Date(ini);d.setDate(ini.getDate()+i);
-    const ds=d.toISOString().split('T')[0];
+    const ds=dataLocal(d);
     dias.push(ds);
     labels.push(d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'}));
     fat7.push(getData('pedidos').filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
@@ -2172,17 +2184,17 @@ function renderAgenda(){
     dias.push(d);
   }
 
-  const ini = dias[0].toISOString().split('T')[0];
-  const fim = dias[6].toISOString().split('T')[0];
+  const ini = dataLocal(dias[0]);
+  const fim = dataLocal(dias[6]);
   document.getElementById('agenda-semana-label').textContent =
     `${dias[0].toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} – ${dias[6].toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}`;
 
-  const hojeStr = new Date().toISOString().split('T')[0];
+  const hojeStr = dataLocal();
 
   // Renderizar grid de 7 dias
   let gridHtml = '';
   dias.forEach(dia=>{
-    const ds = dia.toISOString().split('T')[0];
+    const ds = dataLocal(dia);
     const pedDia = relevantes.filter(p=>p.data===ds);
     const isHoje = ds===hojeStr;
     const isPassado = ds<hojeStr;
@@ -2540,8 +2552,8 @@ function dispararNotif(titulo, corpo, tag='ls-gestao'){
 
 function gerarMensagemNotif(hora){
   const pedidos = getData('pedidos');
-  const hoje = new Date().toISOString().split('T')[0];
-  const amanha = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  const hoje = dataLocal();
+  const amanha = dataLocal(new Date(Date.now()+86400000));
 
   const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
   const pedAmanha = pedidos.filter(p=>p.data===amanha && ['agendado','confirmado'].includes(p.status));
@@ -2592,7 +2604,7 @@ function agendarNotificacoes(){
     const agora = new Date();
     const h = agora.getHours();
     const m = agora.getMinutes();
-    const chave = `notif_${agora.toISOString().split('T')[0]}_${h}`;
+    const chave = `notif_${dataLocal(agora)}_${h}`;
 
     if((h===9||h===17||h===22) && m===0){
       // Só dispara uma vez por hora por dia
@@ -2619,7 +2631,7 @@ function initNotificacoes(){
       const h = agora.getHours();
       if(h >= 7 && h <= 23){
         const pedidos = getData('pedidos');
-        const hoje = agora.toISOString().split('T')[0];
+        const hoje = dataLocal(agora);
         const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
         if(pedHoje.length > 0){
           dispararNotif(
