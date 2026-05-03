@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.5 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.7 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -1528,8 +1528,16 @@ function renderPedidos(){
       <!-- Linha 2: cliente + produtos -->
       <div style="margin-bottom:.65rem">
         <div style="font-size:.95rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
-        <div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>
-        ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.15rem">📝 ${p.obs}</div>`:''}
+        ${p.itens && p.itens.length
+          ? `<div style="background:var(--bg2);border-radius:8px;padding:.5rem .7rem;margin-top:.4rem">
+              ${p.itens.map(i=>`<div style="padding:.25rem 0;border-bottom:1px solid var(--borda)">
+                <div style="font-size:.82rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+                ${i.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec);margin-top:.1rem;line-height:1.4">${i.detalhe}</div>`:''}
+              </div>`).join('')}
+            </div>`
+          : `<div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>`
+        }
+        ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.3rem">📝 ${p.obs}</div>`:''}
       </div>
       <!-- Linha 3: status + ações -->
       <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
@@ -1953,13 +1961,17 @@ function renderAgenda(){
       pedDia.forEach(p=>{
         const statusColors={agendado:'var(--azul)',confirmado:'var(--verde)',pendente:'var(--amarelo)'};
         const cor=statusColors[p.status]||'var(--texto-sec)';
+        // Monta detalhes dos itens
+        const detItens = p.itens && p.itens.length
+          ? p.itens.map(i=>`<div style="margin-top:.2rem"><span style="font-weight:500;color:var(--texto)">${normP(i.nome)}</span>${i.detalhe?`<span style="color:var(--texto-dim)"> · ${i.detalhe}</span>`:''}</div>`).join('')
+          : `<div>${p.produtos.slice(0,2).map(normP).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>`;
         gridHtml += `<div class="agenda-pedido">
-          <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
             <span style="width:7px;height:7px;border-radius:50%;background:${cor};flex-shrink:0;display:inline-block"></span>
             <span class="agenda-pedido-nome">${p.cliente}</span>
           </div>
-          <div class="agenda-pedido-det">${p.produtos.slice(0,2).map(normP).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>
-          ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.15rem">📝 ${p.obs}</div>`:''}
+          <div class="agenda-pedido-det" style="font-size:.76rem;line-height:1.5">${detItens}</div>
+          ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.25rem">📝 ${p.obs}</div>`:''}
           <div class="agenda-pedido-val">${fmtBRL(p.valor)}</div>
         </div>`;
       });
@@ -1991,8 +2003,25 @@ function renderAgenda(){
     const prazoLabel = diasRestantes===0?'hoje':diasRestantes===1?'amanhã':diasRestantes<=3?`em ${diasRestantes}d`:`em ${diasRestantes}d`;
     const prazoColor = diasRestantes===0?'var(--amarelo)':diasRestantes===1?'var(--rosa)':diasRestantes<=3?'var(--amarelo)':'var(--texto-dim)';
     const gcDate = p.data.replace(/-/g,'');
-    const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).join(', ')}`);
-    const gcDesc = encodeURIComponent(`Cliente: ${p.cliente}\nProdutos: ${p.produtos.join(', ')}\nValor: ${fmtBRL(p.valor)}${p.obs?'\nObs: '+p.obs:''}`);
+    // Monta descrição completa para o Google Agenda
+    const gcItensDetalhe = p.itens && p.itens.length
+      ? p.itens.map(i=>`• ${normP(i.nome)}${i.detalhe?' → '+i.detalhe:''}`).join('\n')
+      : p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+    const gcDescTexto = [
+      `👤 Cliente: ${p.cliente}`,
+      ``,
+      `🎂 Encomenda:`,
+      gcItensDetalhe,
+      ``,
+      `💰 Valor: ${fmtBRL(p.valor)}`,
+      p.extra && p.extra.val > 0 ? `   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}` : null,
+      p.obs ? `📝 Obs: ${p.obs}` : null,
+      ``,
+      `📱 Canal: ${p.canal||'—'}`,
+      `📊 Status: ${p.status}`,
+    ].filter(l=>l!==null).join('\n');
+    const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+    const gcDesc = encodeURIComponent(gcDescTexto);
     const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDate}/${gcDate}&details=${gcDesc}`;
 
     listaHtml += `
@@ -2004,10 +2033,20 @@ function renderAgenda(){
         </div>
         <span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span>
       </div>
-      <div style="font-size:.95rem;font-weight:500;color:var(--texto);margin-bottom:.2rem">${p.cliente}</div>
-      <div style="font-size:.78rem;color:var(--texto-sec);margin-bottom:.2rem">${p.produtos.slice(0,3).map(normP).join(', ')}${p.produtos.length>3?' +mais':''}</div>
-      ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-bottom:.2rem">📝 ${p.obs}</div>`:''}
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem">
+      <div style="font-size:.95rem;font-weight:500;color:var(--texto);margin-bottom:.5rem">${p.cliente}</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:.6rem .75rem;margin-bottom:.5rem">
+        ${p.itens && p.itens.length
+          ? p.itens.map(i=>`
+            <div style="padding:.3rem 0;border-bottom:1px solid var(--borda)">
+              <div style="font-size:.84rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+              ${i.detalhe?`<div style="font-size:.75rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.5">${i.detalhe}</div>`:''}
+              ${i.preco>0?`<div style="font-size:.75rem;color:var(--rosa);margin-top:.1rem">${fmtBRL(i.preco)}</div>`:''}
+            </div>`).join('').replace(/border-bottom:1px solid var\(--borda\)">\s*<\/div>\s*$/, '">')
+          : `<div style="font-size:.84rem;color:var(--texto-sec)">${p.produtos.map(normP).join(', ')}</div>`
+        }
+      </div>
+      ${p.obs?`<div style="font-size:.78rem;color:var(--amarelo);margin-bottom:.5rem">📝 ${p.obs}</div>`:''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
         <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
         <a href="${gcUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(96,184,240,.12);color:var(--azul);border:1px solid rgba(96,184,240,.25);border-radius:8px;padding:.4rem .85rem;font-size:.8rem;text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:500">
           📅 + Google Agenda
