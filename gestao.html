@@ -607,7 +607,295 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <button class="np-tab" onclick="npTab('sal',this)">🥐 Salgados</button>
               <button class="np-tab" onclick="npTab('unit',this)">🏷️ Unitários</button>
             </div>
-            <div id="np-cardapio-content"></div>
+            <div id="np-cardapio-content">
+
+            <!-- BOLO DECORADO -->
+            <div class="np-tab-content active" id="np-dec">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-dec-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-dec-tam">
+                  <div class="np-opt" data-preco="60" onclick="npSel(this,'np-dec-tam')"><div>PP · Bento</div><div class="np-opt-sub">~2 fatias · a partir de R$ 60</div></div>
+                  <div class="np-opt" data-preco="99" onclick="npSel(this,'np-dec-tam')"><div>P · 15cm</div><div class="np-opt-sub">8–10 fatias · a partir de R$ 99</div></div>
+                  <div class="np-opt" data-preco="198" onclick="npSel(this,'np-dec-tam')"><div>M · 18cm ⭐</div><div class="np-opt-sub">18–20 fatias · a partir de R$ 198</div></div>
+                  <div class="np-opt" data-preco="297" onclick="npSel(this,'np-dec-tam')"><div>G · 21cm</div><div class="np-opt-sub">28–30 fatias · a partir de R$ 297</div></div>
+                  <div class="np-opt" data-preco="396" onclick="npSel(this,'np-dec-tam')"><div>GG · 23cm</div><div class="np-opt-sub">38–40 fatias · a partir de R$ 396</div></div>
+                  <div class="np-opt" data-preco="495" onclick="npSel(this,'np-dec-tam')"><div>EX · 26cm</div><div class="np-opt-sub">48–50 fatias · a partir de R$ 495</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) <span style="font-weight:400;font-size:.75rem">— até 2</span></div>
+                <div class="np-grid np-grid-wide" id="np-dec-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Beijinho de coco</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Dois amores</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Mousse de chocolate</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de maracujá</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de limão</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Brigadeiro com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Doce de leite com ameixa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Dois amores com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Creme de coco com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Leite ninho com Nutella</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com Oreo</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Caramelo salgado c/ mousse</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Floresta Negra</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Pistache</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Kinder Bueno</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Ouro Branco / Sonho de Valsa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Nozes com praliné</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Doce de leite c/ praliné de nozes</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Marta Rocha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura</div>
+                <div class="np-grid np-grid-wide" id="np-dec-cob">
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Chantininho</div>
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Naked Cake</div>
+                  <div class="np-opt" data-extra="20" onclick="npSel(this,'np-dec-cob')">Chantininho Personalizado<div class="np-opt-sub">+R$20</div></div>
+                  <div class="np-opt" data-extra="25" onclick="npSel(this,'np-dec-cob')">Cobertura de Brigadeiro<div class="np-opt-sub">+R$25</div></div>
+                  <div class="np-opt" data-extra="40" onclick="npSel(this,'np-dec-cob')">Ganache de Chocolate<div class="np-opt-sub">+R$40</div></div>
+                  <div class="np-opt" data-extra="35" onclick="npSel(this,'np-dec-cob')">Ganache Saborizada<div class="np-opt-sub">+R$35</div></div>
+                </div>
+              </div>
+              <div id="np-dec-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddBolo()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- BOLO SIMPLES -->
+            <div class="np-tab-content" id="np-simples">
+              <div class="np-step"><div class="np-step-label">Sabor</div>
+                <div class="np-grid np-grid-wide" id="np-sim-sab">
+                  <div class="np-opt" data-m="40" data-g="60" onclick="npSel(this,'np-sim-sab')">Fubá<div class="np-opt-sub">M R$40 · G R$60</div></div>
+                  <div class="np-opt" data-m="32" data-g="58" onclick="npSel(this,'np-sim-sab')">Chocolate sem cobertura<div class="np-opt-sub">M R$32 · G R$58</div></div>
+                  <div class="np-opt" data-m="45" data-g="70" onclick="npSel(this,'np-sim-sab')">Chocolate com cobertura<div class="np-opt-sub">M R$45 · G R$70</div></div>
+                  <div class="np-opt" data-m="38" data-g="58" onclick="npSel(this,'np-sim-sab')">Formigueiro sem cobertura<div class="np-opt-sub">M R$38 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Formigueiro com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Fubá cremoso<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="65" onclick="npSel(this,'np-sim-sab')">Milho<div class="np-opt-sub">M R$45 · G R$65</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Toalha felpuda<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="58" onclick="npSel(this,'np-sim-sab')">Laranja<div class="np-opt-sub">M R$45 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="68" onclick="npSel(this,'np-sim-sab')">Cenoura com brigadeiro<div class="np-opt-sub">M R$50 · G R$68</div></div>
+                  <div class="np-opt" data-m="35" data-g="58" onclick="npSel(this,'np-sim-sab')">Mesclado<div class="np-opt-sub">M R$35 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Mesclado com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sim-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-sim-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-sim-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-sim-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSimples()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- VULCÃO -->
+            <div class="np-tab-content" id="np-vulcao">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-vul-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura/Recheio</div>
+                <div class="np-grid np-grid-wide" id="np-vul-cob">
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Dois amores<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="65" data-g="90" onclick="npSel(this,'np-vul-cob')">Leite ninho com Nutella<div class="np-opt-sub">M R$65 · G R$90</div></div>
+                  <div class="np-opt" data-m="75" data-g="99" onclick="npSel(this,'np-vul-cob')">Cream cheese<div class="np-opt-sub">M R$75 · G R$99</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Cenoura com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-vul-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-vul-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-vul-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-vul-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddVulcao()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- DOCES -->
+            <div class="np-tab-content" id="np-doces">
+              <div class="np-step"><div class="np-step-label">Tipo</div>
+                <div class="np-grid np-grid-wide" id="np-doc-item">
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Tradicionais<div class="np-opt-sub">25un R$50 · 50un R$100 · 100un R$190 · +100=+R$190</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Especiais<div class="np-opt-sub">25un R$75 · 50un R$120 · 100un R$220 · +100=+R$220</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Caixa Degustação<div class="np-opt-sub">15un R$55 · 20un R$70 · 25un R$100</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas de Chocolate<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas com Frutas<div class="np-opt-sub">R$4,80/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Copinho de Chocolate c/ Cereja<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Bombom Negresco<div class="np-opt-sub">R$4,50/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufa Meio Amarga 50%<div class="np-opt-sub">Cento R$250</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem;flex-wrap:wrap">
+                  <button class="qty-btn" onclick="npChgQ('doc',-25,25);npPreviewDoces()">−</button>
+                  <span class="qty-num" id="np-q-doc">25</span>
+                  <button class="qty-btn" onclick="npChgQ('doc',25,25);npPreviewDoces()">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades (múltiplos de 25)</span>
+                </div>
+                <div id="np-doc-preview" style="margin-top:.5rem;font-size:.82rem;color:var(--rosa);font-weight:500"></div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SOBREMESAS -->
+            <div class="np-tab-content" id="np-sob">
+              <div class="np-step"><div class="np-step-label">Sobremesa</div>
+                <div class="np-grid np-grid-wide" id="np-sob-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa da Felicidade<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa Red Velvet<div class="np-opt-sub">P R$80 · M R$130 · G R$219</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Bombom Aberto<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Banoffee<div class="np-opt-sub">M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Torta<div class="np-opt-sub">8p R$129 · 13p R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Pudim de Leite Condensado<div class="np-opt-sub">M R$65 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sob-tam">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Pequeno (P)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Médio (M)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSobremesa()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- KIT FESTA -->
+            <div class="np-tab-content" id="np-kit">
+              <div class="np-step"><div class="np-step-label">Kit</div>
+                <div class="np-grid np-grid-wide" id="np-kit-tam">
+                  <div class="np-opt" data-preco="200" onclick="npSel(this,'np-kit-tam')">Kit P — R$200<div class="np-opt-sub">Bolo 15cm · 8-10 fatias · 70 docinhos</div></div>
+                  <div class="np-opt" data-preco="325" onclick="npSel(this,'np-kit-tam')">Kit M — R$325<div class="np-opt-sub">Bolo 18cm · 18-20 fatias · 100 docinhos</div></div>
+                  <div class="np-opt" data-preco="450" onclick="npSel(this,'np-kit-tam')">Kit G — R$450<div class="np-opt-sub">Bolo 21cm · 28-30 fatias · 150 docinhos</div></div>
+                  <div class="np-opt" data-preco="649" onclick="npSel(this,'np-kit-tam')">Kit GG — R$649<div class="np-opt-sub">Bolo 23cm · 38-40 fatias · 200 docinhos</div></div>
+                  <div class="np-opt" data-preco="815" onclick="npSel(this,'np-kit-tam')">Kit EX — R$815<div class="np-opt-sub">Bolo 26cm · 48-50 fatias · 250 docinhos</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-kit-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Baunilha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) — até 2</div>
+                <div class="np-grid np-grid-wide" id="np-kit-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Beijinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Choconinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Dois amores</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- CUPCAKES+ -->
+            <div class="np-tab-content" id="np-outros">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-out-item">
+                  <div class="np-opt" data-unit="8.50" onclick="npSel(this,'np-out-item')">Cupcake Grande + Chantininho<div class="np-opt-sub">R$8,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Cupcake Grande + Brigadeiro<div class="np-opt-sub">R$12,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.50" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Chantininho<div class="np-opt-sub">R$6,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Brigadeiro<div class="np-opt-sub">R$9,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Pão de Mel Pequeno<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="10.00" onclick="npSel(this,'np-out-item')">Pão de Mel Grande<div class="np-opt-sub">R$10,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="8.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado P<div class="np-opt-sub">R$8,00/un</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado G<div class="np-opt-sub">R$12,00/un</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Pirulito Simples<div class="np-opt-sub">R$9,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="14.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Pasta e Papel de Arroz<div class="np-opt-sub">R$14,00/un</div></div>
+                  <div class="np-opt" data-unit="20.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Sprinkles<div class="np-opt-sub">R$20,00/un</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Brownie Simples 6x6cm<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Brownie Recheado 6x6cm<div class="np-opt-sub">R$12,00/un</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem">
+                  <button class="qty-btn" onclick="npChgQ('out',-1,1)">−</button>
+                  <span class="qty-num" id="np-q-out">1</span>
+                  <button class="qty-btn" onclick="npChgQ('out',1,1)">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddOutros()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SALGADOS -->
+            <div class="np-tab-content" id="np-sal">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-sal-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta de Frango Fria<div class="np-opt-sub">s/ geleia R$110/kg · c/ geleia R$129/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Pão Italiano<div class="np-opt-sub">M R$60 · G R$90</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Frango c/ catupiry<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Alho poró c/ queijo<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon e calabresa<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Carne seca c/ banana<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon c/ abacaxi<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche de Camarão<div class="np-opt-sub">600g R$100 · 1,1kg R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Frango<div class="np-opt-sub">R$80/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Carne moída<div class="np-opt-sub">R$80/kg</div></div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- UNITÁRIOS -->
+            <div class="np-tab-content" id="np-unit">
+              <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda2);padding:1rem;margin-bottom:1rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Venda unitária com valor livre</div>
+                <div style="margin-bottom:.75rem"><label>Nome do item</label>
+                  <input type="text" id="unit-nome" placeholder="Ex: Fatia de bolo, Pudim individual, Bombom de morango...">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+                  <div><label>Valor unitário (R$)</label><input type="number" id="unit-preco" placeholder="0,00" step="0.01" min="0" oninput="unitAtualizarTotal()"></div>
+                  <div><label>Quantidade</label>
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-top:.3rem">
+                      <button class="qty-btn" onclick="unitChgQ(-1)">−</button>
+                      <span class="qty-num" id="unit-qty">1</span>
+                      <button class="qty-btn" onclick="unitChgQ(1)">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;background:var(--card);border-radius:8px;border:1px solid var(--borda);margin-bottom:.85rem">
+                  <span style="font-size:.82rem;color:var(--texto-sec)">Total do item</span>
+                  <span id="unit-total" style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)">R$ 0,00</span>
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="npAddUnit()">+ Adicionar ao carrinho</button>
+              </div>
+              <div style="margin-top:.5rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Unitários salvos no cardápio</div>
+                <div id="unit-cardapio-lista"></div>
+                <div style="display:flex;gap:.5rem;margin-top:.6rem">
+                  <input type="text" id="unit-salvar-nome" placeholder="Nome para salvar no cardápio" style="flex:1;font-size:.85rem">
+                  <input type="number" id="unit-salvar-preco" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.85rem">
+                  <button class="btn btn-ghost btn-sm" onclick="unitSalvarCardapio()">Salvar</button>
+                </div>
+              </div>
+            </div>
+
+            </div><!-- /np-cardapio-content -->
           </div>
         </div><!-- /np-left -->
 
