@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.7 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v2.9 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -993,6 +993,37 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
+<!-- MODAL CONFIRMAÇÃO WHATSAPP -->
+<div id="modal-wpp" style="display:none;position:fixed;inset:0;z-index:600;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
+  <div style="background:var(--card);border-radius:16px 16px 12px 12px;border:1px solid var(--borda);width:100%;max-width:540px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--borda);flex-shrink:0">
+      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">📋 Confirmação para WhatsApp</span>
+      <button onclick="fecharModalWpp()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.1rem .4rem">✕</button>
+    </div>
+    <div style="padding:1rem 1.25rem;flex:1;overflow-y:auto">
+      <textarea id="wpp-texto" style="
+        width:100%;min-height:320px;background:var(--bg2);border:1.5px solid var(--borda);
+        border-radius:10px;padding:.85rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
+        color:var(--texto);line-height:1.65;resize:vertical;outline:none;
+      "></textarea>
+      <div style="font-size:.75rem;color:var(--texto-dim);margin-top:.5rem">Edite o texto acima se precisar ajustar algo antes de copiar.</div>
+    </div>
+    <div style="padding:1rem 1.25rem;border-top:1px solid var(--borda);display:flex;gap:.75rem;flex-shrink:0">
+      <button onclick="copiarConfirmacao()" style="
+        flex:1;padding:.8rem;border-radius:9px;border:none;cursor:pointer;
+        background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;
+        font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;
+        display:flex;align-items:center;justify-content:center;gap:.5rem;
+      ">📋 Copiar texto</button>
+      <button onclick="fecharModalWpp()" style="
+        padding:.8rem 1.2rem;border-radius:9px;border:1.5px solid var(--borda);
+        background:var(--bg2);color:var(--texto-sec);cursor:pointer;
+        font-family:'DM Sans',sans-serif;font-size:.88rem;
+      ">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== DADOS ==========
 const SENHA = 'lais2024';
@@ -1002,6 +1033,23 @@ function getData(key){try{return JSON.parse(localStorage.getItem('ls_'+key)||'[]
 function setData(key,val){localStorage.setItem('ls_'+key,JSON.stringify(val))}
 // Remove emojis e espaços extras de nomes de produtos
 function normP(n){return(n||'').replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{27FF}]\s*/gu,'').trim()}
+
+// Formata detalhe estruturado (multiline) em HTML com labels destacados
+function fmtDetalhe(detalhe){
+  if(!detalhe) return '';
+  return detalhe.split('\n').map(linha=>{
+    const idx = linha.indexOf(':');
+    if(idx>0 && idx<20){
+      const label = linha.substring(0,idx);
+      const valor = linha.substring(idx+1).trim();
+      return `<div style="display:flex;gap:.35rem;flex-wrap:wrap">
+        <span style="color:var(--texto-dim);font-size:.72rem;white-space:nowrap">${label}:</span>
+        <span style="color:var(--texto);font-size:.78rem;font-weight:500">${valor}</span>
+      </div>`;
+    }
+    return `<div style="font-size:.76rem;color:var(--texto-sec)">${linha}</div>`;
+  }).join('');
+}
 
 // ========== LOGIN ==========
 function doLogin(){
@@ -1196,7 +1244,8 @@ function npAddBolo(){
   const total=base+tierAdd[tier]+extra;
   const tamNome=tam.firstChild.textContent.trim();
   const cobNome=cob.firstChild.textContent.trim();
-  npCarrAdd(`Bolo Decorado`,`Massa: ${mas} · Tamanho: ${tamNome} · Recheio: ${recs.join(' + ')} · Cobertura: ${cobNome}`,total);
+  const detalheEstruturado = `Massa: ${mas}\nTamanho: ${tamNome}\nRecheio: ${recs.join(' + ')}\nCobertura: ${cobNome}`;
+  npCarrAdd(`Bolo Decorado`, detalheEstruturado, total);
   ['np-dec-mas','np-dec-tam','np-dec-rec','np-dec-cob'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-dec-preview','');
 }
@@ -1206,7 +1255,9 @@ function npAddSimples(){
   if(!sab){notif('Escolha o sabor','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   const key=tam.dataset.key;const preco=parseFloat(sab.dataset[key]||0);
-  npCarrAdd(`Bolo Simples`,`${sab.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  const sabNome = sab.firstChild.textContent.trim();
+  const tamNomeSim = tam.firstChild.textContent.trim();
+  npCarrAdd(`Bolo Simples`, `Sabor: ${sabNome}\nTamanho: ${tamNomeSim}`, preco);
   ['np-sim-sab','np-sim-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-sim-preview','');
 }
@@ -1217,7 +1268,7 @@ function npAddVulcao(){
   if(!cob){notif('Escolha a cobertura','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   const key=tam.dataset.key;const preco=parseFloat(cob.dataset[key]||0);
-  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas} · ${cob.firstChild.textContent.trim()} · ${tam.firstChild.textContent.trim()}`,preco);
+  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas}\nCobertura/Recheio: ${cob.firstChild.textContent.trim()}\nTamanho: ${tam.firstChild.textContent.trim()}`,preco);
   ['np-vul-mas','np-vul-cob','np-vul-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-vul-preview','');
 }
@@ -1291,7 +1342,7 @@ function npAddSobremesa(){
     const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
     preco=t[tk]||0;
   }
-  npCarrAdd(`Sobremesa`,`${item} · ${tam}`,preco);
+  npCarrAdd(`Sobremesa`,`Tipo: ${item}\nTamanho: ${tam}`,preco);
   ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
 }
 
@@ -1301,7 +1352,7 @@ function npAddKit(){
   if(!mas){notif('Escolha a massa','error');return}
   if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
   const preco=parseFloat(kit.dataset.preco||0);
-  npCarrAdd(`Kit Festa`,`${kit.firstChild.textContent.trim()} · Massa: ${mas} · Recheio: ${recs.join(' + ')}`,preco);
+  npCarrAdd(`Kit Festa`,`Kit: ${kit.firstChild.textContent.trim()}\nMassa: ${mas}\nRecheio: ${recs.join(' + ')}`,preco);
   ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
 }
 
@@ -1447,7 +1498,7 @@ function renderCarrinho(){
     <div class="item-carrinho">
       <div style="flex:1;min-width:0">
         <div class="item-carrinho-nome">${item.nome}</div>
-        <div class="item-carrinho-sub">${item.detalhe}</div>
+        <div class="item-carrinho-sub">${fmtDetalhe(item.detalhe)}</div>
       </div>
       <div class="item-total">${item.preco>0?fmtBRL(item.preco):'—'}</div>
       <button class="item-del" onclick="removerItem(${item.id})">✕</button>
@@ -1532,7 +1583,7 @@ function renderPedidos(){
           ? `<div style="background:var(--bg2);border-radius:8px;padding:.5rem .7rem;margin-top:.4rem">
               ${p.itens.map(i=>`<div style="padding:.25rem 0;border-bottom:1px solid var(--borda)">
                 <div style="font-size:.82rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
-                ${i.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec);margin-top:.1rem;line-height:1.4">${i.detalhe}</div>`:''}
+                ${i.detalhe?`<div style="margin-top:.25rem">${fmtDetalhe(i.detalhe)}</div>`:''}
               </div>`).join('')}
             </div>`
           : `<div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>`
@@ -1563,6 +1614,13 @@ function renderPedidos(){
           font-family:'DM Sans',sans-serif;
         ">✕</button>
       </div>
+      <!-- Botão confirmação WhatsApp -->
+      <button onclick="abrirConfirmacao(${p.id})" style="
+        width:100%;margin-top:.6rem;padding:.55rem;border-radius:8px;
+        border:1.5px solid rgba(93,191,122,.3);background:rgba(93,191,122,.08);
+        color:var(--verde);cursor:pointer;font-size:.84rem;font-weight:500;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      ">📋 Gerar confirmação para WhatsApp</button>
     </div>`;
   });
   document.getElementById('tabela-pedidos').innerHTML=html;
@@ -1899,7 +1957,75 @@ function initApp(){
 }
 
 
-// ========== AGENDA ==========
+// ========== CONFIRMAÇÃO WHATSAPP ==========
+function abrirConfirmacao(id){
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+
+  // Monta linha de produto
+  const linhasProduto = p.itens && p.itens.length
+    ? p.itens.map(i=>{
+        const nome = normP(i.nome);
+        if(i.detalhe){
+          const det = i.detalhe.split('\n').map(l=>l.trim()).filter(Boolean).join(', ');
+          return `${nome}: ${det}`;
+        }
+        return nome;
+      }).join('\n* ')
+    : p.produtos.map(normP).join('\n* ');
+
+  const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+
+  const texto = `Olá, ${p.cliente}! 😊
+
+Segue a confirmação da sua encomenda:
+
+* Produto: ${linhasProduto}
+* Data da entrega: ${dt}
+* Horário previsto: ${p.obs&&p.obs.toLowerCase().includes('h')?p.obs.split(' ').find(w=>w.match(/\d+h/))||'a combinar':'a combinar'}
+* Local de entrega/retirada: ${p.obs&&(p.obs.toLowerCase().includes('entrega')||p.obs.toLowerCase().includes('retirada'))?p.obs:'a combinar'}
+* Valor: ${fmtBRL(p.valor)}
+
+Pagamento: 50% antecipado e o restante no ato da entrega ou retirada.
+
+Por favor, confira se todas as informações estão corretas. Caso deseje ajustar algo, é só me avisar! 🎂
+
+📲 Aproveite e já me siga no Instagram: www.instagram.com/laissantosconfeitaria
+Lá eu posto novidades, sabores e inspirações de bolos!
+
+💬 Salve meu contato para receber meus status e facilitar futuros pedidos. Será um prazer adoçar seus momentos novamente!`;
+
+  document.getElementById('wpp-texto').value = texto;
+  const modal = document.getElementById('modal-wpp');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalWpp(){
+  document.getElementById('modal-wpp').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function copiarConfirmacao(){
+  const texto = document.getElementById('wpp-texto').value;
+  navigator.clipboard.writeText(texto).then(()=>{
+    notif('Texto copiado! Cole no WhatsApp 💬');
+    setTimeout(fecharModalWpp, 1500);
+  }).catch(()=>{
+    // Fallback para dispositivos sem clipboard API
+    document.getElementById('wpp-texto').select();
+    document.execCommand('copy');
+    notif('Texto copiado! Cole no WhatsApp 💬');
+    setTimeout(fecharModalWpp, 1500);
+  });
+}
+
+document.getElementById('modal-wpp').addEventListener('click', function(e){
+  if(e.target===this) fecharModalWpp();
+});
+
+
 let agendaBaseDate = new Date();
 
 function agendaIrHoje(){ agendaBaseDate = new Date(); renderAgenda(); }
@@ -1963,7 +2089,7 @@ function renderAgenda(){
         const cor=statusColors[p.status]||'var(--texto-sec)';
         // Monta detalhes dos itens
         const detItens = p.itens && p.itens.length
-          ? p.itens.map(i=>`<div style="margin-top:.2rem"><span style="font-weight:500;color:var(--texto)">${normP(i.nome)}</span>${i.detalhe?`<span style="color:var(--texto-dim)"> · ${i.detalhe}</span>`:''}</div>`).join('')
+          ? p.itens.map(i=>`<div style="margin:.3rem 0;padding:.25rem 0;border-bottom:1px solid var(--borda)"><div style="font-size:.82rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>${i.detalhe?fmtDetalhe(i.detalhe):''}</div>`).join('')
           : `<div>${p.produtos.slice(0,2).map(normP).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>`;
         gridHtml += `<div class="agenda-pedido">
           <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
@@ -2005,7 +2131,11 @@ function renderAgenda(){
     const gcDate = p.data.replace(/-/g,'');
     // Monta descrição completa para o Google Agenda
     const gcItensDetalhe = p.itens && p.itens.length
-      ? p.itens.map(i=>`• ${normP(i.nome)}${i.detalhe?' → '+i.detalhe:''}`).join('\n')
+      ? p.itens.map(i=>{
+          const nome = normP(i.nome);
+          const det = i.detalhe ? '\n' + i.detalhe.split('\n').map(l=>'    '+l).join('\n') : '';
+          return `• ${nome}${det}`;
+        }).join('\n')
       : p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
     const gcDescTexto = [
       `👤 Cliente: ${p.cliente}`,
@@ -2039,7 +2169,7 @@ function renderAgenda(){
           ? p.itens.map(i=>`
             <div style="padding:.3rem 0;border-bottom:1px solid var(--borda)">
               <div style="font-size:.84rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
-              ${i.detalhe?`<div style="font-size:.75rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.5">${i.detalhe}</div>`:''}
+              ${i.detalhe?`<div style="margin-top:.3rem">${fmtDetalhe(i.detalhe)}</div>`:''}
               ${i.preco>0?`<div style="font-size:.75rem;color:var(--rosa);margin-top:.1rem">${fmtBRL(i.preco)}</div>`:''}
             </div>`).join('').replace(/border-bottom:1px solid var\(--borda\)">\s*<\/div>\s*$/, '">')
           : `<div style="font-size:.84rem;color:var(--texto-sec)">${p.produtos.map(normP).join(', ')}</div>`
