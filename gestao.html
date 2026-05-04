@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.9 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.0 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -361,33 +361,42 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <!-- ATALHOS RÁPIDOS -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1.5rem">
         <button onclick="abrirModalNovoPedido()" style="
           display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
           background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));color:#fff;
-          border:none;border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          border:none;border-radius:14px;padding:.9rem .4rem;cursor:pointer;
           font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(232,145,184,.3);
         ">
-          <span style="font-size:1.5rem">＋</span>
-          <span style="font-size:.78rem;font-weight:500">Novo Pedido</span>
+          <span style="font-size:1.4rem">＋</span>
+          <span style="font-size:.72rem;font-weight:500">Novo Pedido</span>
+        </button>
+        <button onclick="abrirModalOrcamento()" style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+          background:var(--card);color:var(--amarelo);
+          border:1.5px solid rgba(240,192,64,.25);border-radius:14px;padding:.9rem .4rem;cursor:pointer;
+          font-family:'DM Sans',sans-serif;
+        ">
+          <span style="font-size:1.4rem">💰</span>
+          <span style="font-size:.72rem;font-weight:500">Orçamento</span>
         </button>
         <button onclick="showPage('agenda')" style="
           display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
           background:var(--card);color:var(--azul);
-          border:1.5px solid rgba(96,184,240,.25);border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          border:1.5px solid rgba(96,184,240,.25);border-radius:14px;padding:.9rem .4rem;cursor:pointer;
           font-family:'DM Sans',sans-serif;
         ">
-          <span style="font-size:1.5rem">📅</span>
-          <span style="font-size:.78rem;font-weight:500">Ver Agenda</span>
+          <span style="font-size:1.4rem">📅</span>
+          <span style="font-size:.72rem;font-weight:500">Agenda</span>
         </button>
         <button onclick="abrirDespesaRapida()" style="
           display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
-          background:var(--card);color:var(--amarelo);
-          border:1.5px solid rgba(240,192,64,.25);border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          background:var(--card);color:var(--verde);
+          border:1.5px solid rgba(93,191,122,.25);border-radius:14px;padding:.9rem .4rem;cursor:pointer;
           font-family:'DM Sans',sans-serif;
         ">
-          <span style="font-size:1.5rem">⊟</span>
-          <span style="font-size:.78rem;font-weight:500">Despesa</span>
+          <span style="font-size:1.4rem">⊟</span>
+          <span style="font-size:.72rem;font-weight:500">Despesa</span>
         </button>
       </div>
 
@@ -566,6 +575,77 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div><!-- /main -->
 </div><!-- /app -->
 
+<!-- MODAL ORÇAMENTO -->
+<div id="modal-orcamento" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.7);overflow-y:auto;padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:960px;margin:0 auto;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
+      <div>
+        <span style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--texto)">💰 Novo Orçamento</span>
+        <div style="font-size:.75rem;color:var(--texto-dim);margin-top:.15rem">Não será salvo como pedido — apenas gera o texto para WhatsApp</div>
+      </div>
+      <button onclick="fecharModalOrcamento()" style="background:none;border:none;color:var(--texto-sec);font-size:1.4rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
+    </div>
+    <div style="padding:1.25rem">
+      <!-- Dados básicos -->
+      <div class="form-card" style="margin-bottom:1.25rem;border-color:rgba(240,192,64,.2);background:rgba(240,192,64,.04)">
+        <h2 style="color:var(--amarelo)">Dados do orçamento</h2>
+        <div class="form-row" style="margin-bottom:.75rem">
+          <div><label>Nome do cliente</label><input type="text" id="orc-cliente" placeholder="Nome do cliente"></div>
+          <div><label>Data do evento</label><input type="date" id="orc-data"></div>
+        </div>
+        <div><label>Observações / personalização</label><input type="text" id="orc-obs" placeholder="Ex: Tema safari, escrever Feliz Aniversário..."></div>
+      </div>
+
+      <!-- Carrinho de orçamento -->
+      <div class="np-layout">
+        <div class="np-left">
+          <div class="form-card" style="margin-bottom:0">
+            <h2>Selecionar itens</h2>
+            <div class="np-tabs" id="np-tabs-orc">
+              <button class="np-tab active" onclick="npTabOrc('dec',this)">🎂 Bolo Decorado</button>
+              <button class="np-tab" onclick="npTabOrc('simples',this)">🍰 Bolo Simples</button>
+              <button class="np-tab" onclick="npTabOrc('vulcao',this)">🌋 Vulcão</button>
+              <button class="np-tab" onclick="npTabOrc('doces',this)">🍬 Doces</button>
+              <button class="np-tab" onclick="npTabOrc('sob',this)">🍮 Sobremesas</button>
+              <button class="np-tab" onclick="npTabOrc('kit',this)">🎉 Kit Festa</button>
+              <button class="np-tab" onclick="npTabOrc('outros',this)">🧁 Cupcakes+</button>
+              <button class="np-tab" onclick="npTabOrc('sal',this)">🥐 Salgados</button>
+              <button class="np-tab" onclick="npTabOrc('unit',this)">🏷️ Unitários</button>
+            </div>
+            <div id="orc-cardapio-content"></div>
+          </div>
+        </div>
+        <!-- Carrinho orçamento -->
+        <div class="np-right">
+          <div class="carrinho-card" style="position:sticky;top:1.5rem">
+            <div class="carrinho-header">
+              <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--amarelo)">💰 Orçamento</span>
+              <span id="orc-badge" style="background:var(--amarelo);color:#000;font-size:.72rem;padding:.15rem .6rem;border-radius:20px">0 itens</span>
+            </div>
+            <div id="orc-itens"><div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div></div>
+            <div class="carrinho-footer">
+              <div class="carrinho-totais">
+                <div class="total-row total-final"><span>Total estimado</span><span id="orc-total" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--amarelo)">R$ 0,00</span></div>
+              </div>
+              <button onclick="gerarOrcamentoWhatsApp()" style="
+                width:100%;margin-top:1rem;padding:.9rem;border-radius:10px;border:none;
+                background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;
+                font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;cursor:pointer;
+              ">💬 Gerar orçamento para WhatsApp</button>
+              <button onclick="orcConverterPedido()" style="
+                width:100%;margin-top:.5rem;padding:.7rem;border-radius:10px;
+                border:1.5px solid var(--rosa-dim);background:var(--rosa-glow);
+                color:var(--rosa);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;
+              ">✓ Converter em pedido agendado</button>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:.5rem" onclick="limparCarrinhoOrc()">Limpar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL NOVO PEDIDO -->
 <div id="modal-novo-pedido" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.7);overflow-y:auto;padding:1rem">
   <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:960px;margin:0 auto;box-shadow:var(--sombra)">
@@ -657,6 +737,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Dois amores com morango</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Creme de coco com abacaxi</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Leite ninho com Nutella</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Ninho c/ morango</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com abacaxi</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com Oreo</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Caramelo salgado c/ mousse</div>
@@ -2013,7 +2094,160 @@ function abrirGoogleAgenda(id){
   window.open(url,'_blank');
 }
 
-// ========== DESPESA RÁPIDA ==========
+// ========== ORÇAMENTO ==========
+let carrinhoOrc = [];
+let npQtysOrc = {doc:25, out:1};
+
+function abrirModalOrcamento(){
+  carrinhoOrc = [];
+  document.getElementById('orc-cliente').value = '';
+  document.getElementById('orc-data').value = hoje();
+  document.getElementById('orc-obs').value = '';
+  renderCarrinhoOrc();
+  // Copia o conteúdo do cardápio para o orçamento
+  const src = document.getElementById('np-cardapio-content');
+  const dst = document.getElementById('orc-cardapio-content');
+  if(src && dst) dst.innerHTML = src.innerHTML;
+  // Reset tabs
+  document.querySelectorAll('#np-tabs-orc .np-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('#np-tabs-orc .np-tab').classList.add('active');
+  document.getElementById('modal-orcamento').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-orcamento').scrollTop = 0;
+}
+
+function fecharModalOrcamento(){
+  document.getElementById('modal-orcamento').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function npTabOrc(id, el){
+  document.querySelectorAll('#np-tabs-orc .np-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  // Mostra conteúdo correspondente dentro do orçamento
+  const dst = document.getElementById('orc-cardapio-content');
+  if(!dst) return;
+  dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  const tab = dst.querySelector('#np-'+id);
+  if(tab) tab.classList.add('active');
+}
+
+function orcCarrAdd(nome, detalhe, preco){
+  carrinhoOrc.push({id:Date.now(), nome, detalhe, preco});
+  renderCarrinhoOrc();
+  notif(normP(nome)+' adicionado ao orçamento');
+}
+
+function orcRemoverItem(id){
+  carrinhoOrc = carrinhoOrc.filter(i=>i.id!=id);
+  renderCarrinhoOrc();
+}
+
+function limparCarrinhoOrc(){
+  carrinhoOrc = [];
+  renderCarrinhoOrc();
+}
+
+function renderCarrinhoOrc(){
+  const badge = document.getElementById('orc-badge');
+  if(badge) badge.textContent = carrinhoOrc.length+(carrinhoOrc.length===1?' item':' itens');
+  const cont = document.getElementById('orc-itens');
+  if(!cont) return;
+  const total = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const totEl = document.getElementById('orc-total');
+  if(totEl) totEl.textContent = fmtBRL(total);
+  if(!carrinhoOrc.length){
+    cont.innerHTML='<div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div>';
+    return;
+  }
+  cont.innerHTML = carrinhoOrc.map(item=>`
+    <div class="item-carrinho">
+      <div style="flex:1;min-width:0">
+        <div class="item-carrinho-nome">${normP(item.nome)}</div>
+        ${item.detalhe?`<div class="item-carrinho-sub">${item.detalhe.replace(/\n/g,' · ')}</div>`:''}
+      </div>
+      <div class="item-total">${item.preco>0?fmtBRL(item.preco):'—'}</div>
+      <button class="item-del" onclick="orcRemoverItem(${item.id})">✕</button>
+    </div>`).join('');
+}
+
+function gerarOrcamentoWhatsApp(){
+  const cliente = document.getElementById('orc-cliente').value.trim() || 'cliente';
+  const dataEvento = document.getElementById('orc-data').value;
+  const obs = document.getElementById('orc-obs').value.trim();
+  const total = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const dt = dataEvento ? new Date(dataEvento+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) : 'a combinar';
+
+  if(!carrinhoOrc.length){notif('Adicione ao menos um item ao orçamento','error');return}
+
+  const linhas = carrinhoOrc.map(i=>{
+    const nome = normP(i.nome);
+    if(i.detalhe){
+      const det = i.detalhe.replace(/ · /g,'\n').replace(/·/g,'\n');
+      const linhasDetalhe = det.split('\n').filter(l=>l.trim()).map(l=>{
+        const idx=l.indexOf(':');
+        return idx>0 ? `   ${l.substring(0,idx).trim()}: ${l.substring(idx+1).trim()}` : `   ${l.trim()}`;
+      }).join('\n');
+      return `• ${nome}\n${linhasDetalhe}`;
+    }
+    return `• ${nome}`;
+  }).join('\n\n');
+
+  const texto =
+`Olá, ${cliente}! 😊
+
+Segue o orçamento para o seu evento:
+
+${linhas}
+
+📅 Data do evento: ${dt}
+💰 Valor estimado: ${fmtBRL(total)}${obs?`\n📝 ${obs}`:''}
+
+Este orçamento tem validade de 7 dias. Para confirmar o pedido, basta me avisar! 🎂
+
+📲 Me siga no Instagram: www.instagram.com/laissantosconfeitaria
+Lá eu posto novidades, sabores e inspirações de bolos!
+
+💬 Salve meu contato para facilitar futuros pedidos. Será um prazer adoçar seus momentos!`;
+
+  // Abre modal WhatsApp com o texto
+  document.getElementById('wpp-texto').value = texto;
+  document.getElementById('modal-wpp').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function orcConverterPedido(){
+  if(!carrinhoOrc.length){notif('Adicione ao menos um item','error');return}
+  // Passa itens do orçamento para o carrinho do pedido
+  carrinho = carrinhoOrc.map(i=>({...i, id:Date.now()+Math.random()}));
+  const cliente = document.getElementById('orc-cliente').value.trim();
+  const data = document.getElementById('orc-data').value;
+  const obs = document.getElementById('orc-obs').value.trim();
+  fecharModalOrcamento();
+  abrirModalNovoPedido();
+  // Preenche os campos com os dados do orçamento
+  setTimeout(()=>{
+    if(cliente) document.getElementById('ped-cliente').value = cliente;
+    if(data) document.getElementById('ped-data').value = data;
+    if(obs) document.getElementById('ped-obs').value = obs;
+    document.getElementById('ped-status').value = 'agendado';
+    renderCarrinho();
+  }, 200);
+  notif('Orçamento convertido em pedido ✓');
+}
+
+// Sobrescreve npCarrAdd para redirecionar para orçamento quando modal estiver aberto
+const _npCarrAddOrig = npCarrAdd;
+function npCarrAdd(nome, detalhe, preco){
+  const orcAberto = document.getElementById('modal-orcamento').style.display !== 'none';
+  if(orcAberto){
+    orcCarrAdd(nome, detalhe, preco);
+  } else {
+    _npCarrAddOrig(nome, detalhe, preco);
+  }
+}
+
+
 function abrirDespesaRapida(){
   document.getElementById('dr-data').value=hoje();
   document.getElementById('dr-desc').value='';
