@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.7 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.8 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -337,7 +337,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <a data-page="agenda" onclick="showPage('agenda')"><span class="icon">📅</span> Agenda</a>
       <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
       <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
-      <a data-page="produtos" onclick="showPage('produtos')"><span class="icon">✦</span> Cardápio</a>
       <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
     </nav>
     <div class="sidebar-footer">
@@ -479,39 +478,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
 
     <!-- PRODUTOS (CARDÁPIO) -->
-    <div class="page" id="page-produtos">
-      <div class="page-header">
-        <h1>Cardápio</h1>
-        <p>Gerencie seus produtos e preços</p>
-      </div>
-      <div class="form-card">
-        <h2>Adicionar produto</h2>
-        <div class="form-row">
-          <div><label>Nome do produto</label><input type="text" id="prod-nome" placeholder="Ex: Bolo Naked Cake"></div>
-          <div>
-            <label>Categoria</label>
-            <select id="prod-cat">
-              <option value="bolos">Bolos</option>
-              <option value="brigadeiros">Brigadeiros</option>
-              <option value="tortas">Tortas</option>
-              <option value="cupcakes">Cupcakes</option>
-              <option value="pascoa">Páscoa</option>
-              <option value="festas">Festas</option>
-              <option value="outros">Outros</option>
-            </select>
-          </div>
-          <div><label>Preço (R$)</label><input type="number" id="prod-preco" placeholder="0,00" step="0.01" min="0"></div>
-        </div>
-        <div class="form-row">
-          <div style="grid-column:1/-1"><label>Descrição (opcional)</label><input type="text" id="prod-desc" placeholder="Ex: Bolo de dois andares com recheio de morango"></div>
-        </div>
-        <button class="btn btn-primary" onclick="salvarProduto()">Adicionar ao cardápio</button>
-      </div>
-      <div class="table-card">
-        <div class="table-head"><h2>Produtos cadastrados</h2></div>
-        <div id="lista-produtos"></div>
-      </div>
-    </div>
 
     <!-- RELATÓRIOS -->
     <div class="page" id="page-relatorios">
@@ -622,7 +588,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
               </div>
             </div>
             <div class="form-row" style="margin-bottom:.75rem">
-              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp</option><option value="instagram">Instagram</option><option value="indicacao">Indicação</option><option value="loja">Loja</option><option value="google">Google</option><option value="outro">Outro</option></select></div>
+              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option></select></div>
               <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
             </div>
             <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
@@ -1092,12 +1058,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </div>
         <div><label>Canal</label>
           <select id="edit-canal">
-            <option value="whatsapp">WhatsApp</option>
-            <option value="instagram">Instagram</option>
+            <option value="whatsapp">WhatsApp (já clientes)</option>
             <option value="indicacao">Indicação</option>
-            <option value="loja">Loja</option>
             <option value="google">Google</option>
-            <option value="outro">Outro</option>
           </select>
         </div>
       </div>
@@ -1976,15 +1939,56 @@ function renderPedidos(){
           font-family:'DM Sans',sans-serif;
         ">${protegido?'🔒':'✕'}</button>
       </div>
+      ${!protegido?`
       <button onclick="abrirConfirmacao(${p.id})" style="
         width:100%;margin-top:.6rem;padding:.55rem;border-radius:8px;
         border:1.5px solid rgba(93,191,122,.3);background:rgba(93,191,122,.08);
         color:var(--verde);cursor:pointer;font-size:.84rem;font-weight:500;
         font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.4rem;
-      ">📋 Gerar confirmação para WhatsApp</button>
+      ">📋 Gerar confirmação para WhatsApp</button>`:''}
+      <button onclick="abrirGoogleAgenda(${p.id})" style="
+        width:100%;margin-top:.4rem;padding:.55rem;border-radius:8px;
+        border:1.5px solid rgba(96,184,240,.25);background:rgba(96,184,240,.08);
+        color:var(--azul);cursor:pointer;font-size:.84rem;font-weight:500;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      ">📅 + Google Agenda</button>
     </div>`;
   });
   document.getElementById('tabela-pedidos').innerHTML=html;
+}
+
+// ========== GOOGLE AGENDA DIRETO ==========
+function abrirGoogleAgenda(id){
+  const pedidos=getData('pedidos');
+  const p=pedidos.find(x=>x.id==id);
+  if(!p)return;
+  const gcDateBase=p.data.replace(/-/g,'');
+  let gcDates;
+  if(p.hora){
+    const[hh,mm]=p.hora.split(':');
+    const hEnd=String((parseInt(hh)+1)%24).padStart(2,'0');
+    gcDates=`${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+  } else {
+    gcDates=`${gcDateBase}/${gcDateBase}`;
+  }
+  const itensDetalhe=p.itens&&p.itens.length
+    ?p.itens.map(i=>{
+        const nome=normP(i.nome);
+        const det=i.detalhe?'\n'+i.detalhe.split('\n').map(l=>'    '+l).join('\n'):'';
+        return `• ${nome}${det}`;
+      }).join('\n')
+    :p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+  const desc=[
+    `👤 Cliente: ${p.cliente}`,``,`🎂 Encomenda:`,itensDetalhe,``,
+    `💰 Valor: ${fmtBRL(p.valor)}`,
+    p.extra&&p.extra.val>0?`   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}`:null,
+    p.hora?`⏰ Horário: ${p.hora}`:null,
+    p.local?`📍 Local: ${p.local}`:null,
+    p.obs?`📝 Obs: ${p.obs}`:null,
+  ].filter(l=>l!==null).join('\n');
+  const titulo=encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+  const url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${gcDates}&details=${encodeURIComponent(desc)}`;
+  window.open(url,'_blank');
 }
 
 // ========== DESPESA RÁPIDA ==========
