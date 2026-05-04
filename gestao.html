@@ -329,12 +329,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.0 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.1 · mai/26</span>
       </div>
     </div>
     <nav>
       <a class="active" data-page="dashboard" onclick="showPage('dashboard')"><span class="icon">◈</span> Dashboard</a>
       <a data-page="agenda" onclick="showPage('agenda')"><span class="icon">📅</span> Agenda</a>
+      <a data-page="orcamentos" onclick="showPage('orcamentos')"><span class="icon">💰</span> Orçamentos</a>
       <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
       <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
       <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
@@ -455,6 +456,21 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div id="tabela-pedidos"></div>
       </div>
     </div>
+    <!-- ORÇAMENTOS SALVOS -->
+    <div class="page" id="page-orcamentos">
+      <div class="page-header">
+        <div><h1>Orçamentos</h1><p>Propostas enviadas e pendentes de confirmação</p></div>
+        <button onclick="abrirModalOrcamento()" style="
+          display:flex;align-items:center;gap:.5rem;
+          background:linear-gradient(135deg,#a07010,var(--amarelo));
+          color:#000;border:none;border-radius:12px;padding:.7rem 1.25rem;
+          font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
+          cursor:pointer;white-space:nowrap;flex-shrink:0;
+        ">＋ Novo orçamento</button>
+      </div>
+      <div id="lista-orcamentos"></div>
+    </div>
+
     <!-- DESPESAS -->
     <div class="page" id="page-despesas">
       <div class="page-header">
@@ -624,14 +640,31 @@ tr:hover td{background:rgba(255,255,255,.02)}
             </div>
             <div id="orc-itens"><div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div></div>
             <div class="carrinho-footer">
+              <!-- Adicionais -->
+              <div style="background:var(--bg2);border-radius:9px;border:1px solid var(--borda);padding:.75rem;margin-bottom:.75rem">
+                <div style="font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem">Adicionais</div>
+                <div style="display:flex;flex-direction:column;gap:.4rem" id="orc-adicionais-lista"></div>
+                <div style="display:flex;gap:.4rem;margin-top:.5rem">
+                  <input type="text" id="orc-adic-nome" placeholder="Ex: Topo, escrita, cobertura..." style="flex:1;font-size:.8rem;padding:.4rem .6rem">
+                  <input type="number" id="orc-adic-val" placeholder="R$" step="0.01" min="0" style="width:72px;font-size:.8rem;padding:.4rem .5rem">
+                  <button onclick="orcAddAdicional()" style="padding:.4rem .7rem;border-radius:7px;border:1.5px solid var(--borda);background:var(--card);color:var(--texto-sec);cursor:pointer;font-size:.85rem;white-space:nowrap">＋</button>
+                </div>
+              </div>
               <div class="carrinho-totais">
+                <div class="total-row"><span>Subtotal itens</span><span id="orc-subtotal">R$ 0,00</span></div>
+                <div class="total-row" id="orc-adic-total-row" style="display:none"><span>Adicionais</span><span id="orc-adic-total" style="color:var(--texto)">R$ 0,00</span></div>
                 <div class="total-row total-final"><span>Total estimado</span><span id="orc-total" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--amarelo)">R$ 0,00</span></div>
               </div>
               <button onclick="gerarOrcamentoWhatsApp()" style="
-                width:100%;margin-top:1rem;padding:.9rem;border-radius:10px;border:none;
+                width:100%;margin-top:.75rem;padding:.9rem;border-radius:10px;border:none;
                 background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;
                 font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;cursor:pointer;
               ">💬 Gerar orçamento para WhatsApp</button>
+              <button onclick="salvarOrcamento()" style="
+                width:100%;margin-top:.5rem;padding:.75rem;border-radius:10px;
+                border:1.5px solid var(--amarelo);background:rgba(240,192,64,.08);
+                color:var(--amarelo);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;
+              ">💾 Salvar orçamento</button>
               <button onclick="orcConverterPedido()" style="
                 width:100%;margin-top:.5rem;padding:.7rem;border-radius:10px;
                 border:1.5px solid var(--rosa-dim);background:var(--rosa-glow);
@@ -1290,6 +1323,7 @@ function showPage(id){
   document.querySelector(`nav a[data-page="${id}"]`).classList.add('active');
   if(id==='dashboard')renderDashboard();
   if(id==='agenda')renderAgenda();
+  if(id==='orcamentos')renderOrcamentos();
   if(id==='pedidos')renderPedidos();
   if(id==='despesas')renderDespesas();
   if(id==='produtos')renderProdutos();
@@ -2096,21 +2130,40 @@ function abrirGoogleAgenda(id){
 
 // ========== ORÇAMENTO ==========
 let carrinhoOrc = [];
-let npQtysOrc = {doc:25, out:1};
+let adicionaisOrc = [];
+let orcEditId = null;
 
-function abrirModalOrcamento(){
+function abrirModalOrcamento(idEditar){
+  orcEditId = idEditar || null;
   carrinhoOrc = [];
-  document.getElementById('orc-cliente').value = '';
-  document.getElementById('orc-data').value = hoje();
-  document.getElementById('orc-obs').value = '';
+  adicionaisOrc = [];
+  if(idEditar){
+    const orcs = getData('orcamentos');
+    const orc = orcs.find(o=>o.id==idEditar);
+    if(orc){
+      carrinhoOrc = (orc.itens||[]).map(i=>({...i}));
+      adicionaisOrc = (orc.adicionais||[]).map(a=>({...a}));
+      setTimeout(()=>{
+        document.getElementById('orc-cliente').value = orc.cliente||'';
+        document.getElementById('orc-data').value = orc.data||hoje();
+        document.getElementById('orc-obs').value = orc.obs||'';
+      }, 100);
+    }
+  } else {
+    document.getElementById('orc-cliente').value = '';
+    document.getElementById('orc-data').value = hoje();
+    document.getElementById('orc-obs').value = '';
+  }
   renderCarrinhoOrc();
-  // Copia o conteúdo do cardápio para o orçamento
+  renderAdicionaisOrc();
   const src = document.getElementById('np-cardapio-content');
   const dst = document.getElementById('orc-cardapio-content');
   if(src && dst) dst.innerHTML = src.innerHTML;
-  // Reset tabs
   document.querySelectorAll('#np-tabs-orc .np-tab').forEach(t=>t.classList.remove('active'));
   document.querySelector('#np-tabs-orc .np-tab').classList.add('active');
+  document.querySelectorAll('#orc-cardapio-content .np-tab-content').forEach(t=>t.classList.remove('active'));
+  const first = document.querySelector('#orc-cardapio-content .np-tab-content');
+  if(first) first.classList.add('active');
   document.getElementById('modal-orcamento').style.display = 'block';
   document.body.style.overflow = 'hidden';
   document.getElementById('modal-orcamento').scrollTop = 0;
@@ -2119,6 +2172,7 @@ function abrirModalOrcamento(){
 function fecharModalOrcamento(){
   document.getElementById('modal-orcamento').style.display = 'none';
   document.body.style.overflow = '';
+  orcEditId = null;
 }
 
 function npTabOrc(id, el){
@@ -2130,6 +2184,36 @@ function npTabOrc(id, el){
   dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
   const tab = dst.querySelector('#np-'+id);
   if(tab) tab.classList.add('active');
+}
+
+// Adicionais
+function orcAddAdicional(){
+  const nome = document.getElementById('orc-adic-nome').value.trim();
+  const val = parseFloat(document.getElementById('orc-adic-val').value)||0;
+  if(!nome){notif('Digite o nome do adicional','error');return}
+  adicionaisOrc.push({id:Date.now(), nome, val});
+  document.getElementById('orc-adic-nome').value='';
+  document.getElementById('orc-adic-val').value='';
+  renderAdicionaisOrc();
+  renderCarrinhoOrc();
+}
+function orcRemoverAdicional(id){
+  adicionaisOrc = adicionaisOrc.filter(a=>a.id!=id);
+  renderAdicionaisOrc();
+  renderCarrinhoOrc();
+}
+function renderAdicionaisOrc(){
+  const cont = document.getElementById('orc-adicionais-lista');
+  if(!cont) return;
+  if(!adicionaisOrc.length){cont.innerHTML='<div style="font-size:.78rem;color:var(--texto-dim);padding:.2rem 0">Nenhum adicional</div>';return}
+  cont.innerHTML = adicionaisOrc.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.3rem .5rem;background:var(--card);border-radius:6px;border:1px solid var(--borda);margin-bottom:.3rem">
+      <span style="font-size:.8rem;color:var(--texto)">${a.nome}</span>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-size:.8rem;color:var(--amarelo)">${a.val>0?'+'+fmtBRL(a.val):'—'}</span>
+        <button onclick="orcRemoverAdicional(${a.id})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.82rem">✕</button>
+      </div>
+    </div>`).join('');
 }
 
 function orcCarrAdd(nome, detalhe, preco){
@@ -2145,6 +2229,8 @@ function orcRemoverItem(id){
 
 function limparCarrinhoOrc(){
   carrinhoOrc = [];
+  adicionaisOrc = [];
+  renderAdicionaisOrc();
   renderCarrinhoOrc();
 }
 
@@ -2153,8 +2239,16 @@ function renderCarrinhoOrc(){
   if(badge) badge.textContent = carrinhoOrc.length+(carrinhoOrc.length===1?' item':' itens');
   const cont = document.getElementById('orc-itens');
   if(!cont) return;
-  const total = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const sub = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const adic = adicionaisOrc.reduce((s,a)=>s+(a.val||0),0);
+  const total = sub+adic;
+  const subEl = document.getElementById('orc-subtotal');
+  const adicRowEl = document.getElementById('orc-adic-total-row');
+  const adicEl = document.getElementById('orc-adic-total');
   const totEl = document.getElementById('orc-total');
+  if(subEl) subEl.textContent = fmtBRL(sub);
+  if(adicRowEl) adicRowEl.style.display = adic>0?'flex':'none';
+  if(adicEl) adicEl.textContent = fmtBRL(adic);
   if(totEl) totEl.textContent = fmtBRL(total);
   if(!carrinhoOrc.length){
     cont.innerHTML='<div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div>';
@@ -2175,7 +2269,9 @@ function gerarOrcamentoWhatsApp(){
   const cliente = document.getElementById('orc-cliente').value.trim() || 'cliente';
   const dataEvento = document.getElementById('orc-data').value;
   const obs = document.getElementById('orc-obs').value.trim();
-  const total = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const sub = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const adic = adicionaisOrc.reduce((s,a)=>s+(a.val||0),0);
+  const total = sub+adic;
   const dt = dataEvento ? new Date(dataEvento+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) : 'a combinar';
 
   if(!carrinhoOrc.length){notif('Adicione ao menos um item ao orçamento','error');return}
@@ -2193,17 +2289,21 @@ function gerarOrcamentoWhatsApp(){
     return `• ${nome}`;
   }).join('\n\n');
 
+  const linhasAdic = adicionaisOrc.length
+    ? '\n\n*Adicionais:*\n' + adicionaisOrc.map(a=>`• ${a.nome}${a.val>0?' — '+fmtBRL(a.val):''}`).join('\n')
+    : '';
+
   const texto =
 `Olá, ${cliente}! 😊
 
 Segue o orçamento para o seu evento:
 
-${linhas}
+${linhas}${linhasAdic}
 
 📅 Data do evento: ${dt}
 💰 Valor estimado: ${fmtBRL(total)}${obs?`\n📝 ${obs}`:''}
 
-Este orçamento tem validade de 7 dias. Para confirmar o pedido, basta me avisar! 🎂
+Este orçamento tem validade de 7 dias. Para confirmar o pedido, é só me avisar! 🎂
 
 📲 Me siga no Instagram: www.instagram.com/laissantosconfeitaria
 Lá eu posto novidades, sabores e inspirações de bolos!
@@ -2234,6 +2334,117 @@ function orcConverterPedido(){
     renderCarrinho();
   }, 200);
   notif('Orçamento convertido em pedido ✓');
+}
+
+// Salvar orçamento
+function salvarOrcamento(){
+  const cliente = document.getElementById('orc-cliente').value.trim();
+  const data = document.getElementById('orc-data').value;
+  const obs = document.getElementById('orc-obs').value.trim();
+  if(!cliente){notif('Digite o nome do cliente','error');return}
+  if(!carrinhoOrc.length){notif('Adicione ao menos um item','error');return}
+  const sub = carrinhoOrc.reduce((s,i)=>s+(i.preco||0),0);
+  const adic = adicionaisOrc.reduce((s,a)=>s+(a.val||0),0);
+  const total = sub+adic;
+  const orcs = getData('orcamentos');
+  if(orcEditId){
+    const idx = orcs.findIndex(o=>o.id==orcEditId);
+    if(idx>=0) orcs[idx]={...orcs[idx],cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,updatedAt:Date.now()};
+  } else {
+    orcs.push({id:Date.now(),cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,createdAt:Date.now(),status:'pendente'});
+  }
+  setData('orcamentos',orcs);
+  fecharModalOrcamento();
+  notif('Orçamento salvo ✓');
+  if(document.getElementById('page-orcamentos').classList.contains('active')) renderOrcamentos();
+}
+
+function renderOrcamentos(){
+  const orcs = getData('orcamentos').sort((a,b)=>b.id-a.id);
+  const cont = document.getElementById('lista-orcamentos');
+  if(!cont) return;
+  if(!orcs.length){
+    cont.innerHTML=`<div class="table-card"><div class="empty" style="padding:3rem;text-align:center">Nenhum orçamento salvo<br><span style="font-size:.78rem;color:var(--texto-dim)">Toque em ＋ Novo orçamento para começar</span></div></div>`;
+    return;
+  }
+  let html='<div style="display:flex;flex-direction:column;gap:.75rem">';
+  orcs.forEach(orc=>{
+    const dt = orc.data ? new Date(orc.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '—';
+    const itensStr = (orc.itens||[]).map(i=>normP(i.nome)).join(', ')||'—';
+    const adic = (orc.adicionais||[]);
+    html+=`<div style="background:var(--card);border-radius:14px;border:1px solid var(--borda);overflow:hidden">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:.85rem 1rem;background:var(--bg2);border-bottom:1px solid var(--borda)">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.95rem;font-weight:600;color:var(--texto)">${orc.cliente}</div>
+          <div style="font-size:.75rem;color:var(--texto-sec);margin-top:.1rem">📅 ${dt}</div>
+          ${orc.obs?`<div style="font-size:.73rem;color:var(--texto-dim);margin-top:.1rem">📝 ${orc.obs}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0;margin-left:.75rem">
+          <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--amarelo)">${fmtBRL(orc.total||0)}</span>
+          <select onchange="orcAlterarStatus(${orc.id},this.value)" style="font-size:.72rem;padding:.25rem .45rem;border-radius:6px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+            <option value="pendente" ${orc.status==='pendente'?'selected':''}>⏳ Pendente</option>
+            <option value="enviado" ${orc.status==='enviado'?'selected':''}>📤 Enviado</option>
+            <option value="confirmado" ${orc.status==='confirmado'?'selected':''}>✓ Confirmado</option>
+            <option value="recusado" ${orc.status==='recusado'?'selected':''}>✕ Recusado</option>
+          </select>
+        </div>
+      </div>
+      <div style="padding:.6rem 1rem;font-size:.8rem;color:var(--texto-sec);border-bottom:1px solid var(--borda)">
+        ${itensStr}${adic.length?`<span style="color:var(--texto-dim)"> · +${adic.map(a=>a.nome).join(', ')}</span>`:''}
+      </div>
+      <div style="display:flex;gap:.5rem;padding:.75rem 1rem;flex-wrap:wrap">
+        <button onclick="abrirModalOrcamento(${orc.id})" style="flex:1;min-width:60px;padding:.5rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto-sec);cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif">✏️ Editar</button>
+        <button onclick="orcGerarWhatsAppSalvo(${orc.id})" style="flex:1;min-width:60px;padding:.5rem;border-radius:8px;border:1.5px solid rgba(37,211,102,.3);background:rgba(37,211,102,.08);color:#25D366;cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif">💬 WhatsApp</button>
+        <button onclick="orcConverterPedidoSalvo(${orc.id})" style="flex:2;min-width:100px;padding:.5rem;border-radius:8px;border:1.5px solid var(--rosa-dim);background:var(--rosa-glow);color:var(--rosa);cursor:pointer;font-size:.8rem;font-weight:500;font-family:'DM Sans',sans-serif">✓ Converter em pedido</button>
+        <button onclick="orcExcluir(${orc.id})" style="padding:.5rem .65rem;border-radius:8px;border:1.5px solid rgba(240,96,96,.3);background:rgba(240,96,96,.08);color:var(--vermelho);cursor:pointer;font-size:.82rem">✕</button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  cont.innerHTML=html;
+}
+
+function orcAlterarStatus(id,status){
+  const orcs=getData('orcamentos');
+  const idx=orcs.findIndex(o=>o.id==id);
+  if(idx>=0){orcs[idx].status=status;setData('orcamentos',orcs);}
+  notif('Status atualizado');
+}
+
+function orcExcluir(id){
+  if(!confirm('Excluir este orçamento?'))return;
+  setData('orcamentos',getData('orcamentos').filter(o=>o.id!=id));
+  renderOrcamentos();
+}
+
+function orcGerarWhatsAppSalvo(id){
+  const orc=getData('orcamentos').find(o=>o.id==id);
+  if(!orc)return;
+  carrinhoOrc=[...(orc.itens||[])];
+  adicionaisOrc=[...(orc.adicionais||[])];
+  document.getElementById('orc-cliente').value=orc.cliente||'';
+  document.getElementById('orc-data').value=orc.data||hoje();
+  document.getElementById('orc-obs').value=orc.obs||'';
+  gerarOrcamentoWhatsApp();
+  // Marca como enviado
+  const orcs=getData('orcamentos');
+  const idx=orcs.findIndex(o=>o.id==id);
+  if(idx>=0&&orcs[idx].status==='pendente'){orcs[idx].status='enviado';setData('orcamentos',orcs);renderOrcamentos();}
+}
+
+function orcConverterPedidoSalvo(id){
+  const orc=getData('orcamentos').find(o=>o.id==id);
+  if(!orc)return;
+  carrinho=(orc.itens||[]).map(i=>({...i,id:Date.now()+Math.random()}));
+  abrirModalNovoPedido();
+  setTimeout(()=>{
+    if(orc.cliente) document.getElementById('ped-cliente').value=orc.cliente;
+    if(orc.data) document.getElementById('ped-data').value=orc.data;
+    if(orc.obs) document.getElementById('ped-obs').value=orc.obs;
+    document.getElementById('ped-status').value='agendado';
+    renderCarrinho();
+  },200);
+  notif('Orçamento convertido — confirme o pedido ✓');
 }
 
 // Sobrescreve npCarrAdd para redirecionar para orçamento quando modal estiver aberto
