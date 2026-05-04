@@ -1,75 +1,3063 @@
-const CACHE = 'ls-gestao-v18';
-const ASSETS = [
-  'https://laissantosconfeitaria.github.io/gestao.html',
-  'https://laissantosconfeitaria.github.io/icon-192.png',
-  'https://laissantosconfeitaria.github.io/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
-];
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão – Lais Santos Confeitaria</title>
+<meta name="theme-color" content="#0f0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LS Gestão">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rosa:#e891b8;
+  --rosa-dim:#c06890;
+  --rosa-glow:rgba(232,145,184,.15);
+  --verde:#5dbf7a;
+  --vermelho:#f06060;
+  --amarelo:#f0c040;
+  --azul:#60b8f0;
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS)).catch(() => {})
-  );
-  self.skipWaiting();
+  --bg:#0f0f13;
+  --bg2:#16161c;
+  --card:#1e1e27;
+  --card2:#252530;
+  --borda:#2e2e3d;
+  --borda2:#3a3a4d;
+
+  --texto:#f0eef8;
+  --texto-sec:#8880a8;
+  --texto-dim:#5a5578;
+
+  --sombra:0 4px 24px rgba(0,0,0,.4);
+  --sombra-rosa:0 0 20px rgba(232,145,184,.12);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);min-height:100vh}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--borda2);border-radius:4px}
+
+/* LOGIN */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;background:radial-gradient(ellipse at 50% 40%,#1a1020 0%,#0f0f13 70%);
+}
+.login-box{
+  background:var(--card);border-radius:20px;padding:3rem 2.5rem;
+  box-shadow:0 8px 60px rgba(0,0,0,.5),var(--sombra-rosa);
+  max-width:380px;width:90%;text-align:center;border:1px solid var(--borda);
+}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--rosa);margin-bottom:.3rem;text-shadow:0 0 30px rgba(232,145,184,.3)}
+.login-sub{font-size:.75rem;color:var(--texto-sec);margin-bottom:2rem;letter-spacing:.12em;text-transform:uppercase}
+.login-box input{
+  width:100%;padding:.8rem 1rem;border:1.5px solid var(--borda);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;background:var(--bg2);outline:none;
+  transition:border .2s,box-shadow .2s;color:var(--texto);
+}
+.login-box input:focus{border-color:var(--rosa);box-shadow:0 0 0 3px rgba(232,145,184,.1)}
+.login-box button{
+  width:100%;margin-top:1rem;padding:.85rem;
+  background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));
+  color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 20px rgba(232,145,184,.25);
+}
+.login-box button:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(232,145,184,.35)}
+.login-error{font-size:.82rem;color:var(--vermelho);margin-top:.5rem;display:none}
+
+/* APP */
+#app{display:none;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;top:0;left:0;height:100vh;width:220px;
+  background:var(--bg2);border-right:1px solid var(--borda);
+  display:flex;flex-direction:column;z-index:100;
+}
+.sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid var(--borda)}
+.sidebar-logo .marca{font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);line-height:1.3;text-shadow:0 0 20px rgba(232,145,184,.2)}
+.sidebar-logo .sub{font-size:.68rem;color:var(--texto-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:.2rem}
+nav{flex:1;padding:1rem 0}
+nav a{
+  display:flex;align-items:center;gap:.75rem;padding:.7rem 1.2rem;
+  font-size:.86rem;color:var(--texto-sec);cursor:pointer;
+  border-left:3px solid transparent;transition:all .15s;text-decoration:none;
+}
+nav a:hover{background:var(--rosa-glow);color:var(--rosa)}
+nav a.active{background:var(--rosa-glow);color:var(--rosa);border-left-color:var(--rosa);font-weight:500}
+nav a .icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{padding:1rem 1.2rem;border-top:1px solid var(--borda)}
+.logout-btn{
+  display:flex;align-items:center;gap:.5rem;cursor:pointer;
+  color:var(--texto-dim);transition:color .15s;background:none;border:none;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.3rem 0;
+}
+.logout-btn:hover{color:var(--vermelho)}
+
+/* MAIN */
+.main{margin-left:220px;padding:2rem;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+
+.page-header{margin-bottom:1.75rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--texto);font-weight:500}
+.page-header p{font-size:.85rem;color:var(--texto-sec);margin-top:.2rem}
+
+/* CARDS STAT */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.75rem}
+.card-stat{
+  background:var(--card);border-radius:14px;padding:1.25rem;
+  box-shadow:var(--sombra);border:1px solid var(--borda);
+  transition:border-color .2s;
+}
+.card-stat:hover{border-color:var(--borda2)}
+.card-stat .label{font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.card-stat .value{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--texto);font-weight:500}
+.card-stat .value.green{color:var(--verde)}
+.card-stat .value.red{color:var(--vermelho)}
+.card-stat .sub{font-size:.72rem;color:var(--texto-sec);margin-top:.2rem}
+
+/* FORM CARDS */
+.form-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
+.form-card h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto);margin-bottom:1.2rem;font-weight:500}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.9rem;margin-bottom:.9rem}
+label{font-size:.78rem;color:var(--texto-sec);display:block;margin-bottom:.3rem;letter-spacing:.03em}
+input,select,textarea{
+  width:100%;padding:.65rem .85rem;border:1.5px solid var(--borda);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;background:var(--bg2);outline:none;
+  transition:border .2s,box-shadow .2s;color:var(--texto);
+}
+input:focus,select:focus,textarea:focus{border-color:var(--rosa);box-shadow:0 0 0 3px rgba(232,145,184,.08);background:var(--bg)}
+textarea{resize:vertical;min-height:80px}
+select option{background:var(--card);color:var(--texto)}
+
+/* BUTTONS */
+.btn{
+  padding:.65rem 1.4rem;border-radius:9px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;transition:all .2s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));color:#fff;box-shadow:0 3px 12px rgba(232,145,184,.2)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(232,145,184,.3)}
+.btn-danger{background:var(--vermelho);color:#fff}
+.btn-danger:hover{background:#d44}
+.btn-ghost{background:transparent;color:var(--rosa);border:1.5px solid var(--rosa-dim)}
+.btn-ghost:hover{background:var(--rosa-glow)}
+.btn-sm{padding:.38rem .8rem;font-size:.78rem}
+
+/* TABLE */
+.table-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden;margin-bottom:1.5rem}
+.table-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;border-bottom:1px solid var(--borda);
+}
+.table-head h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--texto);font-weight:500}
+table{width:100%;border-collapse:collapse}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);padding:.75rem 1rem;text-align:left;background:var(--bg2);border-bottom:1px solid var(--borda)}
+td{padding:.75rem 1rem;font-size:.88rem;border-bottom:1px solid var(--borda);color:var(--texto)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* BADGE */
+.badge{display:inline-block;padding:.25rem .75rem;border-radius:20px;font-size:.73rem;font-weight:500}
+.badge-green{background:rgba(93,191,122,.15);color:var(--verde);border:1px solid rgba(93,191,122,.25)}
+.badge-red{background:rgba(240,96,96,.15);color:var(--vermelho);border:1px solid rgba(240,96,96,.25)}
+.badge-yellow{background:rgba(240,192,64,.15);color:var(--amarelo);border:1px solid rgba(240,192,64,.25)}
+.badge-blue{background:rgba(96,184,240,.15);color:var(--azul);border:1px solid rgba(96,184,240,.25)}
+.badge-rosa{background:var(--rosa-glow);color:var(--rosa);border:1px solid rgba(232,145,184,.25)}
+
+/* CHART */
+.chart-card{background:var(--card);border-radius:14px;padding:1.5rem;box-shadow:var(--sombra);border:1px solid var(--borda);margin-bottom:1.5rem}
+.chart-card h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--texto);margin-bottom:1.2rem;font-weight:500}
+
+/* TABS (relatórios) */
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
+.tab{padding:.5rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.85rem;border:1.5px solid var(--borda);color:var(--texto-sec);background:var(--card);transition:all .15s}
+.tab:hover{border-color:var(--borda2);color:var(--texto)}
+.tab.active{background:var(--rosa-glow);color:var(--rosa);border-color:var(--rosa-dim)}
+
+/* PRODUTOS */
+.produto-item{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--borda)}
+.produto-item:last-child{border-bottom:none}
+.produto-nome{font-size:.9rem;font-weight:500;color:var(--texto)}
+.produto-cat{font-size:.73rem;color:var(--texto-sec);margin-top:.1rem}
+.produto-preco{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem;color:var(--texto-dim);font-size:.88rem}
+
+/* LAYOUT NOVO PEDIDO */
+.np-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;align-items:start}
+@media(max-width:1000px){.np-layout{grid-template-columns:1fr}}
+
+/* ABAS DO CARDÁPIO */
+.np-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.25rem}
+.np-tab{font-size:.75rem;font-weight:500;padding:.4rem .85rem;border-radius:20px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto-sec);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.np-tab:hover{border-color:var(--rosa-dim);color:var(--rosa)}
+.np-tab.active{background:var(--rosa-glow);color:var(--rosa);border-color:var(--rosa-dim)}
+.np-tab-content{display:none}
+.np-tab-content.active{display:block}
+
+/* STEPS */
+.np-step{margin-bottom:1.1rem}
+.np-step-label{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem}
+
+/* OPÇÕES */
+.np-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.4rem}
+.np-grid-wide{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.np-opt{
+  border:1.5px solid var(--borda);border-radius:9px;padding:.55rem .75rem;
+  cursor:pointer;background:var(--card2);font-size:.83rem;color:var(--texto-sec);
+  transition:all .15s;position:relative;user-select:none;line-height:1.3;
+}
+.np-opt:hover{border-color:var(--rosa-dim);color:var(--texto);background:var(--rosa-glow)}
+.np-opt.selected{border-color:var(--rosa);background:var(--rosa-glow);color:var(--rosa)}
+.np-opt.selected::after{content:'✓';position:absolute;top:.3rem;right:.5rem;font-size:.68rem;color:var(--rosa);font-weight:700}
+.np-opt-sub{font-size:.7rem;color:var(--texto-dim);margin-top:.15rem}
+.np-badge{display:inline-block;font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;padding:.1rem .45rem;border-radius:20px;font-weight:500;margin-right:.3rem;vertical-align:middle}
+.np-badge.trad{background:rgba(232,145,184,.12);color:var(--rosa)}
+.np-badge.esp{background:rgba(240,192,64,.12);color:var(--amarelo)}
+.np-badge.prem{background:rgba(96,184,240,.12);color:var(--azul)}
+
+/* PREVIEW */
+.np-preview{background:var(--bg2);border:1px solid var(--borda2);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;margin-top:.5rem;display:none;color:var(--texto-sec)}
+.np-preview strong{color:var(--rosa)}
+
+/* CARRINHO */
+.carrinho-card{background:var(--card);border-radius:14px;box-shadow:var(--sombra);border:1px solid var(--borda);overflow:hidden}
+.carrinho-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--borda);background:var(--bg2)}
+#carrinho-itens{max-height:320px;overflow-y:auto}
+.item-carrinho{display:flex;align-items:flex-start;gap:.6rem;padding:.65rem 1rem;border-bottom:1px solid var(--borda)}
+.item-carrinho:last-child{border-bottom:none}
+.item-carrinho-nome{font-size:.85rem;font-weight:500;color:var(--texto);line-height:1.3}
+.item-carrinho-sub{font-size:.73rem;color:var(--texto-sec);margin-top:.15rem;line-height:1.4}
+.item-total{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--rosa);white-space:nowrap;min-width:60px;text-align:right;padding-top:.1rem}
+.item-del{background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.1rem .25rem;opacity:.5;transition:all .15s;flex-shrink:0;margin-top:.1rem}
+.item-del:hover{opacity:1;color:var(--vermelho)}
+.carrinho-footer{padding:1rem 1.1rem;border-top:1px solid var(--borda);background:var(--bg2)}
+.carrinho-totais{margin-bottom:.5rem}
+.total-row{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;padding:.2rem 0;color:var(--texto-sec)}
+.desconto-row{padding:.35rem 0}
+.total-final{font-size:1rem;font-weight:500;color:var(--texto);border-top:1px solid var(--borda);padding-top:.5rem;margin-top:.3rem}
+.total-final span:last-child{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--rosa)}
+
+/* QTY CONTROLS */
+.qty-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--borda);background:var(--card2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--texto-sec)}
+.qty-btn:hover{border-color:var(--rosa);color:var(--rosa)}
+.qty-num{font-size:.95rem;font-weight:500;min-width:26px;text-align:center;color:var(--texto)}
+
+/* AGENDA */
+.agenda-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem}
+.agenda-dia{background:var(--card);border-radius:14px;border:1px solid var(--borda);overflow:hidden}
+.agenda-dia.hoje .agenda-dia-header{background:var(--rosa-glow);border-bottom-color:rgba(232,145,184,.3)}
+.agenda-dia.hoje .agenda-dia-label{color:var(--rosa)}
+.agenda-dia.passado{opacity:.5}
+.agenda-dia-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid var(--borda);background:var(--bg2)}
+.agenda-dia-label{font-size:.78rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec)}
+.agenda-dia-date{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)}
+.agenda-badge{background:var(--rosa-glow);color:var(--rosa);font-size:.7rem;padding:.15rem .55rem;border-radius:20px;font-weight:500;border:1px solid rgba(232,145,184,.2)}
+.agenda-pedido{padding:.7rem 1rem;border-bottom:1px solid var(--borda);cursor:pointer;transition:background .15s}
+.agenda-pedido:last-child{border-bottom:none}
+.agenda-pedido:hover{background:rgba(255,255,255,.03)}
+.agenda-pedido-nome{font-size:.88rem;font-weight:500;color:var(--texto)}
+.agenda-pedido-det{font-size:.75rem;color:var(--texto-sec);margin-top:.2rem;line-height:1.4}
+.agenda-pedido-val{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--rosa);margin-top:.25rem}
+.agenda-semana-nav{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem}
+.agenda-semana-nav button{background:var(--card);border:1px solid var(--borda);color:var(--texto-sec);border-radius:8px;padding:.4rem .85rem;cursor:pointer;font-size:.85rem;transition:all .15s;font-family:'DM Sans',sans-serif}
+.agenda-semana-nav button:hover{border-color:var(--rosa-dim);color:var(--rosa)}
+.agenda-semana-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)}
+
+/* MOBILE MENU */
+.menu-toggle{display:none;position:fixed;top:1rem;left:1rem;z-index:200;
+  background:var(--rosa-dim);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;cursor:pointer;font-size:1.1rem}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:1rem;padding-top:3.5rem}
+  .menu-toggle{display:block}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+  .overlay.show{display:block}
+}
+
+/* ACTION BAR */
+.action-bar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+
+/* NOTIFICATION */
+.notif{
+  position:fixed;top:1.5rem;right:1.5rem;
+  background:var(--card);color:var(--verde);
+  border:1px solid rgba(93,191,122,.3);
+  padding:.75rem 1.25rem;border-radius:10px;font-size:.88rem;z-index:999;
+  display:none;box-shadow:var(--sombra);
+}
+.notif.error{color:var(--vermelho);border-color:rgba(240,96,96,.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- MOBILE TOGGLE -->
+<button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">✦ Lais Santos</div>
+    <div class="login-sub">CONFEITARIA · GESTÃO</div>
+    <input type="password" id="login-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="marca">Lais Santos<br>Confeitaria</div>
+      <div class="sub">Painel de Gestão</div>
+      <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v3.8 · mai/26</span>
+      </div>
+    </div>
+    <nav>
+      <a class="active" data-page="dashboard" onclick="showPage('dashboard')"><span class="icon">◈</span> Dashboard</a>
+      <a data-page="agenda" onclick="showPage('agenda')"><span class="icon">📅</span> Agenda</a>
+      <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
+      <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
+      <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="pwa-install-btn" onclick="instalarPWA()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--rosa);background:var(--rosa-glow);border:1px solid rgba(232,145,184,.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
+        ⬇ Instalar como app
+      </button>
+      <button id="notif-perm-btn" onclick="pedirPermissaoNotif()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--azul);background:rgba(96,184,240,.1);border:1px solid rgba(96,184,240,.25);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
+        🔔 Ativar notificações
+      </button>
+      <button class="logout-btn" onclick="logout()">⎋ Sair do painel</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p id="dash-data">Visão geral do seu negócio</p>
+      </div>
+
+      <!-- ATALHOS RÁPIDOS -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem">
+        <button onclick="abrirModalNovoPedido()" style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+          background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));color:#fff;
+          border:none;border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(232,145,184,.3);
+        ">
+          <span style="font-size:1.5rem">＋</span>
+          <span style="font-size:.78rem;font-weight:500">Novo Pedido</span>
+        </button>
+        <button onclick="showPage('agenda')" style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+          background:var(--card);color:var(--azul);
+          border:1.5px solid rgba(96,184,240,.25);border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          font-family:'DM Sans',sans-serif;
+        ">
+          <span style="font-size:1.5rem">📅</span>
+          <span style="font-size:.78rem;font-weight:500">Ver Agenda</span>
+        </button>
+        <button onclick="abrirDespesaRapida()" style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+          background:var(--card);color:var(--amarelo);
+          border:1.5px solid rgba(240,192,64,.25);border-radius:14px;padding:1rem .5rem;cursor:pointer;
+          font-family:'DM Sans',sans-serif;
+        ">
+          <span style="font-size:1.5rem">⊟</span>
+          <span style="font-size:.78rem;font-weight:500">Despesa</span>
+        </button>
+      </div>
+
+      <!-- PEDIDOS HOJE E AMANHÃ -->
+      <div id="dash-urgentes"></div>
+
+      <div class="cards-row" id="dash-cards"></div>
+      <div class="chart-card">
+        <h2>Faturamento dos últimos 30 dias</h2>
+        <canvas id="chart-linha" height="80"></canvas>
+      </div>
+      <div class="cards-row" style="grid-template-columns:1fr 1fr">
+        <div class="chart-card">
+          <h2>Produtos mais vendidos</h2>
+          <canvas id="chart-produtos" height="140"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Receitas × Despesas (mês atual)</h2>
+          <canvas id="chart-barras" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="page" id="page-pedidos">
+      <div class="page-header">
+        <div>
+          <h1>Pedidos</h1>
+          <p>Histórico e novos pedidos</p>
+        </div>
+        <button onclick="abrirModalNovoPedido()" style="
+          display:flex;align-items:center;gap:.5rem;
+          background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));
+          color:#fff;border:none;border-radius:12px;padding:.7rem 1.25rem;
+          font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;
+          cursor:pointer;box-shadow:0 3px 14px rgba(232,145,184,.3);
+          white-space:nowrap;flex-shrink:0;
+        ">＋ Novo pedido</button>
+      </div>
+
+      <!-- HISTÓRICO (aparece primeiro) -->
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Histórico de pedidos</h2>
+          <input type="month" id="filtro-mes-ped" style="width:auto;padding:.4rem .6rem" onchange="renderPedidos()">
+        </div>
+        <div id="tabela-pedidos"></div>
+      </div>
+    </div>
+    <!-- DESPESAS -->
+    <div class="page" id="page-despesas">
+      <div class="page-header">
+        <h1>Despesas</h1>
+        <p>Controle suas compras e custos operacionais</p>
+      </div>
+      <div class="form-card">
+        <h2>Nova despesa</h2>
+        <div class="form-row">
+          <div><label>Data</label><input type="date" id="desp-data"></div>
+          <div><label>Descrição</label><input type="text" id="desp-desc" placeholder="Ex: Chocolate Harald 5kg"></div>
+          <div><label>Valor (R$)</label><input type="number" id="desp-valor" placeholder="0,00" step="0.01" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Categoria</label>
+            <select id="desp-cat">
+              <option value="ingredientes">Ingredientes</option>
+              <option value="embalagens">Embalagens</option>
+              <option value="utensilios">Utensílios</option>
+              <option value="marketing">Marketing / Publicidade</option>
+              <option value="energia">Energia / Gás</option>
+              <option value="entrega">Frete / Entrega</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div><label>Fornecedor (opcional)</label><input type="text" id="desp-forn" placeholder="Ex: Atacado Doce Vida"></div>
+          <div><label>Observação</label><input type="text" id="desp-obs" placeholder="Opcional"></div>
+        </div>
+        <button class="btn btn-primary" onclick="salvarDespesa()">Salvar despesa</button>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Histórico de despesas</h2>
+          <input type="month" id="filtro-mes-desp" style="width:auto;padding:.4rem .6rem" onchange="renderDespesas()">
+        </div>
+        <div id="tabela-despesas"></div>
+      </div>
+    </div>
+
+    <!-- PRODUTOS (CARDÁPIO) -->
+
+    <!-- RELATÓRIOS -->
+    <div class="page" id="page-relatorios">
+      <div class="page-header">
+        <h1>Relatórios</h1>
+        <p>Análise detalhada do seu faturamento</p>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="setRelTab('diario',this)">Diário</div>
+        <div class="tab" onclick="setRelTab('semanal',this)">Semanal</div>
+        <div class="tab" onclick="setRelTab('mensal',this)">Mensal</div>
+      </div>
+      <div id="rel-diario" class="rel-tab">
+        <div class="action-bar">
+          <label style="margin:0">Data:</label>
+          <input type="date" id="rel-dia" style="width:auto" onchange="renderRelDiario()">
+        </div>
+        <div class="cards-row" id="rel-diario-cards"></div>
+        <div class="table-card" id="rel-diario-tabela"></div>
+      </div>
+      <div id="rel-semanal" class="rel-tab" style="display:none">
+        <div class="action-bar">
+          <label style="margin:0">Semana de:</label>
+          <input type="date" id="rel-semana" style="width:auto" onchange="renderRelSemanal()">
+        </div>
+        <div class="cards-row" id="rel-semanal-cards"></div>
+        <div class="chart-card"><canvas id="chart-semana" height="80"></canvas></div>
+      </div>
+      <div id="rel-mensal" class="rel-tab" style="display:none">
+        <div class="action-bar">
+          <label style="margin:0">Mês:</label>
+          <input type="month" id="rel-mes" style="width:auto" onchange="renderRelMensal()">
+          <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">↓ Exportar CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportarJSON()">↓ Backup JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importar-json').click()">↑ Importar JSON</button>
+          <input type="file" id="importar-json" accept=".json" style="display:none" onchange="importarJSON(this)">
+        </div>
+        <div class="cards-row" id="rel-mensal-cards"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="chart-card"><h2>Faturamento por dia</h2><canvas id="chart-mensal-dias" height="120"></canvas></div>
+          <div class="chart-card"><h2>Despesas por categoria</h2><canvas id="chart-mensal-desp" height="120"></canvas></div>
+        </div>
+        <div class="table-card" id="rel-mensal-top"></div>
+      </div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="page" id="page-agenda">
+      <div class="page-header">
+        <div>
+          <h1>Agenda</h1>
+          <p>Pedidos agendados e confirmados por data</p>
+        </div>
+      </div>
+
+      <!-- HOJE E PRÓXIMOS DIAS -->
+      <div class="agenda-semana-nav">
+        <button onclick="agendaNavSemana(-1)">← Semana anterior</button>
+        <span class="agenda-semana-label" id="agenda-semana-label"></span>
+        <button onclick="agendaNavSemana(1)">Próxima semana →</button>
+        <button class="btn btn-ghost btn-sm" onclick="agendaIrHoje()">Hoje</button>
+      </div>
+
+      <div class="agenda-grid" id="agenda-grid"></div>
+
+      <!-- PRÓXIMOS 30 DIAS sem data específica -->
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Todos os pedidos agendados</h2>
+          <span id="agenda-total-badge" class="badge badge-rosa"></span>
+        </div>
+        <div id="agenda-lista-completa"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL NOVO PEDIDO -->
+<div id="modal-novo-pedido" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.7);overflow-y:auto;padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:960px;margin:0 auto;box-shadow:var(--sombra)">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
+      <span style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--texto)">＋ Novo Pedido</span>
+      <button onclick="fecharModalNovoPedido()" style="background:none;border:none;color:var(--texto-sec);font-size:1.4rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
+    </div>
+
+    <div style="padding:1.25rem">
+      <div class="np-layout">
+        <!-- COLUNA ESQUERDA: dados + cardápio -->
+        <div class="np-left">
+          <!-- Dados do cliente -->
+          <div class="form-card" style="margin-bottom:1.25rem">
+            <h2>Dados do pedido</h2>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Data</label><input type="date" id="ped-data"></div>
+              <div><label>Cliente</label><input type="text" id="ped-cliente" placeholder="Nome do cliente"></div>
+            </div>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Horário de entrega</label><input type="time" id="ped-hora"></div>
+              <div><label>Local</label>
+                <select id="ped-local">
+                  <option value="retirada">Retirada</option>
+                  <option value="entrega">Entrega</option>
+                  <option value="a combinar">A combinar</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:.75rem">
+              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option></select></div>
+              <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
+            </div>
+            <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
+          </div>
+
+          <!-- Cardápio por abas -->
+          <div class="form-card" style="margin-bottom:0">
+            <h2>Cardápio</h2>
+            <div class="np-tabs" id="np-tabs">
+              <button class="np-tab active" onclick="npTab('dec',this)">🎂 Bolo Decorado</button>
+              <button class="np-tab" onclick="npTab('simples',this)">🍰 Bolo Simples</button>
+              <button class="np-tab" onclick="npTab('vulcao',this)">🌋 Vulcão</button>
+              <button class="np-tab" onclick="npTab('doces',this)">🍬 Doces</button>
+              <button class="np-tab" onclick="npTab('sob',this)">🍮 Sobremesas</button>
+              <button class="np-tab" onclick="npTab('kit',this)">🎉 Kit Festa</button>
+              <button class="np-tab" onclick="npTab('outros',this)">🧁 Cupcakes+</button>
+              <button class="np-tab" onclick="npTab('sal',this)">🥐 Salgados</button>
+              <button class="np-tab" onclick="npTab('unit',this)">🏷️ Unitários</button>
+            </div>
+            <div id="np-cardapio-content">
+
+            <!-- BOLO DECORADO -->
+            <div class="np-tab-content active" id="np-dec">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-dec-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-dec-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-dec-tam">
+                  <div class="np-opt" data-preco="60" onclick="npSel(this,'np-dec-tam')"><div>PP · Bento</div><div class="np-opt-sub">~2 fatias · a partir de R$ 60</div></div>
+                  <div class="np-opt" data-preco="99" onclick="npSel(this,'np-dec-tam')"><div>P · 15cm</div><div class="np-opt-sub">8–10 fatias · a partir de R$ 99</div></div>
+                  <div class="np-opt" data-preco="198" onclick="npSel(this,'np-dec-tam')"><div>M · 18cm ⭐</div><div class="np-opt-sub">18–20 fatias · a partir de R$ 198</div></div>
+                  <div class="np-opt" data-preco="297" onclick="npSel(this,'np-dec-tam')"><div>G · 21cm</div><div class="np-opt-sub">28–30 fatias · a partir de R$ 297</div></div>
+                  <div class="np-opt" data-preco="396" onclick="npSel(this,'np-dec-tam')"><div>GG · 23cm</div><div class="np-opt-sub">38–40 fatias · a partir de R$ 396</div></div>
+                  <div class="np-opt" data-preco="495" onclick="npSel(this,'np-dec-tam')"><div>EX · 26cm</div><div class="np-opt-sub">48–50 fatias · a partir de R$ 495</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) <span style="font-weight:400;font-size:.75rem">— até 2</span></div>
+                <div class="np-grid np-grid-wide" id="np-dec-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Beijinho de coco</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Dois amores</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Mousse de chocolate</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de maracujá</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge trad">Trad</span>Brigadeiro de limão</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Brigadeiro com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Doce de leite com ameixa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Dois amores com morango</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Creme de coco com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Leite ninho com Nutella</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com abacaxi</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>4 leites com Oreo</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Caramelo salgado c/ mousse</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge esp">Esp</span>Floresta Negra</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Pistache</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Kinder Bueno</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Ouro Branco / Sonho de Valsa</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Nozes com praliné</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Doce de leite c/ praliné de nozes</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-dec-rec',2)"><span class="np-badge prem">Prem</span>Marta Rocha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura</div>
+                <div class="np-grid np-grid-wide" id="np-dec-cob">
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Chantininho</div>
+                  <div class="np-opt" data-extra="0" onclick="npSel(this,'np-dec-cob')">Naked Cake</div>
+                  <div class="np-opt" data-extra="20" onclick="npSel(this,'np-dec-cob')">Chantininho Personalizado<div class="np-opt-sub">+R$20</div></div>
+                  <div class="np-opt" data-extra="25" onclick="npSel(this,'np-dec-cob')">Cobertura de Brigadeiro<div class="np-opt-sub">+R$25</div></div>
+                  <div class="np-opt" data-extra="40" onclick="npSel(this,'np-dec-cob')">Ganache de Chocolate<div class="np-opt-sub">+R$40</div></div>
+                  <div class="np-opt" data-extra="35" onclick="npSel(this,'np-dec-cob')">Ganache Saborizada<div class="np-opt-sub">+R$35</div></div>
+                </div>
+              </div>
+              <div id="np-dec-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddBolo()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- BOLO SIMPLES -->
+            <div class="np-tab-content" id="np-simples">
+              <div class="np-step"><div class="np-step-label">Sabor</div>
+                <div class="np-grid np-grid-wide" id="np-sim-sab">
+                  <div class="np-opt" data-m="40" data-g="60" onclick="npSel(this,'np-sim-sab')">Fubá<div class="np-opt-sub">M R$40 · G R$60</div></div>
+                  <div class="np-opt" data-m="32" data-g="58" onclick="npSel(this,'np-sim-sab')">Chocolate sem cobertura<div class="np-opt-sub">M R$32 · G R$58</div></div>
+                  <div class="np-opt" data-m="45" data-g="70" onclick="npSel(this,'np-sim-sab')">Chocolate com cobertura<div class="np-opt-sub">M R$45 · G R$70</div></div>
+                  <div class="np-opt" data-m="38" data-g="58" onclick="npSel(this,'np-sim-sab')">Formigueiro sem cobertura<div class="np-opt-sub">M R$38 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Formigueiro com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Fubá cremoso<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="65" onclick="npSel(this,'np-sim-sab')">Milho<div class="np-opt-sub">M R$45 · G R$65</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Toalha felpuda<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                  <div class="np-opt" data-m="45" data-g="58" onclick="npSel(this,'np-sim-sab')">Laranja<div class="np-opt-sub">M R$45 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="68" onclick="npSel(this,'np-sim-sab')">Cenoura com brigadeiro<div class="np-opt-sub">M R$50 · G R$68</div></div>
+                  <div class="np-opt" data-m="35" data-g="58" onclick="npSel(this,'np-sim-sab')">Mesclado<div class="np-opt-sub">M R$35 · G R$58</div></div>
+                  <div class="np-opt" data-m="50" data-g="70" onclick="npSel(this,'np-sim-sab')">Mesclado com cobertura<div class="np-opt-sub">M R$50 · G R$70</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sim-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-sim-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-sim-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-sim-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSimples()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- VULCÃO -->
+            <div class="np-tab-content" id="np-vulcao">
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-vul-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Baunilha</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-vul-mas')">Red Velvet</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Cobertura/Recheio</div>
+                <div class="np-grid np-grid-wide" id="np-vul-cob">
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Dois amores<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Leite ninho com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                  <div class="np-opt" data-m="65" data-g="90" onclick="npSel(this,'np-vul-cob')">Leite ninho com Nutella<div class="np-opt-sub">M R$65 · G R$90</div></div>
+                  <div class="np-opt" data-m="75" data-g="99" onclick="npSel(this,'np-vul-cob')">Cream cheese<div class="np-opt-sub">M R$75 · G R$99</div></div>
+                  <div class="np-opt" data-m="60" data-g="85" onclick="npSel(this,'np-vul-cob')">Cenoura com brigadeiro<div class="np-opt-sub">M R$60 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-vul-tam">
+                  <div class="np-opt" data-key="m" onclick="npSel(this,'np-vul-tam')">Médio (M)</div>
+                  <div class="np-opt" data-key="g" onclick="npSel(this,'np-vul-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <div id="np-vul-preview" class="np-preview"></div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddVulcao()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- DOCES -->
+            <div class="np-tab-content" id="np-doces">
+              <div class="np-step"><div class="np-step-label">Tipo</div>
+                <div class="np-grid np-grid-wide" id="np-doc-item">
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Tradicionais<div class="np-opt-sub">25un R$50 · 50un R$100 · 100un R$190 · +100=+R$190</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Docinhos Especiais<div class="np-opt-sub">25un R$75 · 50un R$120 · 100un R$220 · +100=+R$220</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Caixa Degustação<div class="np-opt-sub">15un R$55 · 20un R$70 · 25un R$100</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas de Chocolate<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufas com Frutas<div class="np-opt-sub">R$4,80/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Copinho de Chocolate c/ Cereja<div class="np-opt-sub">R$4,00/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Bombom Negresco<div class="np-opt-sub">R$4,50/un</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-doc-item')">Trufa Meio Amarga 50%<div class="np-opt-sub">Cento R$250</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem;flex-wrap:wrap">
+                  <button class="qty-btn" onclick="npChgQ('doc',-25,25);npPreviewDoces()">−</button>
+                  <span class="qty-num" id="np-q-doc">25</span>
+                  <button class="qty-btn" onclick="npChgQ('doc',25,25);npPreviewDoces()">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades (múltiplos de 25)</span>
+                </div>
+                <div id="np-doc-preview" style="margin-top:.5rem;font-size:.82rem;color:var(--rosa);font-weight:500"></div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SOBREMESAS -->
+            <div class="np-tab-content" id="np-sob">
+              <div class="np-step"><div class="np-step-label">Sobremesa</div>
+                <div class="np-grid np-grid-wide" id="np-sob-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa da Felicidade<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Travessa Red Velvet<div class="np-opt-sub">P R$80 · M R$130 · G R$219</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Bombom Aberto<div class="np-opt-sub">P R$80 · M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Banoffee<div class="np-opt-sub">M R$130 · G R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Torta<div class="np-opt-sub">8p R$129 · 13p R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-item')">Pudim de Leite Condensado<div class="np-opt-sub">M R$65 · G R$85</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Tamanho</div>
+                <div class="np-grid" id="np-sob-tam">
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Pequeno (P)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Médio (M)</div>
+                  <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Grande (G)</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSobremesa()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- KIT FESTA -->
+            <div class="np-tab-content" id="np-kit">
+              <div class="np-step"><div class="np-step-label">Kit</div>
+                <div class="np-grid np-grid-wide" id="np-kit-tam">
+                  <div class="np-opt" data-preco="200" onclick="npSel(this,'np-kit-tam')">Kit P — R$200<div class="np-opt-sub">Bolo 15cm · 8-10 fatias · 70 docinhos</div></div>
+                  <div class="np-opt" data-preco="325" onclick="npSel(this,'np-kit-tam')">Kit M — R$325<div class="np-opt-sub">Bolo 18cm · 18-20 fatias · 100 docinhos</div></div>
+                  <div class="np-opt" data-preco="450" onclick="npSel(this,'np-kit-tam')">Kit G — R$450<div class="np-opt-sub">Bolo 21cm · 28-30 fatias · 150 docinhos</div></div>
+                  <div class="np-opt" data-preco="649" onclick="npSel(this,'np-kit-tam')">Kit GG — R$649<div class="np-opt-sub">Bolo 23cm · 38-40 fatias · 200 docinhos</div></div>
+                  <div class="np-opt" data-preco="815" onclick="npSel(this,'np-kit-tam')">Kit EX — R$815<div class="np-opt-sub">Bolo 26cm · 48-50 fatias · 250 docinhos</div></div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Massa</div>
+                <div class="np-grid" id="np-kit-mas">
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Chocolate</div>
+                  <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Baunilha</div>
+                </div>
+              </div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) — até 2</div>
+                <div class="np-grid np-grid-wide" id="np-kit-rec">
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Brigadeiro 50%</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Beijinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Doce de leite</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">4 leites</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Leite ninho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Choconinho</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Prestígio</div>
+                  <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Dois amores</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- CUPCAKES+ -->
+            <div class="np-tab-content" id="np-outros">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-out-item">
+                  <div class="np-opt" data-unit="8.50" onclick="npSel(this,'np-out-item')">Cupcake Grande + Chantininho<div class="np-opt-sub">R$8,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Cupcake Grande + Brigadeiro<div class="np-opt-sub">R$12,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.50" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Chantininho<div class="np-opt-sub">R$6,50/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Cupcake Pequeno + Brigadeiro<div class="np-opt-sub">R$9,00/un · mín. 20</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Pão de Mel Pequeno<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="10.00" onclick="npSel(this,'np-out-item')">Pão de Mel Grande<div class="np-opt-sub">R$10,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="8.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado P<div class="np-opt-sub">R$8,00/un</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Pão de Mel Personalizado G<div class="np-opt-sub">R$12,00/un</div></div>
+                  <div class="np-opt" data-unit="9.00" onclick="npSel(this,'np-out-item')">Pirulito Simples<div class="np-opt-sub">R$9,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="14.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Pasta e Papel de Arroz<div class="np-opt-sub">R$14,00/un</div></div>
+                  <div class="np-opt" data-unit="20.00" onclick="npSel(this,'np-out-item')">Pirulito c/ Sprinkles<div class="np-opt-sub">R$20,00/un</div></div>
+                  <div class="np-opt" data-unit="6.00" onclick="npSel(this,'np-out-item')">Brownie Simples 6x6cm<div class="np-opt-sub">R$6,00/un · mín. 10</div></div>
+                  <div class="np-opt" data-unit="12.00" onclick="npSel(this,'np-out-item')">Brownie Recheado 6x6cm<div class="np-opt-sub">R$12,00/un</div></div>
+                </div>
+              </div>
+              <div class="np-step">
+                <div class="np-step-label">Quantidade</div>
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.4rem">
+                  <button class="qty-btn" onclick="npChgQ('out',-1,1)">−</button>
+                  <span class="qty-num" id="np-q-out">1</span>
+                  <button class="qty-btn" onclick="npChgQ('out',1,1)">+</button>
+                  <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddOutros()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- SALGADOS -->
+            <div class="np-tab-content" id="np-sal">
+              <div class="np-step"><div class="np-step-label">Item</div>
+                <div class="np-grid np-grid-wide" id="np-sal-item">
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta de Frango Fria<div class="np-opt-sub">s/ geleia R$110/kg · c/ geleia R$129/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Pão Italiano<div class="np-opt-sub">M R$60 · G R$90</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Frango c/ catupiry<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Alho poró c/ queijo<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon e calabresa<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Carne seca c/ banana<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche Bacon c/ abacaxi<div class="np-opt-sub">600g R$80 · 1,1kg R$150</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Quiche de Camarão<div class="np-opt-sub">600g R$100 · 1,1kg R$199</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Frango<div class="np-opt-sub">R$80/kg</div></div>
+                  <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Carne moída<div class="np-opt-sub">R$80/kg</div></div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
+            </div>
+
+            <!-- UNITÁRIOS -->
+            <div class="np-tab-content" id="np-unit">
+              <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda2);padding:1rem;margin-bottom:1rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Venda unitária com valor livre</div>
+                <div style="margin-bottom:.75rem"><label>Nome do item</label>
+                  <input type="text" id="unit-nome" placeholder="Ex: Fatia de bolo, Pudim individual, Bombom de morango...">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+                  <div><label>Valor unitário (R$)</label><input type="number" id="unit-preco" placeholder="0,00" step="0.01" min="0" oninput="unitAtualizarTotal()"></div>
+                  <div><label>Quantidade</label>
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-top:.3rem">
+                      <button class="qty-btn" onclick="unitChgQ(-1)">−</button>
+                      <span class="qty-num" id="unit-qty">1</span>
+                      <button class="qty-btn" onclick="unitChgQ(1)">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;background:var(--card);border-radius:8px;border:1px solid var(--borda);margin-bottom:.85rem">
+                  <span style="font-size:.82rem;color:var(--texto-sec)">Total do item</span>
+                  <span id="unit-total" style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa)">R$ 0,00</span>
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="npAddUnit()">+ Adicionar ao carrinho</button>
+              </div>
+              <div style="margin-top:.5rem">
+                <div style="font-size:.75rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Unitários salvos no cardápio</div>
+                <div id="unit-cardapio-lista"></div>
+                <div style="display:flex;gap:.5rem;margin-top:.6rem">
+                  <input type="text" id="unit-salvar-nome" placeholder="Nome para salvar no cardápio" style="flex:1;font-size:.85rem">
+                  <input type="number" id="unit-salvar-preco" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.85rem">
+                  <button class="btn btn-ghost btn-sm" onclick="unitSalvarCardapio()">Salvar</button>
+                </div>
+              </div>
+            </div>
+
+            </div><!-- /np-cardapio-content -->
+          </div>
+        </div><!-- /np-left -->
+
+        <!-- COLUNA DIREITA: carrinho -->
+        <div class="np-right">
+          <div class="carrinho-card" style="position:sticky;top:1.5rem">
+            <div class="carrinho-header">
+              <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--marrom)">🛒 Carrinho</span>
+              <span id="carr-badge" style="background:var(--rosa);color:#fff;font-size:.72rem;padding:.15rem .6rem;border-radius:20px">0 itens</span>
+            </div>
+            <div id="carrinho-itens"><div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div></div>
+            <div class="carrinho-footer">
+              <div style="margin-bottom:.75rem;padding:.75rem;background:var(--bg2);border-radius:9px;border:1px solid var(--borda)">
+                <div style="font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Cobrança adicional</div>
+                <div style="display:flex;gap:.5rem;align-items:center">
+                  <input type="text" id="extra-desc" placeholder="Descrição (ex: entrega, personalização)" style="flex:1;font-size:.82rem;padding:.45rem .6rem">
+                  <input type="number" id="extra-val" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.82rem;padding:.45rem .6rem" oninput="atualizarTotais()">
+                </div>
+              </div>
+              <div class="carrinho-totais">
+                <div class="total-row"><span>Subtotal</span><span id="subtotal-val">R$ 0,00</span></div>
+                <div class="total-row" id="extra-row" style="display:none"><span id="extra-label-show">—</span><span id="extra-val-show" style="color:var(--marrom)">R$ 0,00</span></div>
+                <div class="total-row desconto-row">
+                  <span>Desconto</span>
+                  <div style="display:flex;gap:.4rem;align-items:center">
+                    <input type="number" id="desconto-val" placeholder="0" min="0" step="0.01" style="width:70px;padding:.3rem .5rem;font-size:.82rem" oninput="atualizarTotais()">
+                    <select id="desconto-tipo" style="padding:.3rem .4rem;font-size:.78rem;width:auto" onchange="atualizarTotais()">
+                      <option value="reais">R$</option>
+                      <option value="pct">%</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="total-row total-final"><span>Total</span><span id="total-final-val">R$ 0,00</span></div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;margin-top:1rem;padding:.9rem;font-size:.95rem" onclick="salvarPedido()">✓ Confirmar pedido</button>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:.5rem" onclick="limparCarrinho()">Limpar carrinho</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /np-layout -->
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONCLUSÃO DO PEDIDO -->
+<div id="modal-conclusao" style="display:none;position:fixed;inset:0;z-index:550;align-items:center;justify-content:center;background:rgba(0,0,0,.75);padding:1rem">
+  <div style="background:var(--card);border-radius:20px;border:1px solid var(--borda);width:100%;max-width:420px;box-shadow:var(--sombra);overflow:hidden">
+    <div style="background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));padding:1.5rem;text-align:center">
+      <div style="font-size:2.2rem;margin-bottom:.4rem">🎂</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;font-weight:500">Pedido registrado!</div>
+      <div id="conclusao-resumo" style="font-size:.82rem;color:rgba(255,255,255,.85);margin-top:.3rem"></div>
+    </div>
+    <div id="conclusao-itens" style="padding:1rem 1.25rem;border-bottom:1px solid var(--borda);max-height:200px;overflow-y:auto;background:var(--bg2)"></div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.75rem">
+      <button onclick="conclusaoWhatsApp()" style="
+        display:flex;align-items:center;justify-content:center;gap:.6rem;
+        background:rgba(37,211,102,.1);color:#25D366;
+        border:1.5px solid rgba(37,211,102,.3);border-radius:12px;
+        padding:.9rem;font-family:'DM Sans',sans-serif;font-size:.92rem;
+        font-weight:500;cursor:pointer;width:100%;
+      ">💬 Gerar confirmação para WhatsApp</button>
+      <a id="conclusao-gc-link" href="#" target="_blank" onclick="notif('Abrindo Google Agenda... 📅')" style="
+        display:flex;align-items:center;justify-content:center;gap:.6rem;
+        background:rgba(96,184,240,.08);color:var(--azul);
+        border:1.5px solid rgba(96,184,240,.25);border-radius:12px;
+        padding:.9rem;font-family:'DM Sans',sans-serif;font-size:.92rem;
+        font-weight:500;text-decoration:none;width:100%;box-sizing:border-box;
+      ">📅 Adicionar ao Google Agenda</a>
+      <button onclick="fecharModalConclusao()" style="
+        display:flex;align-items:center;justify-content:center;
+        background:var(--bg2);color:var(--texto-sec);
+        border:1.5px solid var(--borda);border-radius:12px;
+        padding:.75rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
+        cursor:pointer;width:100%;
+      ">✓ Finalizar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DESPESA RÁPIDA -->
+<div id="modal-desp-rapida" style="display:none;position:fixed;inset:0;z-index:550;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
+  <div style="background:var(--card);border-radius:16px 16px 12px 12px;border:1px solid var(--borda);width:100%;max-width:480px;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--borda)">
+      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">⊟ Despesa rápida</span>
+      <button onclick="fecharDespesaRapida()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.1rem .4rem">✕</button>
+    </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.85rem">
+      <div><label>Data</label><input type="date" id="dr-data"></div>
+      <div><label>Descrição</label><input type="text" id="dr-desc" placeholder="Ex: Chocolate Harald 5kg"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div><label>Valor (R$)</label><input type="number" id="dr-valor" placeholder="0,00" step="0.01" min="0"></div>
+        <div><label>Categoria</label>
+          <select id="dr-cat">
+            <option value="ingredientes">🧁 Ingredientes</option>
+            <option value="embalagens">📦 Embalagens</option>
+            <option value="utensilios">🔧 Utensílios</option>
+            <option value="marketing">📣 Marketing</option>
+            <option value="energia">⚡ Energia/Gás</option>
+            <option value="entrega">🚗 Frete</option>
+            <option value="outros">📌 Outros</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="salvarDespesaRapida()" style="
+        width:100%;padding:.85rem;border-radius:10px;border:none;
+        background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));
+        color:#fff;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;cursor:pointer;
+      ">Salvar despesa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SENHA PROTEÇÃO -->
+<div id="modal-senha-prot" style="display:none;position:fixed;inset:0;z-index:600;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:340px;padding:1.75rem;box-shadow:var(--sombra);text-align:center">
+    <div style="font-size:1.8rem;margin-bottom:.5rem">🔒</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto);margin-bottom:.35rem">Ação protegida</div>
+    <div style="font-size:.82rem;color:var(--texto-sec);margin-bottom:1.25rem">Digite a senha para editar ou excluir este pedido</div>
+    <input type="password" id="senha-prot-input" placeholder="Senha" style="width:100%;margin-bottom:.75rem;text-align:center;font-size:1rem;letter-spacing:.15em" onkeydown="if(event.key==='Enter')confirmarSenhaProt()">
+    <div id="senha-prot-erro" style="font-size:.78rem;color:var(--vermelho);margin-bottom:.6rem;display:none">Senha incorreta</div>
+    <div style="display:flex;gap:.6rem">
+      <button onclick="confirmarSenhaProt()" style="flex:1;padding:.75rem;border-radius:9px;border:none;background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));color:#fff;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer">Confirmar</button>
+      <button onclick="fecharSenhaProt()" style="padding:.75rem 1rem;border-radius:9px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto-sec);font-family:'DM Sans',sans-serif;cursor:pointer">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PEDIDO -->
+<div id="modal-editar" style="display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1">
+      <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)">✏️ Editar pedido</span>
+      <button onclick="fecharModal()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
+    </div>
+    <div style="padding:1.25rem">
+      <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Data</label><input type="date" id="edit-data"></div>
+        <div><label>Cliente</label><input type="text" id="edit-cliente" placeholder="Nome do cliente"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Horário de entrega</label><input type="time" id="edit-hora"></div>
+        <div><label>Local</label>
+          <select id="edit-local">
+            <option value="retirada">Retirada</option>
+            <option value="entrega">Entrega</option>
+            <option value="a combinar">A combinar</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:.9rem">
+        <div><label>Status</label>
+          <select id="edit-status">
+            <option value="agendado">📅 Agendado</option>
+            <option value="confirmado">✓ Confirmado</option>
+            <option value="entregue">✅ Entregue</option>
+            <option value="pendente">⏳ Pendente</option>
+            <option value="cancelado">✕ Cancelado</option>
+          </select>
+        </div>
+        <div><label>Canal</label>
+          <select id="edit-canal">
+            <option value="whatsapp">WhatsApp (já clientes)</option>
+            <option value="indicacao">Indicação</option>
+            <option value="google">Google</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem"><label>Observações</label><input type="text" id="edit-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
+
+      <!-- Itens -->
+      <div style="font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem">Itens do pedido</div>
+      <div id="edit-itens" style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);margin-bottom:.75rem;min-height:48px"></div>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+        <input type="text" id="edit-av-nome" placeholder="Adicionar item avulso" style="flex:1;font-size:.85rem">
+        <input type="number" id="edit-av-val" placeholder="R$" step="0.01" min="0" style="width:85px;font-size:.85rem">
+        <button class="btn btn-ghost btn-sm" onclick="editAddAvulso()">+ Add</button>
+      </div>
+
+      <!-- Ajustes -->
+      <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);padding:.85rem;margin-bottom:1rem">
+        <div style="font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Ajustes de valor</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
+          <input type="text" id="edit-extra-desc" placeholder="Cobrança adicional (ex: entrega)" style="flex:1;font-size:.82rem">
+          <input type="number" id="edit-extra-val" placeholder="R$" step="0.01" min="0" style="width:80px;font-size:.82rem" oninput="editAtualizarTotal()">
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span style="font-size:.82rem;color:var(--texto-sec);white-space:nowrap">Desconto:</span>
+          <input type="number" id="edit-desc-val" placeholder="0" min="0" step="0.01" style="width:80px;font-size:.82rem" oninput="editAtualizarTotal()">
+          <select id="edit-desc-tipo" style="font-size:.78rem;padding:.3rem .4rem;width:auto" onchange="editAtualizarTotal()">
+            <option value="reais">R$</option>
+            <option value="pct">%</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--rosa-glow);border-radius:10px;border:1px solid rgba(232,145,184,.2);margin-bottom:1.25rem">
+        <span style="font-size:.88rem;color:var(--texto-sec)">Total do pedido</span>
+        <span id="edit-total" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--rosa)">R$ 0,00</span>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn btn-primary" style="flex:1;padding:.85rem" onclick="salvarEdicao()">Salvar alterações</button>
+        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAÇÃO WHATSAPP -->
+<div id="modal-wpp" style="display:none;position:fixed;inset:0;z-index:600;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
+  <div style="background:var(--card);border-radius:16px 16px 12px 12px;border:1px solid var(--borda);width:100%;max-width:540px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--borda);flex-shrink:0">
+      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">📋 Confirmação para WhatsApp</span>
+      <button onclick="fecharModalWpp()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.1rem .4rem">✕</button>
+    </div>
+    <div style="padding:1rem 1.25rem;flex:1;overflow-y:auto">
+      <textarea id="wpp-texto" style="
+        width:100%;min-height:320px;background:var(--bg2);border:1.5px solid var(--borda);
+        border-radius:10px;padding:.85rem;font-family:'DM Sans',sans-serif;font-size:.88rem;
+        color:var(--texto);line-height:1.65;resize:vertical;outline:none;
+      "></textarea>
+      <div style="font-size:.75rem;color:var(--texto-dim);margin-top:.5rem">Edite o texto acima se precisar ajustar algo antes de copiar.</div>
+    </div>
+    <div style="padding:1rem 1.25rem;border-top:1px solid var(--borda);display:flex;gap:.75rem;flex-shrink:0">
+      <button onclick="copiarConfirmacao()" style="
+        flex:1;padding:.8rem;border-radius:9px;border:none;cursor:pointer;
+        background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;
+        font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;
+        display:flex;align-items:center;justify-content:center;gap:.5rem;
+      ">📋 Copiar texto</button>
+      <button onclick="fecharModalWpp()" style="
+        padding:.8rem 1.2rem;border-radius:9px;border:1.5px solid var(--borda);
+        background:var(--bg2);color:var(--texto-sec);cursor:pointer;
+        font-family:'DM Sans',sans-serif;font-size:.88rem;
+      ">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== DADOS ==========
+const SENHA = 'lais2024';
+let carrinho_init_done = false;
+
+function getData(key){try{return JSON.parse(localStorage.getItem('ls_'+key)||'[]')}catch{return[]}}
+function setData(key,val){localStorage.setItem('ls_'+key,JSON.stringify(val))}
+// Remove emojis e espaços extras de nomes de produtos
+function normP(n){return(n||'').replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{27FF}]\s*/gu,'').trim()}
+
+// Formata detalhe estruturado (multiline) em HTML com labels destacados
+function fmtDetalhe(detalhe){
+  if(!detalhe) return '';
+  // Converte formato antigo (separado por ·) para estruturado
+  let texto = detalhe;
+  if(!texto.includes('\n') && texto.includes('·')){
+    texto = texto.split('·').map(p=>p.trim()).join('\n');
+  }
+  // Converte formato "Massa: X · Tamanho: Y" se ainda houver
+  texto = texto.replace(/ · /g, '\n');
+  
+  return texto.split('\n').filter(l=>l.trim()).map(linha=>{
+    const idx = linha.indexOf(':');
+    if(idx>0 && idx<25){
+      const label = linha.substring(0,idx).trim();
+      const valor = linha.substring(idx+1).trim();
+      return `<div style="display:flex;gap:.4rem;align-items:baseline;padding:.1rem 0">
+        <span style="color:var(--texto-dim);font-size:.72rem;white-space:nowrap;min-width:70px">${label}:</span>
+        <span style="color:var(--texto);font-size:.82rem;font-weight:500;line-height:1.4">${valor}</span>
+      </div>`;
+    }
+    return `<div style="font-size:.8rem;color:var(--texto-sec);padding:.1rem 0">${linha}</div>`;
+  }).join('');
+}
+
+// ========== LOGIN ==========
+function doLogin(){
+  const v=document.getElementById('login-input').value;
+  if(v===SENHA){
+    sessionStorage.setItem('ls_logado','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    initApp();
+  } else {
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('login-input').value='';
+  }
+}
+function logout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-input').value='';
+}
+
+// ========== NAVEGAÇÃO ==========
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelector(`nav a[data-page="${id}"]`).classList.add('active');
+  if(id==='dashboard')renderDashboard();
+  if(id==='agenda')renderAgenda();
+  if(id==='pedidos')renderPedidos();
+  if(id==='despesas')renderDespesas();
+  if(id==='produtos')renderProdutos();
+  if(id==='relatorios')initRelatorios();
+  if(window.innerWidth<=768)toggleMenu();
+}
+function toggleMenu(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ========== NOTIFICAÇÃO ==========
+function notif(msg,tipo='ok'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;
+  n.className='notif'+(tipo==='error'?' error':'');
+  n.style.display='block';
+  setTimeout(()=>n.style.display='none',2800);
+}
+
+// ========== UTILS ==========
+function fmtBRL(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function dataLocal(d){
+  // Retorna YYYY-MM-DD no fuso horário LOCAL do dispositivo
+  const dt = d || new Date();
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const dia = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dia}`;
+}
+function mesLocal(d){
+  const dt = d || new Date();
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+function hoje(){return dataLocal()}
+function mesAtual(){return hoje().substring(0,7)}
+function inicioSemana(d){
+  const dt=new Date(d+'T12:00:00');
+  const day=dt.getDay();
+  const diff=dt.getDate()-day+(day===0?-6:1);
+  return dataLocal(new Date(dt.setDate(diff)));
+}
+
+// ========== PRODUTOS ==========
+function salvarProduto(){
+  const nome=document.getElementById('prod-nome').value.trim();
+  const cat=document.getElementById('prod-cat').value;
+  const preco=parseFloat(document.getElementById('prod-preco').value);
+  const desc=document.getElementById('prod-desc').value.trim();
+  if(!nome||!preco){notif('Preencha nome e preço','error');return}
+  const prods=getData('produtos');
+  prods.push({id:Date.now(),nome,cat,preco,desc});
+  setData('produtos',prods);
+  document.getElementById('prod-nome').value='';
+  document.getElementById('prod-preco').value='';
+  document.getElementById('prod-desc').value='';
+  renderProdutos();
+  notif('Produto adicionado ao cardápio ✦');
+}
+function deleteProduto(id){
+  if(!confirm('Remover este produto?'))return;
+  setData('produtos',getData('produtos').filter(p=>p.id!==id));
+  renderProdutos();
+}
+function renderProdutos(){
+  const prods=getData('produtos');
+  const cats={bolos:'Bolos',brigadeiros:'Brigadeiros',tortas:'Tortas',cupcakes:'Cupcakes',pascoa:'Páscoa',festas:'Festas',outros:'Outros'};
+  if(!prods.length){document.getElementById('lista-produtos').innerHTML='<div class="empty">Nenhum produto cadastrado ainda</div>';return}
+  const agrupado={};
+  prods.forEach(p=>{if(!agrupado[p.cat])agrupado[p.cat]=[];agrupado[p.cat].push(p)});
+  let html='';
+  for(const cat in agrupado){
+    html+=`<div style="padding:.6rem 1rem .2rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-sec);background:#fdf6ef">${cats[cat]||cat}</div>`;
+    agrupado[cat].forEach(p=>{
+      html+=`<div class="produto-item">
+        <div>
+          <div class="produto-nome">${p.nome}</div>
+          ${p.desc?`<div class="produto-cat">${p.desc}</div>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="produto-preco">${fmtBRL(p.preco)}</div>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduto(${p.id})">✕</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('lista-produtos').innerHTML=html;
+}
+// (select populado pelo carrinho)
+
+// ========== NOVO PEDIDO: CARDÁPIO ABAS ==========
+let npQtys = {doc:25, out:1};
+
+function npTab(id, el){
+  document.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('np-'+id).classList.add('active');
+  if(id==='unit') renderUnitCardapio();
+}
+
+function npSel(el, gid){
+  document.querySelectorAll('#'+gid+' .np-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  npUpdatePreviewDec();npUpdatePreviewSim();npUpdatePreviewVul();
+  if(gid==='np-doc-item') npPreviewDoces();
+}
+
+function npPreviewDoces(){
+  const item = npGetV('np-doc-item');
+  const qty = npQtys['doc']||25;
+  const prev = document.getElementById('np-doc-preview');
+  if(!prev) return;
+  if(!item){prev.textContent='';return}
+  const t = tabLookup(P_DOCES_TAB, item);
+  if(!t){prev.textContent='';return}
+  if(t.fixo){ prev.textContent=`Total: ${fmtBRL(t.fixo)}`; return; }
+  if(t.un){ prev.textContent=`Total: ${fmtBRL(t.un*qty)} (${qty} un × R$${t.un.toFixed(2).replace('.',',')})`; return; }
+  const calc = calcPrecoDoces(t, qty);
+  if(calc.mult){
+    prev.textContent=`Total: ${fmtBRL(calc.preco)} (${calc.vezes}× ${calc.unitBase}un)`;
+  } else {
+    prev.textContent=`Total: ${fmtBRL(calc.preco)} (${qty} unidades)`;
+  }
+}
+
+function npMulti(el, gid, max){
+  if(el.classList.contains('selected')){el.classList.remove('selected');npUpdatePreviewDec();return}
+  const sel=document.querySelectorAll('#'+gid+' .np-opt.selected');
+  if(sel.length>=max){notif('Máximo '+max+' recheios','error');return}
+  el.classList.add('selected');npUpdatePreviewDec();
+}
+
+function npChgQ(k,d,min){
+  const step=Math.abs(d);
+  npQtys[k]=Math.max(min, (npQtys[k]||min)+d);
+  document.getElementById('np-q-'+k).textContent=npQtys[k];
+}
+
+function npGetV(gid){
+  const el=document.querySelector('#'+gid+' .np-opt.selected');
+  if(!el) return null;
+  // Get only the direct text node, ignoring child divs (like np-opt-sub)
+  const txt=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).join('').trim();
+  return txt || el.firstChild.textContent.trim();
+}
+function npGetEl(gid){return document.querySelector('#'+gid+' .np-opt.selected')}
+function npGetMulti(gid){
+  return [...document.querySelectorAll('#'+gid+' .np-opt.selected')].map(e=>{
+    // Pega só nós de texto diretos, ignorando badges e sub-divs
+    const txt = [...e.childNodes]
+      .filter(n=>n.nodeType===3)
+      .map(n=>n.textContent.trim())
+      .join('').trim();
+    return txt || e.firstChild.textContent.trim();
+  });
+}
+
+// Previews
+function npPreviewEl(id,html){const e=document.getElementById(id);if(e){e.innerHTML=html;e.style.display=html?'block':'none'}}
+
+function npUpdatePreviewDec(){
+  const tam=npGetEl('np-dec-tam');const recs=npGetMulti('np-dec-rec');const cob=npGetEl('np-dec-cob');
+  if(!tam&&!recs.length&&!cob){npPreviewEl('np-dec-preview','');return}
+  const base=tam?parseFloat(tam.dataset.preco||0):0;
+  const extra=cob?parseFloat(cob.dataset.extra||0):0;
+  const tier=recs.some(r=>r.includes('Pistache')||r.includes('Kinder')||r.includes('Ouro')||r.includes('Nozes')||r.includes('praliné')||r.includes('Marta'))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','coco','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
+  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
+  const total=base+tierAdd[tier]+extra;
+  const label={trad:'Tradicional',esp:'Especial',prem:'Premium'};
+  let html=`<strong>Estimativa:</strong> R$ ${total.toLocaleString('pt-BR')}`;
+  if(recs.length) html+=` · Recheio ${label[tier]}`;
+  if(extra>0) html+=` · Cobertura +R$${extra}`;
+  npPreviewEl('np-dec-preview',html);
+}
+
+function npUpdatePreviewSim(){
+  const sab=npGetEl('np-sim-sab');const tam=npGetEl('np-sim-tam');
+  if(!sab||!tam)return;
+  const key=tam.dataset.key;
+  const v=sab.dataset[key];
+  if(v) npPreviewEl('np-sim-preview',`<strong>Valor:</strong> R$ ${parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2})}`);
+}
+
+function npUpdatePreviewVul(){
+  const cob=npGetEl('np-vul-cob');const tam=npGetEl('np-vul-tam');
+  if(!cob||!tam)return;
+  const key=tam.dataset.key;
+  const v=cob.dataset[key];
+  if(v) npPreviewEl('np-vul-preview',`<strong>Valor:</strong> R$ ${parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2})}`);
+}
+
+// ADD functions
+function npAddBolo(){
+  const mas=npGetV('np-dec-mas'),tam=npGetEl('np-dec-tam'),recs=npGetMulti('np-dec-rec'),cob=npGetEl('np-dec-cob');
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
+  if(!cob){notif('Escolha a cobertura','error');return}
+  const base=parseFloat(tam.dataset.preco||0);
+  const extra=parseFloat(cob.dataset.extra||0);
+  const tier=recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
+  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
+  const total=base+tierAdd[tier]+extra;
+  const tamNome=tam.firstChild.textContent.trim();
+  const cobNome=cob.firstChild.textContent.trim();
+  const detalheEstruturado = `Massa: ${mas}\nTamanho: ${tamNome}\nRecheio: ${recs.join(' + ')}\nCobertura: ${cobNome}`;
+  npCarrAdd(`Bolo Decorado`, detalheEstruturado, total);
+  ['np-dec-mas','np-dec-tam','np-dec-rec','np-dec-cob'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-dec-preview','');
+}
+
+function npAddSimples(){
+  const sab=npGetEl('np-sim-sab'),tam=npGetEl('np-sim-tam');
+  if(!sab){notif('Escolha o sabor','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  const key=tam.dataset.key;const preco=parseFloat(sab.dataset[key]||0);
+  const sabNome = sab.firstChild.textContent.trim();
+  const tamNomeSim = tam.firstChild.textContent.trim();
+  npCarrAdd(`Bolo Simples`, `Sabor: ${sabNome}\nTamanho: ${tamNomeSim}`, preco);
+  ['np-sim-sab','np-sim-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-sim-preview','');
+}
+
+function npAddVulcao(){
+  const mas=npGetV('np-vul-mas'),cob=npGetEl('np-vul-cob'),tam=npGetEl('np-vul-tam');
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!cob){notif('Escolha a cobertura','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  const key=tam.dataset.key;const preco=parseFloat(cob.dataset[key]||0);
+  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas}\nCobertura/Recheio: ${cob.firstChild.textContent.trim()}\nTamanho: ${tam.firstChild.textContent.trim()}`,preco);
+  ['np-vul-mas','np-vul-cob','np-vul-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npPreviewEl('np-vul-preview','');
+}
+
+// Tabelas de preço
+const P_DOCES_TAB={
+  'Docinhos Tradicionais':{25:50,50:100,100:190},
+  'Docinhos Especiais':{25:75,50:120,100:220},
+  'Caixa Degustação':{15:55,20:70,25:100},
+  'Trufas de Chocolate':{un:4.00},
+  'Trufas com Frutas':{un:4.80},
+  'Copinho de Chocolate c/ Cereja':{un:4.00},
+  'Bombom Negresco':{un:4.50},
+  'Trufa Meio Amarga 50%':{fixo:250},
+};
+const P_SOB_TAB={
+  'Travessa da Felicidade':{P:80,M:130,G:199},
+  'Travessa Red Velvet':{P:80,M:130,G:219},
+  'Bombom Aberto':{P:80,M:130,G:199},
+  'Banoffee':{M:130,G:199},
+  'Torta':{P:129,M:199,G:199},
+  'Pudim de Leite Condensado':{M:65,G:85},
+};
+
+function calcPrecoDoces(t, qty){
+  // Para quantidades com tabela de tiers, calcula o preço proporcional
+  const tiers = Object.keys(t).map(Number).sort((a,b)=>a-b);
+  const maxTier = tiers[tiers.length-1];
+  const precoMaxTier = t[maxTier];
+  
+  if(qty <= tiers[0]){
+    // Menor que o mínimo, cobra o mínimo
+    return {preco: t[tiers[0]], base: tiers[0]};
+  }
+  
+  // Verifica se qty é múltiplo do tier máximo
+  if(qty > maxTier){
+    // Ex: 200un = 2x100un = 2x190 = R$380
+    const vezes = Math.ceil(qty / maxTier);
+    return {preco: vezes * precoMaxTier, base: qty, mult: true, vezes, unitBase: maxTier};
+  }
+  
+  // Encontra o tier exato ou mais próximo
+  const best = tiers.filter(n=>n<=qty).pop() || tiers[0];
+  return {preco: t[best], base: best};
+}
+
+function tabLookup(tabela, item){
+  if(!item) return null;
+  const norm = s => s.toLowerCase().trim();
+  const ni = norm(item);
+  for(const k of Object.keys(tabela)){
+    if(norm(k)===ni) return tabela[k];
+  }
+  for(const k of Object.keys(tabela)){
+    if(ni.includes(norm(k))) return tabela[k];
+  }
+  for(const k of Object.keys(tabela)){
+    if(norm(k).includes(ni)) return tabela[k];
+  }
+  return null;
+}
+
+function npAddDoces(){
+  const item=npGetV('np-doc-item');if(!item){notif('Escolha o tipo','error');return}
+  const qty=npQtys['doc']||25;
+  let preco=0, detalhe=`${qty} unidades`;
+  const t=tabLookup(P_DOCES_TAB, item);
+  if(t){
+    if(t.fixo){
+      preco=t.fixo;
+      detalhe=`cento · ${fmtBRL(t.fixo)}`;
+    } else if(t.un){
+      preco=t.un*qty;
+      detalhe=`${qty} un · R$${t.un.toFixed(2).replace('.',',')} cada`;
+    } else {
+      const calc = calcPrecoDoces(t, qty);
+      preco = calc.preco;
+      if(calc.mult){
+        detalhe=`${qty} un · ${calc.vezes}x${calc.unitBase}un = ${fmtBRL(preco)}`;
+      } else {
+        detalhe=`${qty} unidades`;
+      }
+    }
+  }
+  npCarrAdd(item, detalhe, preco);
+  document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
+  npQtys['doc']=25;
+  document.getElementById('np-q-doc').textContent='25';
+}
+
+function npAddSobremesa(){
+  const item=npGetV('np-sob-item'),tam=npGetV('np-sob-tam');
+  if(!item){notif('Escolha a sobremesa','error');return}
+  if(!tam){notif('Escolha o tamanho','error');return}
+  let preco=0;
+  const t=tabLookup(P_SOB_TAB, item);
+  if(t){
+    const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
+    preco=t[tk]||0;
+  }
+  npCarrAdd(`Sobremesa`,`Tipo: ${item}\nTamanho: ${tam}`,preco);
+  ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+}
+
+function npAddKit(){
+  const kit=npGetEl('np-kit-tam'),mas=npGetV('np-kit-mas'),recs=npGetMulti('np-kit-rec');
+  if(!kit){notif('Escolha o kit','error');return}
+  if(!mas){notif('Escolha a massa','error');return}
+  if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
+  const preco=parseFloat(kit.dataset.preco||0);
+  npCarrAdd(`Kit Festa`,`Kit: ${kit.firstChild.textContent.trim()}\nMassa: ${mas}\nRecheio: ${recs.join(' + ')}`,preco);
+  ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+}
+
+function npAddOutros(){
+  const item=npGetEl('np-out-item');if(!item){notif('Escolha o item','error');return}
+  const qty=npQtys['out']||1;const unit=parseFloat(item.dataset.unit||0);
+  npCarrAdd(`${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada`,unit*qty);
+  document.querySelectorAll('#np-out-item .selected').forEach(e=>e.classList.remove('selected'));
+  npQtys['out']=1;document.getElementById('np-q-out').textContent='1';
+}
+
+function npAddSalgado(){
+  const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
+  npCarrAdd(`${item}`,`Confirmar tamanho/peso e valor`,0);
+  document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
+}
+
+// ========== UNITÁRIOS ==========
+let unitQty = 1;
+
+function unitChgQ(d){
+  unitQty = Math.max(1, unitQty + d);
+  document.getElementById('unit-qty').textContent = unitQty;
+  unitAtualizarTotal();
+}
+
+function unitAtualizarTotal(){
+  const preco = parseFloat(document.getElementById('unit-preco').value)||0;
+  const total = preco * unitQty;
+  document.getElementById('unit-total').textContent = fmtBRL(total);
+}
+
+function npAddUnit(){
+  const nome = document.getElementById('unit-nome').value.trim();
+  const preco = parseFloat(document.getElementById('unit-preco').value)||0;
+  if(!nome){notif('Digite o nome do item','error');return}
+  if(!preco){notif('Digite o valor do item','error');return}
+  const total = preco * unitQty;
+  const det = unitQty > 1 ? `${unitQty} un · ${fmtBRL(preco)} cada` : fmtBRL(preco);
+  npCarrAdd(nome, det, total);
+  document.getElementById('unit-nome').value='';
+  document.getElementById('unit-preco').value='';
+  unitQty=1;
+  document.getElementById('unit-qty').textContent='1';
+  document.getElementById('unit-total').textContent='R$ 0,00';
+}
+
+function unitSalvarCardapio(){
+  const nome = document.getElementById('unit-salvar-nome').value.trim();
+  const preco = parseFloat(document.getElementById('unit-salvar-preco').value)||0;
+  if(!nome||!preco){notif('Preencha nome e valor para salvar','error');return}
+  const prods = getData('produtos');
+  prods.push({id:Date.now(), nome, cat:'unitarios', preco, desc:'Venda unitária'});
+  setData('produtos', prods);
+  document.getElementById('unit-salvar-nome').value='';
+  document.getElementById('unit-salvar-preco').value='';
+  renderUnitCardapio();
+  notif('Item salvo no cardápio ✦');
+}
+
+function renderUnitCardapio(){
+  const prods = getData('produtos').filter(p=>p.cat==='unitarios');
+  const cont = document.getElementById('unit-cardapio-lista');
+  if(!cont) return;
+  if(!prods.length){
+    cont.innerHTML='<div style="font-size:.8rem;color:var(--texto-dim);padding:.4rem 0">Nenhum item salvo ainda</div>';
+    return;
+  }
+  cont.innerHTML = prods.map(p=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;background:var(--card2);border-radius:8px;margin-bottom:.35rem;border:1px solid var(--borda);cursor:pointer"
+         onclick="unitCarregarSalvo('${p.nome.replace(/'/g,"\\'")}',${p.preco})">
+      <div>
+        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${p.nome}</div>
+        <div style="font-size:.73rem;color:var(--texto-sec)">${fmtBRL(p.preco)} · toque para usar</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-family:'Playfair Display',serif;font-size:.95rem;color:var(--rosa)">${fmtBRL(p.preco)}</span>
+        <button onclick="event.stopPropagation();unitDeletar(${p.id})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.85rem;opacity:.5" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.5;this.style.color='var(--texto-dim)'">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function unitCarregarSalvo(nome, preco){
+  document.getElementById('unit-nome').value = nome;
+  document.getElementById('unit-preco').value = preco;
+  unitAtualizarTotal();
+  document.getElementById('unit-nome').focus();
+}
+
+function unitDeletar(id){
+  setData('produtos', getData('produtos').filter(p=>p.id!==id));
+  renderUnitCardapio();
+}
+
+// ========== CARRINHO ==========
+let carrinho = [];
+
+function npCarrAdd(nome, detalhe, preco){
+  carrinho.push({id:Date.now(), nome, detalhe, preco});
+  renderCarrinho();
+  notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
+}
+
+function removerItem(id){
+  carrinho=carrinho.filter(i=>i.id!=id);
+  renderCarrinho();
+}
+
+function limparCarrinho(){
+  if(carrinho.length&&!confirm('Limpar todos os itens?'))return;
+  carrinho=[];renderCarrinho();
+}
+
+function calcTotais(){
+  const sub=carrinho.reduce((s,i)=>s+(i.preco||0),0);
+  const extraV=parseFloat(document.getElementById('extra-val')?.value)||0;
+  const dv=parseFloat(document.getElementById('desconto-val')?.value)||0;
+  const dt=document.getElementById('desconto-tipo')?.value||'reais';
+  const desc=dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const total=Math.max(0,sub+extraV-desc);
+  return{sub,extraV,desc,total};
+}
+
+function atualizarTotais(){
+  const{sub,extraV,desc,total}=calcTotais();
+  document.getElementById('subtotal-val').textContent=fmtBRL(sub);
+  const eRow=document.getElementById('extra-row');
+  const eDesc=document.getElementById('extra-desc')?.value.trim();
+  if(extraV>0){
+    document.getElementById('extra-label-show').textContent=eDesc||'Cobrança adicional';
+    document.getElementById('extra-val-show').textContent='+'+fmtBRL(extraV);
+    eRow.style.display='flex';
+  } else {eRow.style.display='none'}
+  document.getElementById('total-final-val').textContent=fmtBRL(total);
+}
+
+function renderCarrinho(){
+  const badge=document.getElementById('carr-badge');
+  badge.textContent=carrinho.length+(carrinho.length===1?' item':' itens');
+  const cont=document.getElementById('carrinho-itens');
+  if(!carrinho.length){cont.innerHTML='<div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div>';atualizarTotais();return}
+  cont.innerHTML=carrinho.map(item=>`
+    <div class="item-carrinho">
+      <div style="flex:1;min-width:0">
+        <div class="item-carrinho-nome">${item.nome}</div>
+        <div class="item-carrinho-sub">${fmtDetalhe(item.detalhe)}</div>
+      </div>
+      <div class="item-total">${item.preco>0?fmtBRL(item.preco):'—'}</div>
+      <button class="item-del" onclick="removerItem(${item.id})">✕</button>
+    </div>`).join('');
+  atualizarTotais();
+}
+
+// ========== MODAL CONCLUSÃO ==========
+let conclusaoPedidoId = null;
+
+function abrirModalConclusao(id){
+  conclusaoPedidoId = id;
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+
+  // Resumo no topo
+  const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+  document.getElementById('conclusao-resumo').textContent =
+    `${p.cliente} · ${dt}${p.hora?' às '+p.hora:''} · ${fmtBRL(p.valor)}`;
+
+  // Itens detalhados
+  const itensHtml = p.itens && p.itens.length
+    ? p.itens.map(i=>`
+        <div style="padding:.5rem 0;border-bottom:1px solid var(--borda)">
+          <div style="font-size:.88rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+          ${i.detalhe?`<div style="margin-top:.25rem">${fmtDetalhe(i.detalhe)}</div>`:''}
+          ${i.preco>0?`<div style="font-size:.78rem;color:var(--rosa);margin-top:.15rem">${fmtBRL(i.preco)}</div>`:''}
+        </div>`).join('')
+    : p.produtos.map(pr=>`<div style="padding:.4rem 0;font-size:.88rem;color:var(--texto);border-bottom:1px solid var(--borda)">${normP(pr)}</div>`).join('');
+  document.getElementById('conclusao-itens').innerHTML = itensHtml || '<div class="empty">—</div>';
+
+  // Monta URL Google Calendar
+  const gcDateBase = p.data.replace(/-/g,'');
+  let gcDates;
+  if(p.hora){
+    const [hh,mm] = p.hora.split(':');
+    const hEnd = String((parseInt(hh)+1)%24).padStart(2,'0');
+    gcDates = `${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+  } else {
+    gcDates = `${gcDateBase}/${gcDateBase}`;
+  }
+  const gcItensDetalhe = p.itens && p.itens.length
+    ? p.itens.map(i=>{
+        const nome = normP(i.nome);
+        const det = i.detalhe ? '\n' + i.detalhe.split('\n').map(l=>'    '+l).join('\n') : '';
+        return `• ${nome}${det}`;
+      }).join('\n')
+    : p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+  const gcDescTexto = [
+    `👤 Cliente: ${p.cliente}`,
+    ``,`🎂 Encomenda:`,gcItensDetalhe,``,
+    `💰 Valor: ${fmtBRL(p.valor)}`,
+    p.extra&&p.extra.val>0?`   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}`:null,
+    p.hora?`⏰ Horário: ${p.hora}`:null,
+    p.local?`📍 Local: ${p.local}`:null,
+    p.obs?`📝 Obs: ${p.obs}`:null,
+    ``,`📱 Canal: ${p.canal||'—'}`,`📊 Status: ${p.status}`,
+  ].filter(l=>l!==null).join('\n');
+  const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+  const gcDesc = encodeURIComponent(gcDescTexto);
+  const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDates}&details=${gcDesc}`;
+  document.getElementById('conclusao-gc-link').href = gcUrl;
+
+  const modal = document.getElementById('modal-conclusao');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function conclusaoGoogleClick(){
+  notif('Abrindo Google Agenda... 📅');
+}
+
+function conclusaoWhatsApp(){
+  fecharModalConclusao();
+  setTimeout(()=>abrirConfirmacao(conclusaoPedidoId), 200);
+}
+
+function fecharModalConclusao(){
+  document.getElementById('modal-conclusao').style.display = 'none';
+  document.body.style.overflow = '';
+  notif('Pedido finalizado ♡');
+}
+
+document.getElementById('modal-conclusao').addEventListener('click', function(e){
+  if(e.target===this) fecharModalConclusao();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
+
+function abrirModalNovoPedido(){
+  document.getElementById('ped-data').value = hoje();
+  document.getElementById('ped-status').value = 'agendado';
+  document.getElementById('ped-local').value = 'retirada';
+  document.getElementById('ped-hora').value = '';
+  document.getElementById('ped-cliente').value = '';
+  document.getElementById('ped-obs').value = '';
+  document.getElementById('extra-desc').value = '';
+  document.getElementById('extra-val').value = '';
+  document.getElementById('desconto-val').value = '';
+  carrinho = [];
+  renderCarrinho();
+  renderUnitCardapio();
+  const modal = document.getElementById('modal-novo-pedido');
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Scroll to top of modal
+  modal.scrollTop = 0;
+}
+
+function fecharModalNovoPedido(){
+  document.getElementById('modal-novo-pedido').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+
+function salvarPedido(){
+  const data=document.getElementById('ped-data').value;
+  const cliente=document.getElementById('ped-cliente').value.trim();
+  const status=document.getElementById('ped-status').value;
+  const canal=document.getElementById('ped-canal').value;
+  const obs=document.getElementById('ped-obs').value.trim();
+  const hora=document.getElementById('ped-hora').value||'';
+  const local=document.getElementById('ped-local').value||'a combinar';
+  const extraDesc=document.getElementById('extra-desc')?.value.trim();
+  const extraV=parseFloat(document.getElementById('extra-val')?.value)||0;
+  if(!data||!cliente){notif('Preencha data e cliente','error');return}
+  if(!carrinho.length){notif('Adicione ao menos um produto ao carrinho','error');return}
+  const{total}=calcTotais();
+  const produtosNomes=carrinho.map(i=>i.nome.replace(/^[^\w\s]+\s/,''));
+  const novoPedido={id:Date.now(),data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}};
+  const pedidos=getData('pedidos');
+  pedidos.push(novoPedido);
+  setData('pedidos',pedidos);
+  carrinho=[];
+  renderCarrinho();
+  document.getElementById('extra-desc').value='';
+  document.getElementById('extra-val').value='';
+  document.getElementById('desconto-val').value='';
+  document.getElementById('ped-hora').value='';
+  ['ped-data','ped-cliente','ped-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ped-data').value=hoje();
+  document.getElementById('ped-status').value='confirmado';
+  document.getElementById('ped-local').value='retirada';
+  renderPedidos();
+  fecharModalNovoPedido();
+  abrirModalConclusao(novoPedido.id);
+}
+function deletePedido(id){
+  if(!confirm('Remover este pedido?'))return;
+  setData('pedidos',getData('pedidos').filter(p=>p.id!==id));
+  renderPedidos();
+}
+function alterarStatus(id, novoStatus, protegido){
+  if(protegido){
+    // Restaura o select para o valor anterior e pede senha
+    renderPedidos();
+    senhaPendente={acao:'status',id,novoStatus};
+    document.getElementById('senha-prot-input').value='';
+    document.getElementById('senha-prot-erro').style.display='none';
+    document.getElementById('modal-senha-prot').style.display='flex';
+    document.body.style.overflow='hidden';
+    setTimeout(()=>document.getElementById('senha-prot-input').focus(),200);
+    return;
+  }
+  const pedidos=getData('pedidos');
+  const idx=pedidos.findIndex(p=>p.id==id);
+  if(idx<0)return;
+  pedidos[idx].status=novoStatus;
+  setData('pedidos',pedidos);
+  renderPedidos();
+  if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
+  if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
+  const labels={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue ✓',pendente:'Pendente',cancelado:'Cancelado'};
+  notif('Status atualizado: '+labels[novoStatus]);
+}
+
+function renderPedidos(){
+  const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
+  if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
+
+  const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
+  const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍',outro:'📌'};
+  const hojeStr=dataLocal();
+  const amanhaStr=dataLocal(new Date(Date.now()+86400000));
+
+  let html='';
+  pedidos.forEach(p=>{
+    const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
+    const prods=p.produtos.length?p.produtos.slice(0,3).map(normP).join(', ')+(p.produtos.length>3?' +mais':''):'—';
+    const protegido = p.status==='entregue'||p.status==='cancelado';
+
+    // Destaque visual para hoje e amanhã
+    let borderColor='var(--borda)';
+    let urgLabel='';
+    if(p.data===hojeStr && p.status!=='entregue' && p.status!=='cancelado'){
+      borderColor='var(--rosa)';
+      urgLabel=`<span style="font-size:.7rem;background:var(--rosa);color:#fff;padding:.1rem .55rem;border-radius:20px;margin-left:.4rem;font-weight:500">HOJE</span>`;
+    } else if(p.data===amanhaStr && p.status!=='entregue' && p.status!=='cancelado'){
+      borderColor='var(--amarelo)';
+      urgLabel=`<span style="font-size:.7rem;background:var(--amarelo);color:#000;padding:.1rem .55rem;border-radius:20px;margin-left:.4rem;font-weight:500">AMANHÃ</span>`;
+    }
+
+    html+=`
+    <div style="padding:1rem;border-bottom:2px solid ${borderColor};${p.data===hojeStr&&!protegido?'background:rgba(232,145,184,.04)':''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem">
+          <span style="font-size:.78rem;color:var(--texto-dim)">${dt}${p.hora?` · ⏰ ${p.hora}`:''}</span>
+          <span style="font-size:.75rem;color:var(--texto-dim)">${canalIcon[p.canal]||'📌'} ${p.canal}${p.local?' · '+p.local:''}</span>
+          ${urgLabel}
+          ${protegido?`<span style="font-size:.68rem;color:var(--texto-dim);background:var(--bg2);border:1px solid var(--borda);padding:.1rem .45rem;border-radius:20px">🔒 protegido</span>`:''}
+        </div>
+        <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
+      </div>
+      <div style="margin-bottom:.65rem">
+        <div style="font-size:.95rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
+        ${p.itens && p.itens.length
+          ? `<div style="background:var(--bg2);border-radius:8px;padding:.5rem .7rem;margin-top:.4rem">
+              ${p.itens.map(i=>`<div style="padding:.25rem 0;border-bottom:1px solid var(--borda)">
+                <div style="font-size:.82rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+                ${i.detalhe?`<div style="margin-top:.25rem">${fmtDetalhe(i.detalhe)}</div>`:''}
+              </div>`).join('')}
+            </div>`
+          : `<div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>`
+        }
+        ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.3rem">📝 ${p.obs}</div>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+        <select onchange="alterarStatus(${p.id},this.value,${protegido})" style="
+          flex:1;min-width:130px;padding:.4rem .6rem;font-size:.8rem;border-radius:8px;
+          border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);
+          font-family:'DM Sans',sans-serif;${protegido?'opacity:.6':''}
+        ">
+          <option value="agendado"   ${p.status==='agendado'  ?'selected':''}>📅 Agendado</option>
+          <option value="confirmado" ${p.status==='confirmado'?'selected':''}>✓ Confirmado</option>
+          <option value="entregue"   ${p.status==='entregue'  ?'selected':''}>✅ Entregue</option>
+          <option value="pendente"   ${p.status==='pendente'  ?'selected':''}>⏳ Pendente</option>
+          <option value="cancelado"  ${p.status==='cancelado' ?'selected':''}>✕ Cancelado</option>
+        </select>
+        <button onclick="${protegido?`pedirSenhaProt('editar',${p.id})`:`abrirModal(${p.id})`}" style="
+          padding:.4rem .8rem;border-radius:8px;border:1.5px solid var(--borda);
+          background:var(--bg2);color:${protegido?'var(--texto-dim)':'var(--texto-sec)'};cursor:pointer;font-size:.82rem;
+          font-family:'DM Sans',sans-serif;white-space:nowrap;
+        ">${protegido?'🔒':'✏️'} Editar</button>
+        <button onclick="${protegido?`pedirSenhaProt('excluir',${p.id})`:`deletePedido(${p.id})`}" style="
+          padding:.4rem .7rem;border-radius:8px;
+          border:1.5px solid ${protegido?'var(--borda)':'rgba(240,96,96,.3)'};
+          background:${protegido?'var(--bg2)':'rgba(240,96,96,.1)'};
+          color:${protegido?'var(--texto-dim)':'var(--vermelho)'};cursor:pointer;font-size:.82rem;
+          font-family:'DM Sans',sans-serif;
+        ">${protegido?'🔒':'✕'}</button>
+      </div>
+      ${!protegido?`
+      <button onclick="abrirConfirmacao(${p.id})" style="
+        width:100%;margin-top:.6rem;padding:.55rem;border-radius:8px;
+        border:1.5px solid rgba(93,191,122,.3);background:rgba(93,191,122,.08);
+        color:var(--verde);cursor:pointer;font-size:.84rem;font-weight:500;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      ">📋 Gerar confirmação para WhatsApp</button>`:''}
+      <button onclick="abrirGoogleAgenda(${p.id})" style="
+        width:100%;margin-top:.4rem;padding:.55rem;border-radius:8px;
+        border:1.5px solid rgba(96,184,240,.25);background:rgba(96,184,240,.08);
+        color:var(--azul);cursor:pointer;font-size:.84rem;font-weight:500;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      ">📅 + Google Agenda</button>
+    </div>`;
+  });
+  document.getElementById('tabela-pedidos').innerHTML=html;
+}
+
+// ========== GOOGLE AGENDA DIRETO ==========
+function abrirGoogleAgenda(id){
+  const pedidos=getData('pedidos');
+  const p=pedidos.find(x=>x.id==id);
+  if(!p)return;
+  const gcDateBase=p.data.replace(/-/g,'');
+  let gcDates;
+  if(p.hora){
+    const[hh,mm]=p.hora.split(':');
+    const hEnd=String((parseInt(hh)+1)%24).padStart(2,'0');
+    gcDates=`${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+  } else {
+    gcDates=`${gcDateBase}/${gcDateBase}`;
+  }
+  const itensDetalhe=p.itens&&p.itens.length
+    ?p.itens.map(i=>{
+        const nome=normP(i.nome);
+        const det=i.detalhe?'\n'+i.detalhe.split('\n').map(l=>'    '+l).join('\n'):'';
+        return `• ${nome}${det}`;
+      }).join('\n')
+    :p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+  const desc=[
+    `👤 Cliente: ${p.cliente}`,``,`🎂 Encomenda:`,itensDetalhe,``,
+    `💰 Valor: ${fmtBRL(p.valor)}`,
+    p.extra&&p.extra.val>0?`   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}`:null,
+    p.hora?`⏰ Horário: ${p.hora}`:null,
+    p.local?`📍 Local: ${p.local}`:null,
+    p.obs?`📝 Obs: ${p.obs}`:null,
+  ].filter(l=>l!==null).join('\n');
+  const titulo=encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+  const url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${gcDates}&details=${encodeURIComponent(desc)}`;
+  window.open(url,'_blank');
+}
+
+// ========== DESPESA RÁPIDA ==========
+function abrirDespesaRapida(){
+  document.getElementById('dr-data').value=hoje();
+  document.getElementById('dr-desc').value='';
+  document.getElementById('dr-valor').value='';
+  document.getElementById('dr-cat').value='ingredientes';
+  const modal=document.getElementById('modal-desp-rapida');
+  modal.style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('dr-desc').focus(),200);
+}
+function fecharDespesaRapida(){
+  document.getElementById('modal-desp-rapida').style.display='none';
+  document.body.style.overflow='';
+}
+function salvarDespesaRapida(){
+  const data=document.getElementById('dr-data').value;
+  const desc=document.getElementById('dr-desc').value.trim();
+  const valor=parseFloat(document.getElementById('dr-valor').value);
+  const cat=document.getElementById('dr-cat').value;
+  if(!data||!desc||!valor){notif('Preencha data, descrição e valor','error');return}
+  const desp=getData('despesas');
+  desp.push({id:Date.now(),data,desc,valor,cat,forn:'',obs:''});
+  setData('despesas',desp);
+  fecharDespesaRapida();
+  if(document.getElementById('page-despesas').classList.contains('active'))renderDespesas();
+  notif('Despesa registrada ✓');
+}
+
+// ========== SENHA PROTEÇÃO ==========
+let senhaPendente={acao:null,id:null};
+function pedirSenhaProt(acao,id){
+  senhaPendente={acao,id};
+  document.getElementById('senha-prot-input').value='';
+  document.getElementById('senha-prot-erro').style.display='none';
+  document.getElementById('modal-senha-prot').style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('senha-prot-input').focus(),200);
+}
+function fecharSenhaProt(){
+  document.getElementById('modal-senha-prot').style.display='none';
+  document.body.style.overflow='';
+  senhaPendente={acao:null,id:null};
+}
+function confirmarSenhaProt(){
+  const v=document.getElementById('senha-prot-input').value;
+  if(v!==SENHA){
+    document.getElementById('senha-prot-erro').style.display='block';
+    document.getElementById('senha-prot-input').value='';
+    return;
+  }
+  fecharSenhaProt();
+  if(senhaPendente.acao==='editar') abrirModal(senhaPendente.id);
+  if(senhaPendente.acao==='excluir') deletePedido(senhaPendente.id);
+  if(senhaPendente.acao==='status'){
+    const{id,novoStatus}=senhaPendente;
+    const pedidos=getData('pedidos');
+    const idx=pedidos.findIndex(p=>p.id==id);
+    if(idx>=0){pedidos[idx].status=novoStatus;setData('pedidos',pedidos);renderPedidos();}
+  }
+}
+
+// ========== DASHBOARD URGENTES ==========
+function renderDashUrgentes(){
+  const pedidos=getData('pedidos');
+  const hojeStr=dataLocal();
+  const amanhaStr=dataLocal(new Date(Date.now()+86400000));
+  const urgentes=pedidos.filter(p=>
+    (p.data===hojeStr||p.data===amanhaStr)&&
+    !['entregue','cancelado'].includes(p.status)
+  ).sort((a,b)=>a.data.localeCompare(b.data)||((a.hora||'')>(b.hora||'')?1:-1));
+
+  const cont=document.getElementById('dash-urgentes');
+  if(!cont)return;
+  if(!urgentes.length){cont.innerHTML='';return}
+
+  let html=`<div style="margin-bottom:1.25rem">
+    <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.6rem;font-weight:500">📌 Hoje e amanhã</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">`;
+  urgentes.forEach(p=>{
+    const isHoje=p.data===hojeStr;
+    const cor=isHoje?'var(--rosa)':'var(--amarelo)';
+    const label=isHoje?'HOJE':'AMANHÃ';
+    const itensStr=p.itens&&p.itens.length?p.itens.map(i=>normP(i.nome)).join(', '):p.produtos.map(normP).join(', ');
+    html+=`<div onclick="showPage('pedidos')" style="
+      display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;
+      background:var(--card);border-radius:12px;border:1.5px solid ${cor};cursor:pointer;">
+      <div style="width:44px;height:44px;border-radius:10px;background:${isHoje?'rgba(232,145,184,.15)':'rgba(240,192,64,.12)'};
+        display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:.58rem;color:${cor};font-weight:700">${label}</span>
+        ${p.hora?`<span style="font-size:.72rem;color:${cor};font-weight:600">${p.hora}</span>`:''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.9rem;font-weight:600;color:var(--texto)">${p.cliente}</div>
+        <div style="font-size:.75rem;color:var(--texto-sec);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${itensStr}</div>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:.95rem;color:${cor};flex-shrink:0">${fmtBRL(p.valor)}</div>
+    </div>`;
+  });
+  html+=`</div></div>`;
+  cont.innerHTML=html;
+}
+
+// ========== DESPESAS ==========
+function salvarDespesa(){
+  const data=document.getElementById('desp-data').value;
+  const desc=document.getElementById('desp-desc').value.trim();
+  const valor=parseFloat(document.getElementById('desp-valor').value);
+  const cat=document.getElementById('desp-cat').value;
+  const forn=document.getElementById('desp-forn').value.trim();
+  const obs=document.getElementById('desp-obs').value.trim();
+  if(!data||!desc||!valor){notif('Preencha data, descrição e valor','error');return}
+  const desp=getData('despesas');
+  desp.push({id:Date.now(),data,desc,valor,cat,forn,obs});
+  setData('despesas',desp);
+  ['desp-data','desp-desc','desp-valor','desp-forn','desp-obs'].forEach(id=>document.getElementById(id).value='');
+  renderDespesas();
+  notif('Despesa registrada');
+}
+function deleteDespesa(id){
+  if(!confirm('Remover esta despesa?'))return;
+  setData('despesas',getData('despesas').filter(d=>d.id!==id));
+  renderDespesas();
+}
+function renderDespesas(){
+  const mes=document.getElementById('filtro-mes-desp').value||mesAtual();
+  const desp=getData('despesas').filter(d=>d.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
+  if(!desp.length){document.getElementById('tabela-despesas').innerHTML='<div class="empty">Nenhuma despesa neste mês</div>';return}
+  const catLabel={ingredientes:'Ingredientes',embalagens:'Embalagens',utensilios:'Utensílios',marketing:'Marketing',energia:'Energia/Gás',entrega:'Frete/Entrega',outros:'Outros'};
+  const catIcon={ingredientes:'🧁',embalagens:'📦',utensilios:'🔧',marketing:'📣',energia:'⚡',entrega:'🚗',outros:'📌'};
+  let html='';
+  desp.forEach(d=>{
+    const dt=new Date(d.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
+    html+=`
+    <div style="padding:1rem;border-bottom:1px solid var(--borda)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
+            <span style="font-size:.75rem;color:var(--texto-dim)">${dt}</span>
+            <span style="font-size:.72rem;background:rgba(240,192,64,.12);color:var(--amarelo);border:1px solid rgba(240,192,64,.2);border-radius:20px;padding:.1rem .55rem">${catIcon[d.cat]||'📌'} ${catLabel[d.cat]||d.cat}</span>
+          </div>
+          <div style="font-size:.92rem;font-weight:500;color:var(--texto)">${d.desc}</div>
+          ${d.forn?`<div style="font-size:.76rem;color:var(--texto-sec);margin-top:.15rem">🏪 ${d.forn}</div>`:''}
+          ${d.obs?`<div style="font-size:.75rem;color:var(--texto-dim);margin-top:.1rem">${d.obs}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0">
+          <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--vermelho)">${fmtBRL(d.valor)}</span>
+          <button onclick="deleteDespesa(${d.id})" style="
+            padding:.3rem .65rem;border-radius:7px;border:1.5px solid rgba(240,96,96,.3);
+            background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.78rem;
+            font-family:'DM Sans',sans-serif;
+          ">✕ Remover</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('tabela-despesas').innerHTML=html;
+}
+
+// ========== DASHBOARD ==========
+let chartLinha,chartProd,chartBarras;
+function renderDashboard(){
+  const pedidos=getData('pedidos');
+  const despesas=getData('despesas');
+  const mes=mesAtual();
+  const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
+  const despMes=despesas.filter(d=>d.data.startsWith(mes));
+  const fat=pedMes.reduce((s,p)=>s+p.valor,0);
+  const desp=despMes.reduce((s,d)=>s+d.valor,0);
+  const lucro=fat-desp;
+  const qPed=pedMes.length;
+  const ticket=qPed?fat/qPed:0;
+  const now=new Date();
+  document.getElementById('dash-data').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  renderDashUrgentes();
+  document.getElementById('dash-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento do mês</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Despesas do mês</div><div class="value red">${fmtBRL(desp)}</div></div>
+    <div class="card-stat"><div class="label">Lucro estimado</div><div class="value ${lucro>=0?'green':'red'}">${fmtBRL(lucro)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos no mês</div><div class="value">${qPed}</div></div>
+    <div class="card-stat"><div class="label">Ticket médio</div><div class="value">${fmtBRL(ticket)}</div></div>
+  `;
+
+  // Linha — últimos 30 dias
+  const dias30=[];const fat30=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=dataLocal(d);
+    dias30.push(d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
+    fat30.push(pedidos.filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+  }
+  if(chartLinha)chartLinha.destroy();
+  chartLinha=new Chart(document.getElementById('chart-linha'),{
+    type:'line',data:{labels:dias30,datasets:[{label:'Faturamento',data:fat30,borderColor:'#e891b8',backgroundColor:'rgba(232,145,184,.08)',tension:.4,fill:true,pointRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10,font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}}}}
+  });
+
+  // Produtos mais vendidos
+  const normNome=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
+  const contagem={};
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{const k=normNome(pr);contagem[k]=(contagem[k]||0)+1}));
+  const topProd=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(chartProd)chartProd.destroy();
+  chartProd=new Chart(document.getElementById('chart-produtos'),{
+    type:'doughnut',
+    data:{labels:topProd.map(x=>x[0]),datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#e891b8','#c06890','#60b8f0','#5dbf7a','#f0c040','#f06060']}]},
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12,color:'#8880a8'}}}}
+  });
+
+
+  // Barras meses — últimos 6 meses
+  const meses6=[];const fat6=[];const desp6=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date();d.setMonth(d.getMonth()-i);
+    const m=mesLocal(d);
+    meses6.push(d.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}));
+    fat6.push(pedidos.filter(p=>p.data.startsWith(m)&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+    desp6.push(despesas.filter(d=>d.data.startsWith(m)).reduce((s,d)=>s+d.valor,0));
+  }
+  if(chartBarras)chartBarras.destroy();
+  chartBarras=new Chart(document.getElementById('chart-barras'),{
+    type:'bar',data:{labels:meses6,datasets:[
+      {label:'Receita',data:fat6,backgroundColor:'rgba(232,145,184,.7)'},
+      {label:'Despesa',data:desp6,backgroundColor:'rgba(240,96,96,.5)'}
+    ]},
+    options:{responsive:true,plugins:{legend:{labels:{font:{size:10},color:'#8880a8'}}},scales:{x:{ticks:{font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10},color:'#8880a8'},grid:{color:'rgba(255,255,255,.04)'}}}}
+  });
+}
+
+document.getElementById('modal-desp-rapida').addEventListener('click',function(e){if(e.target===this)fecharDespesaRapida();});
+document.getElementById('modal-senha-prot').addEventListener('click',function(e){if(e.target===this)fecharSenhaProt();});
+
+// ========== RELATÓRIOS ==========
+let chartSemana,chartMensalDias,chartMensalDesp;
+function initRelatorios(){
+  document.getElementById('rel-dia').value=hoje();
+  document.getElementById('rel-semana').value=hoje();
+  document.getElementById('rel-mes').value=mesAtual();
+  renderRelDiario();
+}
+function setRelTab(tab,el){
+  document.querySelectorAll('.rel-tab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rel-'+tab).style.display='block';
+  el.classList.add('active');
+  if(tab==='diario')renderRelDiario();
+  if(tab==='semanal')renderRelSemanal();
+  if(tab==='mensal')renderRelMensal();
+}
+function renderRelDiario(){
+  const dia=document.getElementById('rel-dia').value;
+  if(!dia)return;
+  const pedidos=getData('pedidos').filter(p=>p.data===dia&&p.status!=='cancelado');
+  const desp=getData('despesas').filter(d=>d.data===dia);
+  const fat=pedidos.reduce((s,p)=>s+p.valor,0);
+  const despVal=desp.reduce((s,d)=>s+d.valor,0);
+  document.getElementById('rel-diario-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${pedidos.length}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Resultado</div><div class="value ${fat-despVal>=0?'green':'red'}">${fmtBRL(fat-despVal)}</div></div>
+  `;
+  let html='';
+  if(!pedidos.length&&!desp.length){html='<div class="empty">Sem registros neste dia</div>'}
+  else{
+    if(pedidos.length){
+      pedidos.forEach(p=>{
+        html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--borda)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.9rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
+            <div style="font-size:.76rem;color:var(--texto-sec);margin-top:.15rem">${p.produtos.join(', ')||'—'} · ${p.canal}</div>
+          </div>
+          <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--rosa);flex-shrink:0;margin-left:.75rem">${fmtBRL(p.valor)}</span>
+        </div>`;
+      });
+    }
+  }
+  document.getElementById('rel-diario-tabela').innerHTML=html;
+}
+function renderRelSemanal(){
+  const dia=document.getElementById('rel-semana').value;
+  if(!dia)return;
+  const ini=new Date(inicioSemana(dia)+'T12:00:00');
+  const dias=[];const labels=[];const fat7=[];const desp7=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(ini);d.setDate(ini.getDate()+i);
+    const ds=dataLocal(d);
+    dias.push(ds);
+    labels.push(d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'}));
+    fat7.push(getData('pedidos').filter(p=>p.data===ds&&p.status!=='cancelado').reduce((s,p)=>s+p.valor,0));
+    desp7.push(getData('despesas').filter(d=>d.data===ds).reduce((s,d)=>s+d.valor,0));
+  }
+  const fat=fat7.reduce((a,b)=>a+b,0);
+  const despVal=desp7.reduce((a,b)=>a+b,0);
+  const nPed=getData('pedidos').filter(p=>dias.includes(p.data)&&p.status!=='cancelado').length;
+  document.getElementById('rel-semanal-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento semana</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${nPed}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Lucro estimado</div><div class="value ${fat-despVal>=0?'green':'red'}">${fmtBRL(fat-despVal)}</div></div>
+  `;
+  if(chartSemana)chartSemana.destroy();
+  chartSemana=new Chart(document.getElementById('chart-semana'),{
+    type:'bar',data:{labels,datasets:[
+      {label:'Faturamento',data:fat7,backgroundColor:'rgba(201,127,160,.7)'},
+      {label:'Despesas',data:desp7,backgroundColor:'rgba(192,57,43,.4)'}
+    ]},
+    options:{responsive:true,scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:10}}}}}
+  });
+}
+function renderRelMensal(){
+  const mes=document.getElementById('rel-mes').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
+  const desp=getData('despesas').filter(d=>d.data.startsWith(mes));
+  const fat=pedidos.reduce((s,p)=>s+p.valor,0);
+  const despVal=desp.reduce((s,d)=>s+d.valor,0);
+  const lucro=fat-despVal;
+  const nPed=pedidos.length;
+  const ticket=nPed?fat/nPed:0;
+  const margem=fat?((lucro/fat)*100):0;
+  document.getElementById('rel-mensal-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Faturamento</div><div class="value">${fmtBRL(fat)}</div></div>
+    <div class="card-stat"><div class="label">Despesas</div><div class="value red">${fmtBRL(despVal)}</div></div>
+    <div class="card-stat"><div class="label">Lucro</div><div class="value ${lucro>=0?'green':'red'}">${fmtBRL(lucro)}</div></div>
+    <div class="card-stat"><div class="label">Margem</div><div class="value ${margem>=0?'green':'red'}">${margem.toFixed(1)}%</div></div>
+    <div class="card-stat"><div class="label">Pedidos</div><div class="value">${nPed}</div></div>
+    <div class="card-stat"><div class="label">Ticket médio</div><div class="value">${fmtBRL(ticket)}</div></div>
+  `;
+
+  // Dias do mês
+  const ano=parseInt(mes.split('-')[0]);const mm=parseInt(mes.split('-')[1]);
+  const nDias=new Date(ano,mm,0).getDate();
+  const diasLabels=[];const fatDias=[];
+  for(let i=1;i<=nDias;i++){
+    const ds=`${mes}-${String(i).padStart(2,'0')}`;
+    diasLabels.push(String(i));
+    fatDias.push(pedidos.filter(p=>p.data===ds).reduce((s,p)=>s+p.valor,0));
+  }
+  if(chartMensalDias)chartMensalDias.destroy();
+  chartMensalDias=new Chart(document.getElementById('chart-mensal-dias'),{
+    type:'bar',data:{labels:diasLabels,datasets:[{label:'Faturamento',data:fatDias,backgroundColor:'rgba(201,127,160,.7)'}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}},y:{ticks:{callback:v=>fmtBRL(v),font:{size:9}}}}}
+  });
+
+  // Despesas por categoria
+  const catTotais={};
+  desp.forEach(d=>{catTotais[d.cat]=(catTotais[d.cat]||0)+d.valor});
+  const catLabel={ingredientes:'Ingredientes',embalagens:'Embalagens',utensilios:'Utensílios',marketing:'Marketing',energia:'Energia/Gás',entrega:'Frete',outros:'Outros'};
+  if(chartMensalDesp)chartMensalDesp.destroy();
+  if(Object.keys(catTotais).length){
+    chartMensalDesp=new Chart(document.getElementById('chart-mensal-desp'),{
+      type:'doughnut',
+      data:{labels:Object.keys(catTotais).map(k=>catLabel[k]||k),datasets:[{data:Object.values(catTotais),backgroundColor:['#c97fa0','#e8b4cb','#d4a017','#4a7c59','#5c8c9c','#c0392b','#8b4c69']}]},
+      options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}}}
+    });
+  }
+
+  // Top produtos
+  const normNome2=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
+  const contagem={};
+  pedidos.forEach(p=>p.produtos.forEach(pr=>{const k=normNome2(pr);contagem[k]=(contagem[k]||0)+1}));
+  const top=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  let html='<div class="table-head"><h2>Produtos mais vendidos no mês</h2></div>';
+  if(!top.length){html+='<div class="empty">Sem dados de produtos</div>'}
+  else{
+    top.forEach((x,i)=>{
+      const w = Math.round((x[1]/top[0][1])*100);
+      html+=`<div style="display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--borda)">
+        <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--rosa);min-width:22px;text-align:center">${i+1}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.88rem;font-weight:500;color:var(--texto);margin-bottom:.25rem">${x[0]}</div>
+          <div style="height:4px;background:var(--borda);border-radius:2px">
+            <div style="height:4px;background:var(--rosa);border-radius:2px;width:${w}%"></div>
+          </div>
+        </div>
+        <span style="font-size:.88rem;font-weight:500;color:var(--texto-sec);flex-shrink:0">${x[1]} ped.</span>
+      </div>`;
+    });
+  }
+  document.getElementById('rel-mensal-top').innerHTML=html;
+}
+
+// ========== EXPORTAR ==========
+function exportarCSV(){
+  const mes=document.getElementById('rel-mes').value||mesAtual();
+  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes));
+  let csv='Data,Cliente,Produtos,Canal,Valor,Status\n';
+  pedidos.forEach(p=>{csv+=`${p.data},"${p.cliente}","${p.produtos.join(';')}",${p.canal},${p.valor},${p.status}\n`});
+  download(`pedidos_${mes}.csv`,csv,'text/csv');
+}
+function exportarJSON(){
+  const backup={pedidos:getData('pedidos'),despesas:getData('despesas'),produtos:getData('produtos')};
+  download(`backup_lsconfeitaria_${hoje()}.json`,JSON.stringify(backup,null,2),'application/json');
+}
+function importarJSON(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const backup=JSON.parse(e.target.result);
+      if(!backup.pedidos&&!backup.despesas&&!backup.produtos){
+        notif('Arquivo inválido — não é um backup do sistema','error');return;
+      }
+      const totalPed=(backup.pedidos||[]).length;
+      const totalDesp=(backup.despesas||[]).length;
+      const totalProd=(backup.produtos||[]).length;
+      if(!confirm(`Importar backup?\n\n• ${totalPed} pedidos\n• ${totalDesp} despesas\n• ${totalProd} produtos\n\nOs dados atuais serão substituídos.`)){return;}
+      if(backup.pedidos) setData('pedidos',backup.pedidos);
+      if(backup.despesas) setData('despesas',backup.despesas);
+      if(backup.produtos) setData('produtos',backup.produtos);
+      notif(`Backup importado! ${totalPed} pedidos, ${totalDesp} despesas, ${totalProd} produtos`);
+      renderDashboard();
+      input.value='';
+    }catch(err){
+      notif('Erro ao ler o arquivo. Verifique se é um backup válido.','error');
+    }
+  };
+  reader.readAsText(file);
+}
+function download(nome,conteudo,tipo){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo}));
+  a.download=nome;a.click();
+}
+
+// ========== INIT ==========
+function initApp(){
+  document.getElementById('filtro-mes-ped').value=mesAtual();
+  document.getElementById('filtro-mes-desp').value=mesAtual();
+  document.getElementById('ped-data').value=hoje();
+  document.getElementById('desp-data').value=hoje();
+  renderDashboard();
+  renderProdutos();
+  initNotificacoes();
+}
+
+
+// ========== CONFIRMAÇÃO WHATSAPP ==========
+function abrirConfirmacao(id){
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+
+  // Monta linhas de produto com todos os detalhes
+  let linhasProduto = '';
+  if(p.itens && p.itens.length){
+    linhasProduto = p.itens.map(i=>{
+      const nome = normP(i.nome);
+      if(i.detalhe){
+        // Normaliza separadores
+        const det = i.detalhe.replace(/ · /g,'\n').replace(/·/g,'\n');
+        const linhas = det.split('\n').filter(l=>l.trim());
+        const detFormatado = linhas.map(l=>{
+          const idx = l.indexOf(':');
+          if(idx>0){
+            const label = l.substring(0,idx).trim();
+            const valor = l.substring(idx+1).trim();
+            return `   ${label}: ${valor}`;
+          }
+          return `   ${l.trim()}`;
+        }).join('\n');
+        return `${nome}\n${detFormatado}`;
+      }
+      return nome;
+    }).join('\n\n* ');
+  } else {
+    linhasProduto = p.produtos.map(normP).join('\n* ');
+  }
+
+  const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+
+  // Usa hora e local salvos no pedido, com fallback para observações
+  let horario = p.hora || 'a combinar';
+  let local = p.local || 'a combinar';
+  if(horario==='a combinar' && p.obs){
+    const matchH = p.obs.match(/(\d{1,2}h\d{0,2}|\d{1,2}:\d{2}|\d{1,2}\s*hrs?)/i);
+    if(matchH) horario = matchH[0];
+  }
+  if(local==='a combinar' && p.obs){
+    const obsLower = p.obs.toLowerCase();
+    if(obsLower.includes('retirada')) local = 'Retirada';
+    else if(obsLower.includes('entrega')) local = 'Entrega';
+  }
+
+  const texto =
+`Olá, ${p.cliente}! 😊
+
+Segue a confirmação da sua encomenda:
+
+* Produto: ${linhasProduto}
+* Data de entrega: ${dt}
+* Horário previsto: ${horario}
+* Local de entrega/retirada: ${local}
+* Valor: ${fmtBRL(p.valor)}${p.extra&&p.extra.val>0?`\n* Adicional (${p.extra.desc||'extra'}): ${fmtBRL(p.extra.val)}`:''}
+
+- Pagamento: 50% antecipado e o restante no ato da entrega ou retirada.
+
+${p.obs?`📝 Obs: ${p.obs}\n\n`:''}Por favor, confira se todas as informações estão corretas. Caso deseje ajustar algo, é só me avisar! 🎂
+
+📲 Aproveite e já me siga no Instagram: www.instagram.com/laissantosconfeitaria
+Lá eu posto novidades, sabores e inspirações de bolos!
+
+💬 Salve meu contato para receber meus status e facilitar futuros pedidos. Será um prazer adoçar seus momentos novamente!`;
+
+  document.getElementById('wpp-texto').value = texto;
+  const modal = document.getElementById('modal-wpp');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalWpp(){
+  document.getElementById('modal-wpp').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function copiarConfirmacao(){
+  const texto = document.getElementById('wpp-texto').value;
+  navigator.clipboard.writeText(texto).then(()=>{
+    notif('Texto copiado! Cole no WhatsApp 💬');
+    setTimeout(fecharModalWpp, 1500);
+  }).catch(()=>{
+    // Fallback para dispositivos sem clipboard API
+    document.getElementById('wpp-texto').select();
+    document.execCommand('copy');
+    notif('Texto copiado! Cole no WhatsApp 💬');
+    setTimeout(fecharModalWpp, 1500);
+  });
+}
+
+document.getElementById('modal-wpp').addEventListener('click', function(e){
+  if(e.target===this) fecharModalWpp();
 });
 
-self.addEventListener('message', e => {
-  if(e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
-});
 
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
+let agendaBaseDate = new Date();
 
-  // Nunca intercepta o próprio service worker ou arquivos de script de worker
-  if(url.pathname.endsWith('sw.js')) return;
+function agendaIrHoje(){ agendaBaseDate = new Date(); renderAgenda(); }
 
-  // Só intercepta GET
-  if(e.request.method !== 'GET') return;
+function agendaNavSemana(d){
+  agendaBaseDate = new Date(agendaBaseDate);
+  agendaBaseDate.setDate(agendaBaseDate.getDate() + d*7);
+  renderAgenda();
+}
 
-  // Navegação (HTML): sempre busca da rede primeiro, cache como fallback
-  if(e.request.mode === 'navigate'){
-    e.respondWith(
-      fetch(e.request).catch(() =>
-        caches.match('https://laissantosconfeitaria.github.io/gestao.html')
-      )
-    );
+function renderAgenda(){
+  const pedidos = getData('pedidos');
+  // Pedidos relevantes: agendado, confirmado, pendente (não entregue/cancelado)
+  const relevantes = pedidos.filter(p=>['agendado','confirmado','pendente'].includes(p.status));
+
+  // Semana atual (7 dias a partir do baseDate, começando na segunda)
+  const base = new Date(agendaBaseDate);
+  const dow = base.getDay();
+  const monday = new Date(base);
+  monday.setDate(base.getDate() - (dow===0?6:dow-1));
+
+  const dias = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    dias.push(d);
+  }
+
+  const ini = dataLocal(dias[0]);
+  const fim = dataLocal(dias[6]);
+  document.getElementById('agenda-semana-label').textContent =
+    `${dias[0].toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} – ${dias[6].toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}`;
+
+  const hojeStr = dataLocal();
+
+  // Renderizar grid de 7 dias
+  let gridHtml = '';
+  dias.forEach(dia=>{
+    const ds = dataLocal(dia);
+    const pedDia = relevantes.filter(p=>p.data===ds);
+    const isHoje = ds===hojeStr;
+    const isPassado = ds<hojeStr;
+    const nomeDia = dia.toLocaleDateString('pt-BR',{weekday:'long'});
+    const dataDia = dia.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const clsExtra = isHoje?' hoje':isPassado?' passado':'';
+
+    gridHtml += `<div class="agenda-dia${clsExtra}">
+      <div class="agenda-dia-header">
+        <div>
+          <div class="agenda-dia-label">${nomeDia}${isHoje?' · Hoje':''}</div>
+          <div class="agenda-dia-date">${dataDia}</div>
+        </div>
+        ${pedDia.length?`<span class="agenda-badge">${pedDia.length} pedido${pedDia.length>1?'s':''}</span>`:''}
+      </div>`;
+
+    if(!pedDia.length){
+      gridHtml += `<div class="empty" style="padding:1.2rem;font-size:.8rem">Livre ✓</div>`;
+    } else {
+      pedDia.forEach(p=>{
+        const statusColors={agendado:'var(--azul)',confirmado:'var(--verde)',pendente:'var(--amarelo)'};
+        const cor=statusColors[p.status]||'var(--texto-sec)';
+        // Monta detalhes dos itens
+        const detItens = p.itens && p.itens.length
+          ? p.itens.map(i=>`<div style="margin:.3rem 0;padding:.25rem 0;border-bottom:1px solid var(--borda)"><div style="font-size:.82rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>${i.detalhe?fmtDetalhe(i.detalhe):''}</div>`).join('')
+          : `<div>${p.produtos.slice(0,2).map(normP).join(', ')}${p.produtos.length>2?` +${p.produtos.length-2} mais`:''}</div>`;
+        gridHtml += `<div class="agenda-pedido">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
+            <span style="width:7px;height:7px;border-radius:50%;background:${cor};flex-shrink:0;display:inline-block"></span>
+            <span class="agenda-pedido-nome">${p.cliente}</span>
+            ${p.hora?`<span style="font-size:.72rem;color:var(--azul);margin-left:auto">⏰ ${p.hora}</span>`:''}
+          </div>
+          <div class="agenda-pedido-det" style="font-size:.76rem;line-height:1.5">${detItens}</div>
+          ${p.obs?`<div class="agenda-pedido-det" style="color:var(--amarelo);margin-top:.25rem">📝 ${p.obs}</div>`:''}
+          <div class="agenda-pedido-val">${fmtBRL(p.valor)}</div>
+        </div>`;
+      });
+    }
+    gridHtml += `</div>`;
+  });
+  document.getElementById('agenda-grid').innerHTML = gridHtml;
+
+  // Lista completa de agendados (todos os futuros)
+  const futuros = relevantes
+    .filter(p=>p.data>=hojeStr)
+    .sort((a,b)=>a.data.localeCompare(b.data));
+
+  document.getElementById('agenda-total-badge').textContent =
+    futuros.length + ' pedido' + (futuros.length!==1?'s':'');
+
+  if(!futuros.length){
+    document.getElementById('agenda-lista-completa').innerHTML='<div class="empty">Nenhum pedido agendado</div>';
     return;
   }
 
-  // Demais recursos: cache primeiro, rede como fallback
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      if(cached) return cached;
-      return fetch(e.request).then(response => {
-        if(response && response.status === 200){
-          const clone = response.clone();
-          caches.open(CACHE).then(cache => cache.put(e.request, clone));
+  const statusLabel={agendado:'Agendado',confirmado:'Confirmado',pendente:'Pendente'};
+  const statusCls={agendado:'badge-blue',confirmado:'badge-green',pendente:'badge-yellow'};
+
+  let listaHtml = '';
+  futuros.forEach(p=>{
+    const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const diasRestantes = Math.round((new Date(p.data+'T12:00:00')-new Date())/(1000*60*60*24));
+    const prazoLabel = diasRestantes===0?'hoje':diasRestantes===1?'amanhã':diasRestantes<=3?`em ${diasRestantes}d`:`em ${diasRestantes}d`;
+    const prazoColor = diasRestantes===0?'var(--amarelo)':diasRestantes===1?'var(--rosa)':diasRestantes<=3?'var(--amarelo)':'var(--texto-dim)';
+    const gcDateBase = p.data.replace(/-/g,'');
+    // Monta data/hora para Google Calendar (formato: YYYYMMDDTHHmmss)
+    let gcDates;
+    if(p.hora){
+      const [hh,mm] = p.hora.split(':');
+      const hEnd = String((parseInt(hh)+1)%24).padStart(2,'0');
+      gcDates = `${gcDateBase}T${hh}${mm}00/${gcDateBase}T${hEnd}${mm}00`;
+    } else {
+      gcDates = `${gcDateBase}/${gcDateBase}`;
+    }
+    // Monta descrição completa para o Google Agenda
+    const gcItensDetalhe = p.itens && p.itens.length
+      ? p.itens.map(i=>{
+          const nome = normP(i.nome);
+          const det = i.detalhe ? '\n' + i.detalhe.split('\n').map(l=>'    '+l).join('\n') : '';
+          return `• ${nome}${det}`;
+        }).join('\n')
+      : p.produtos.map(normP).map(n=>`• ${n}`).join('\n');
+    const gcDescTexto = [
+      `👤 Cliente: ${p.cliente}`,
+      ``,
+      `🎂 Encomenda:`,
+      gcItensDetalhe,
+      ``,
+      `💰 Valor: ${fmtBRL(p.valor)}`,
+      p.extra && p.extra.val > 0 ? `   + ${p.extra.desc||'Adicional'}: ${fmtBRL(p.extra.val)}` : null,
+      p.obs ? `📝 Obs: ${p.obs}` : null,
+      ``,
+      `📱 Canal: ${p.canal||'—'}`,
+      `📊 Status: ${p.status}`,
+    ].filter(l=>l!==null).join('\n');
+    const gcTitulo = encodeURIComponent(`🎂 ${p.cliente} — ${p.produtos.slice(0,2).map(normP).join(', ')}`);
+    const gcDesc = encodeURIComponent(gcDescTexto);
+    const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcTitulo}&dates=${gcDates}&details=${gcDesc}`;
+
+    listaHtml += `
+    <div style="padding:1rem;border-bottom:1px solid var(--borda)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem">
+        <div>
+          <span style="font-size:.8rem;font-weight:500;color:var(--texto-sec)">${dt}</span>
+          <span style="font-size:.75rem;color:${prazoColor};margin-left:.4rem">· ${prazoLabel}</span>
+          ${p.hora?`<div style="font-size:.78rem;color:var(--azul);margin-top:.15rem">⏰ ${p.hora}${p.local?' · '+p.local:''}</div>`:''}
+          ${!p.hora&&p.local?`<div style="font-size:.78rem;color:var(--texto-dim);margin-top:.15rem">${p.local}</div>`:''}
+        </div>
+        <span class="badge ${statusCls[p.status]||'badge-rosa'}">${statusLabel[p.status]||p.status}</span>
+      </div>
+      <div style="font-size:.95rem;font-weight:500;color:var(--texto);margin-bottom:.5rem">${p.cliente}</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:.6rem .75rem;margin-bottom:.5rem">
+        ${p.itens && p.itens.length
+          ? p.itens.map(i=>`
+            <div style="padding:.3rem 0;border-bottom:1px solid var(--borda)">
+              <div style="font-size:.84rem;font-weight:500;color:var(--texto)">${normP(i.nome)}</div>
+              ${i.detalhe?`<div style="margin-top:.3rem">${fmtDetalhe(i.detalhe)}</div>`:''}
+              ${i.preco>0?`<div style="font-size:.75rem;color:var(--rosa);margin-top:.1rem">${fmtBRL(i.preco)}</div>`:''}
+            </div>`).join('').replace(/border-bottom:1px solid var\(--borda\)">\s*<\/div>\s*$/, '">')
+          : `<div style="font-size:.84rem;color:var(--texto-sec)">${p.produtos.map(normP).join(', ')}</div>`
         }
-        return response;
-      }).catch(() => cached);
-    })
-  );
+      </div>
+      ${p.obs?`<div style="font-size:.78rem;color:var(--amarelo);margin-bottom:.5rem">📝 ${p.obs}</div>`:''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
+        <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
+        <a href="${gcUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(96,184,240,.12);color:var(--azul);border:1px solid rgba(96,184,240,.25);border-radius:8px;padding:.4rem .85rem;font-size:.8rem;text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:500">
+          📅 + Google Agenda
+        </a>
+      </div>
+    </div>`;
+  });
+  document.getElementById('agenda-lista-completa').innerHTML = listaHtml;
+}
+
+
+// ========== EDITAR PEDIDO ==========
+let editId = null;
+let editItens = [];
+
+function abrirModal(id){
+  const pedidos = getData('pedidos');
+  const p = pedidos.find(x=>x.id==id);
+  if(!p) return;
+  editId = id;
+  editItens = p.itens ? p.itens.map(i=>({...i})) : p.produtos.map(n=>({nome:n,detalhe:'',preco:0}));
+
+  document.getElementById('edit-data').value = p.data;
+  document.getElementById('edit-hora').value = p.hora||'';
+  document.getElementById('edit-local').value = p.local||'retirada';
+  document.getElementById('edit-cliente').value = p.cliente;
+  document.getElementById('edit-status').value = p.status;
+  document.getElementById('edit-canal').value = p.canal||'whatsapp';
+  document.getElementById('edit-obs').value = p.obs||'';
+  document.getElementById('edit-extra-desc').value = p.extra?.desc||'';
+  document.getElementById('edit-extra-val').value = p.extra?.val||'';
+  document.getElementById('edit-desc-val').value = p.desconto||'';
+  document.getElementById('edit-desc-tipo').value = p.descontoTipo||'reais';
+  document.getElementById('edit-av-nome').value = '';
+  document.getElementById('edit-av-val').value = '';
+
+  renderEditItens();
+  const modal = document.getElementById('modal-editar');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal(){
+  document.getElementById('modal-editar').style.display = 'none';
+  document.body.style.overflow = '';
+  editId = null;
+  editItens = [];
+}
+
+function renderEditItens(){
+  const cont = document.getElementById('edit-itens');
+  if(!editItens.length){
+    cont.innerHTML = '<div class="empty" style="padding:1rem;font-size:.82rem">Nenhum item</div>';
+    editAtualizarTotal();
+    return;
+  }
+  cont.innerHTML = editItens.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-bottom:1px solid var(--borda)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${item.nome}</div>
+        ${item.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec)">${item.detalhe}</div>`:''}
+      </div>
+      <input type="number" value="${item.preco||0}" min="0" step="0.01"
+        style="width:80px;font-size:.82rem;padding:.3rem .5rem;text-align:right"
+        oninput="editItens[${i}].preco=parseFloat(this.value)||0;editAtualizarTotal()">
+      <button onclick="editRemoverItem(${i})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.1rem .3rem;opacity:.6" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.6;this.style.color='var(--texto-dim)'">✕</button>
+    </div>`).join('');
+  editAtualizarTotal();
+}
+
+function editRemoverItem(i){
+  editItens.splice(i,1);
+  renderEditItens();
+}
+
+function editAddAvulso(){
+  const nome = document.getElementById('edit-av-nome').value.trim();
+  const preco = parseFloat(document.getElementById('edit-av-val').value)||0;
+  if(!nome){notif('Digite o nome do item','error');return}
+  editItens.push({nome, detalhe:'', preco});
+  document.getElementById('edit-av-nome').value='';
+  document.getElementById('edit-av-val').value='';
+  renderEditItens();
+}
+
+function editAtualizarTotal(){
+  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
+  const extraV = parseFloat(document.getElementById('edit-extra-val')?.value)||0;
+  const dv = parseFloat(document.getElementById('edit-desc-val')?.value)||0;
+  const dt = document.getElementById('edit-desc-tipo')?.value||'reais';
+  const desc = dt==='pct' ? (sub+extraV)*(dv/100) : dv;
+  const total = Math.max(0, sub+extraV-desc);
+  document.getElementById('edit-total').textContent = fmtBRL(total);
+}
+
+function salvarEdicao(){
+  if(!editId) return;
+  const data = document.getElementById('edit-data').value;
+  const cliente = document.getElementById('edit-cliente').value.trim();
+  if(!data||!cliente){notif('Preencha data e cliente','error');return}
+
+  const extraDesc = document.getElementById('edit-extra-desc').value.trim();
+  const extraV = parseFloat(document.getElementById('edit-extra-val').value)||0;
+  const dv = parseFloat(document.getElementById('edit-desc-val').value)||0;
+  const dt = document.getElementById('edit-desc-tipo').value;
+  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
+  const desc = dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const total = Math.max(0, sub+extraV-desc);
+
+  const pedidos = getData('pedidos');
+  const idx = pedidos.findIndex(p=>p.id==editId);
+  if(idx<0) return;
+
+  pedidos[idx] = {
+    ...pedidos[idx],
+    data,
+    hora: document.getElementById('edit-hora').value||'',
+    local: document.getElementById('edit-local').value||'retirada',
+    cliente,
+    status: document.getElementById('edit-status').value,
+    canal: document.getElementById('edit-canal').value,
+    obs: document.getElementById('edit-obs').value.trim(),
+    valor: total,
+    itens: editItens,
+    produtos: editItens.map(i=>i.nome),
+    extra: {desc:extraDesc, val:extraV},
+    desconto: dv,
+    descontoTipo: dt,
+  };
+  setData('pedidos', pedidos);
+  fecharModal();
+  renderPedidos();
+  if(document.getElementById('page-agenda').classList.contains('active')) renderAgenda();
+  if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+  notif('Pedido atualizado ✓');
+}
+
+// Fechar modal clicando fora
+document.getElementById('modal-editar').addEventListener('click', function(e){
+  if(e.target===this) fecharModal();
 });
 
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(
-    clients.matchAll({type:'window', includeUncontrolled:true}).then(list => {
-      for(const client of list){
-        if(client.url.includes('gestao.html') && 'focus' in client)
-          return client.focus();
+if(sessionStorage.getItem('ls_logado')){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  initApp();
+}
+</script>
+<script>
+// Limpa caches corrompidos se a página carregar corretamente
+if('caches' in window){
+  caches.keys().then(keys=>{
+    keys.forEach(k=>{
+      // Remove caches muito antigos (antes da v18)
+      if(k.startsWith('ls-gestao-') && k!=='ls-gestao-v18'){
+        caches.delete(k);
       }
-      return clients.openWindow('https://laissantosconfeitaria.github.io/gestao.html');
-    })
-  );
+    });
+  });
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    reg.update();
+    reg.addEventListener('updatefound',()=>{
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange',()=>{
+        if(newWorker.state==='installed' && navigator.serviceWorker.controller){
+          const badge = document.getElementById('versao-badge');
+          if(badge){
+            badge.style.background='rgba(240,192,64,.15)';
+            badge.style.borderColor='rgba(240,192,64,.3)';
+            badge.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:var(--amarelo);display:inline-block;animation:pulse 1s infinite"></span>
+              <span style="font-size:.65rem;color:var(--amarelo);letter-spacing:.04em;cursor:pointer" onclick="atualizarApp()">↻ Atualização disponível</span>`;
+          }
+          navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());
+          newWorker.postMessage({type:'SKIP_WAITING'});
+        }
+      });
+    });
+  }).catch(()=>{});
+}
+
+function atualizarApp(){
+  window.location.reload(true);
+}
+
+// ========== NOTIFICAÇÕES ==========
+function verificarBotaoNotif(){
+  const btn = document.getElementById('notif-perm-btn');
+  if(!btn) return;
+  if(!('Notification' in window)){btn.style.display='none';return}
+  if(Notification.permission === 'granted'){
+    btn.style.display='none';
+    agendarNotificacoes();
+  } else if(Notification.permission !== 'denied'){
+    btn.style.display='flex';
+  } else {
+    btn.style.display='none';
+  }
+}
+
+function pedirPermissaoNotif(){
+  if(!('Notification' in window)){
+    notif('Seu navegador não suporta notificações','error');return;
+  }
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted'){
+      notif('Notificações ativadas! 🔔');
+      document.getElementById('notif-perm-btn').style.display='none';
+      agendarNotificacoes();
+      // Mostra uma notificação de teste
+      setTimeout(()=>dispararNotif(
+        '🎂 Lais Santos Confeitaria',
+        'Notificações ativadas com sucesso! Você receberá alertas às 9h, 17h e 22h.'
+      ), 1000);
+    } else {
+      notif('Permissão negada. Ative nas configurações do celular.','error');
+    }
+  });
+}
+
+function dispararNotif(titulo, corpo, tag='ls-gestao'){
+  if(Notification.permission !== 'granted') return;
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.ready.then(sw=>{
+      sw.showNotification(titulo,{
+        body: corpo,
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        tag: tag,
+        requireInteraction: false,
+        vibrate: [200,100,200]
+      });
+    }).catch(()=>{
+      new Notification(titulo,{body:corpo,icon:'/icon-192.png'});
+    });
+  } else {
+    new Notification(titulo,{body:corpo,icon:'/icon-192.png'});
+  }
+}
+
+function gerarMensagemNotif(hora){
+  const pedidos = getData('pedidos');
+  const hoje = dataLocal();
+  const amanha = dataLocal(new Date(Date.now()+86400000));
+
+  const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
+  const pedAmanha = pedidos.filter(p=>p.data===amanha && ['agendado','confirmado'].includes(p.status));
+  const fatHoje = pedidos.filter(p=>p.data===hoje && p.status==='entregue').reduce((s,p)=>s+p.valor,0);
+
+  if(hora === 9){
+    if(pedHoje.length > 0){
+      const nomes = pedHoje.map(p=>p.cliente).join(', ');
+      return {
+        titulo: `🌅 Bom dia! ${pedHoje.length} pedido${pedHoje.length>1?'s':''} hoje`,
+        corpo: `${nomes}${pedAmanha.length?` · Amanhã: ${pedAmanha.length} pedido${pedAmanha.length>1?'s':''}`:''}`
+      };
+    }
+    return {
+      titulo: '🌅 Bom dia, Lais!',
+      corpo: pedAmanha.length ? `Você tem ${pedAmanha.length} pedido${pedAmanha.length>1?'s':''} para amanhã 🎂` : 'Nenhum pedido agendado para hoje. Boas vendas! 🌸'
+    };
+  }
+
+  if(hora === 17){
+    return {
+      titulo: '☀️ Lembrete da tarde',
+      corpo: `Lembrou de registrar todos os pedidos e despesas de hoje? ${fatHoje>0?'Faturamento: '+fmtBRL(fatHoje):''}`
+    };
+  }
+
+  if(hora === 22){
+    const semRegistro = pedHoje.filter(p=>p.status==='agendado').length;
+    return {
+      titulo: '🌙 Fechamento do dia',
+      corpo: semRegistro > 0
+        ? `${semRegistro} pedido${semRegistro>1?'s':''} ainda como Agendado. Lembre de atualizar o status!`
+        : `Boa noite! ${fatHoje>0?'Faturamento hoje: '+fmtBRL(fatHoje)+' 🎂':'Não esqueça de registrar despesas do dia.'}`
+    };
+  }
+
+  return {titulo:'🎂 Lais Santos Confeitaria', corpo:'Lembrete de gestão'};
+}
+
+function agendarNotificacoes(){
+  if(Notification.permission !== 'granted') return;
+
+  // Limpa intervalos anteriores
+  if(window._notifInterval) clearInterval(window._notifInterval);
+
+  // Verifica a cada minuto se chegou o horário
+  window._notifInterval = setInterval(()=>{
+    const agora = new Date();
+    const h = agora.getHours();
+    const m = agora.getMinutes();
+    const chave = `notif_${dataLocal(agora)}_${h}`;
+
+    if((h===9||h===17||h===22) && m===0){
+      // Só dispara uma vez por hora por dia
+      if(!sessionStorage.getItem(chave)){
+        sessionStorage.setItem(chave,'1');
+        const msg = gerarMensagemNotif(h);
+        dispararNotif(msg.titulo, msg.corpo, `ls-${h}h`);
+      }
+    }
+  }, 30000); // verifica a cada 30 segundos
+
+  // Salva preferência
+  localStorage.setItem('ls_notif_ativa','1');
+}
+
+// Reativar notificações ao abrir o app se já tinha permissão
+function initNotificacoes(){
+  verificarBotaoNotif();
+  if(Notification.permission==='granted' && localStorage.getItem('ls_notif_ativa')==='1'){
+    agendarNotificacoes();
+    // Notificação de boas-vindas com resumo do dia
+    setTimeout(()=>{
+      const agora = new Date();
+      const h = agora.getHours();
+      if(h >= 7 && h <= 23){
+        const pedidos = getData('pedidos');
+        const hoje = dataLocal(agora);
+        const pedHoje = pedidos.filter(p=>p.data===hoje && ['agendado','confirmado','pendente'].includes(p.status));
+        if(pedHoje.length > 0){
+          dispararNotif(
+            `🎂 ${pedHoje.length} pedido${pedHoje.length>1?'s':''} para hoje`,
+            pedHoje.map(p=>p.cliente).join(', '),
+            'ls-abertura'
+          );
+        }
+      }
+    }, 3000);
+  }
+}
+
+
+
+// ========== PWA INSTALL ==========
+let pwaInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaInstallPrompt = e;
+  // Mostra botão de instalação na sidebar
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'flex';
 });
+
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'none';
+  notif('App instalado com sucesso! ✓');
+});
+
+function instalarPWA(){
+  if(pwaInstallPrompt){
+    pwaInstallPrompt.prompt();
+    pwaInstallPrompt.userChoice.then(r => {
+      if(r.outcome === 'accepted') notif('Instalando o app... ✓');
+      pwaInstallPrompt = null;
+      document.getElementById('pwa-install-btn').style.display='none';
+    });
+  } else {
+    // Fallback: instruções manuais
+    alert('Para instalar:\n\nAndroid: toque nos 3 pontinhos (⋮) → "Adicionar à tela inicial"\n\niPhone: toque em Compartilhar → "Adicionar à Tela de Início"');
+  }
+}
+</script>
+</body>
+</html>
