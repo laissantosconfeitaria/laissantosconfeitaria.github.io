@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.1 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.4 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -1764,7 +1764,7 @@ function unitDeletar(id){
 // ========== CARRINHO ==========
 let carrinho = [];
 
-function npCarrAdd(nome, detalhe, preco){
+function _npCarrAddBase(nome, detalhe, preco){
   carrinho.push({id:Date.now(), nome, detalhe, preco});
   renderCarrinho();
   notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
@@ -1792,26 +1792,32 @@ function calcTotais(){
 
 function atualizarTotais(){
   const{sub,extraV,desc,total}=calcTotais();
-  document.getElementById('subtotal-val').textContent=fmtBRL(sub);
+  const subEl=document.getElementById('subtotal-val');
+  const totEl=document.getElementById('total-final-val');
   const eRow=document.getElementById('extra-row');
+  const eValShow=document.getElementById('extra-val-show');
+  const eLabelShow=document.getElementById('extra-label-show');
+  if(subEl) subEl.textContent=fmtBRL(sub);
+  if(totEl) totEl.textContent=fmtBRL(total);
+  if(!eRow) return;
   const eDesc=document.getElementById('extra-desc')?.value.trim();
   if(extraV>0){
-    document.getElementById('extra-label-show').textContent=eDesc||'Cobrança adicional';
-    document.getElementById('extra-val-show').textContent='+'+fmtBRL(extraV);
+    if(eLabelShow) eLabelShow.textContent=eDesc||'Cobrança adicional';
+    if(eValShow) eValShow.textContent='+'+fmtBRL(extraV);
     eRow.style.display='flex';
   } else {eRow.style.display='none'}
-  document.getElementById('total-final-val').textContent=fmtBRL(total);
 }
 
 function renderCarrinho(){
   const badge=document.getElementById('carr-badge');
-  badge.textContent=carrinho.length+(carrinho.length===1?' item':' itens');
   const cont=document.getElementById('carrinho-itens');
+  if(!badge||!cont) return;
+  badge.textContent=carrinho.length+(carrinho.length===1?' item':' itens');
   if(!carrinho.length){cont.innerHTML='<div class="empty" style="padding:1.5rem;font-size:.82rem">Nenhum item adicionado</div>';atualizarTotais();return}
   cont.innerHTML=carrinho.map(item=>`
     <div class="item-carrinho">
       <div style="flex:1;min-width:0">
-        <div class="item-carrinho-nome">${item.nome}</div>
+        <div class="item-carrinho-nome">${normP(item.nome)}</div>
         <div class="item-carrinho-sub">${fmtDetalhe(item.detalhe)}</div>
       </div>
       <div class="item-total">${item.preco>0?fmtBRL(item.preco):'—'}</div>
@@ -1903,23 +1909,29 @@ document.getElementById('modal-conclusao').addEventListener('click', function(e)
 
 
 function abrirModalNovoPedido(){
-  document.getElementById('ped-data').value = hoje();
-  document.getElementById('ped-status').value = 'agendado';
-  document.getElementById('ped-local').value = 'retirada';
-  document.getElementById('ped-hora').value = '';
-  document.getElementById('ped-cliente').value = '';
-  document.getElementById('ped-obs').value = '';
-  document.getElementById('extra-desc').value = '';
-  document.getElementById('extra-val').value = '';
-  document.getElementById('desconto-val').value = '';
-  carrinho = [];
-  renderCarrinho();
-  renderUnitCardapio();
-  const modal = document.getElementById('modal-novo-pedido');
-  modal.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  // Scroll to top of modal
-  modal.scrollTop = 0;
+  const modal=document.getElementById('modal-novo-pedido');
+  modal.style.display='block';
+  document.body.style.overflow='hidden';
+  modal.scrollTop=0;
+
+  // Só limpa se não vier de conversão de orçamento
+  if(!carrinho.length){
+    document.getElementById('extra-desc').value='';
+    document.getElementById('extra-val').value='';
+    document.getElementById('desconto-val').value='';
+    document.getElementById('ped-cliente').value='';
+    document.getElementById('ped-obs').value='';
+  }
+  document.getElementById('ped-data').value=hoje();
+  document.getElementById('ped-status').value='agendado';
+  document.getElementById('ped-local').value='retirada';
+  document.getElementById('ped-hora').value='';
+
+  // Renderiza após o modal estar visível no DOM
+  requestAnimationFrame(()=>{
+    renderCarrinho();
+    renderUnitCardapio();
+  });
 }
 
 function fecharModalNovoPedido(){
@@ -2167,12 +2179,14 @@ function abrirModalOrcamento(idEditar){
   document.getElementById('modal-orcamento').style.display = 'block';
   document.body.style.overflow = 'hidden';
   document.getElementById('modal-orcamento').scrollTop = 0;
+  _modoOrcamento = true;
 }
 
 function fecharModalOrcamento(){
   document.getElementById('modal-orcamento').style.display = 'none';
   document.body.style.overflow = '';
   orcEditId = null;
+  _modoOrcamento = false;
 }
 
 function npTabOrc(id, el){
@@ -2318,22 +2332,22 @@ Lá eu posto novidades, sabores e inspirações de bolos!
 
 function orcConverterPedido(){
   if(!carrinhoOrc.length){notif('Adicione ao menos um item','error');return}
-  // Passa itens do orçamento para o carrinho do pedido
-  carrinho = carrinhoOrc.map(i=>({...i, id:Date.now()+Math.random()}));
   const cliente = document.getElementById('orc-cliente').value.trim();
   const data = document.getElementById('orc-data').value;
   const obs = document.getElementById('orc-obs').value.trim();
+  carrinho = carrinhoOrc.map(i=>({...i, id:Date.now()+Math.random()}));
   fecharModalOrcamento();
   abrirModalNovoPedido();
-  // Preenche os campos com os dados do orçamento
-  setTimeout(()=>{
-    if(cliente) document.getElementById('ped-cliente').value = cliente;
-    if(data) document.getElementById('ped-data').value = data;
-    if(obs) document.getElementById('ped-obs').value = obs;
-    document.getElementById('ped-status').value = 'agendado';
-    renderCarrinho();
-  }, 200);
-  notif('Orçamento convertido em pedido ✓');
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      if(cliente) document.getElementById('ped-cliente').value=cliente;
+      if(data) document.getElementById('ped-data').value=data;
+      if(obs) document.getElementById('ped-obs').value=obs;
+      document.getElementById('ped-status').value='agendado';
+      renderCarrinho();
+      notif('Itens carregados — revise e confirme o pedido ✓');
+    },100);
+  });
 }
 
 // Salvar orçamento
@@ -2435,26 +2449,29 @@ function orcGerarWhatsAppSalvo(id){
 function orcConverterPedidoSalvo(id){
   const orc=getData('orcamentos').find(o=>o.id==id);
   if(!orc)return;
-  carrinho=(orc.itens||[]).map(i=>({...i,id:Date.now()+Math.random()}));
+  carrinho=(orc.itens||[]).map(i=>({...i, id:Date.now()+Math.random()}));
+  _modoOrcamento = false;
   abrirModalNovoPedido();
-  setTimeout(()=>{
-    if(orc.cliente) document.getElementById('ped-cliente').value=orc.cliente;
-    if(orc.data) document.getElementById('ped-data').value=orc.data;
-    if(orc.obs) document.getElementById('ped-obs').value=orc.obs;
-    document.getElementById('ped-status').value='agendado';
-    renderCarrinho();
-  },200);
-  notif('Orçamento convertido — confirme o pedido ✓');
+  // Preenche campos após modal estar visível
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      if(orc.cliente) document.getElementById('ped-cliente').value=orc.cliente;
+      if(orc.data) document.getElementById('ped-data').value=orc.data;
+      if(orc.obs) document.getElementById('ped-obs').value=orc.obs;
+      document.getElementById('ped-status').value='agendado';
+      renderCarrinho();
+      notif('Orçamento carregado — revise e confirme ✓');
+    },100);
+  });
 }
 
-// Sobrescreve npCarrAdd para redirecionar para orçamento quando modal estiver aberto
-const _npCarrAddOrig = npCarrAdd;
+// npCarrAdd roteia para orçamento ou pedido conforme o modo ativo
+let _modoOrcamento = false;
 function npCarrAdd(nome, detalhe, preco){
-  const orcAberto = document.getElementById('modal-orcamento').style.display !== 'none';
-  if(orcAberto){
+  if(_modoOrcamento){
     orcCarrAdd(nome, detalhe, preco);
   } else {
-    _npCarrAddOrig(nome, detalhe, preco);
+    _npCarrAddBase(nome, detalhe, preco);
   }
 }
 
