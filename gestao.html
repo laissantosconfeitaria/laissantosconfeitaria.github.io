@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.4 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.5 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -714,7 +714,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option></select></div>
               <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
             </div>
-            <div><label>Observações</label><input type="text" id="ped-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
+            <div><label>Observações gerais do pedido</label><input type="text" id="ped-obs" placeholder="Ex: horário, endereço de entrega, informações gerais..."></div>
           </div>
 
           <!-- Cardápio por abas -->
@@ -794,7 +794,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                 </div>
               </div>
               <div id="np-dec-preview" class="np-preview"></div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddBolo()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-bolo" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddBolo()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- BOLO SIMPLES -->
@@ -822,7 +826,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                 </div>
               </div>
               <div id="np-sim-preview" class="np-preview"></div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSimples()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-simples" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddSimples()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- VULCÃO -->
@@ -852,7 +860,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                 </div>
               </div>
               <div id="np-vul-preview" class="np-preview"></div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddVulcao()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-vulcao" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddVulcao()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- DOCES -->
@@ -879,7 +891,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                 </div>
                 <div id="np-doc-preview" style="margin-top:.5rem;font-size:.82rem;color:var(--rosa);font-weight:500"></div>
               </div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-doces" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddDoces()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- SOBREMESAS -->
@@ -901,7 +917,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt" onclick="npSel(this,'np-sob-tam')">Grande (G)</div>
                 </div>
               </div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSobremesa()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-sob" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddSobremesa()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- KIT FESTA -->
@@ -933,7 +953,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Dois amores</div>
                 </div>
               </div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-kit" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- CUPCAKES+ -->
@@ -964,7 +988,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <span style="font-size:.78rem;color:var(--texto-sec)">unidades</span>
                 </div>
               </div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddOutros()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-outros" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddOutros()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- SALGADOS -->
@@ -983,7 +1011,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt" onclick="npSel(this,'np-sal-item')">Torta Assada de Carne moída<div class="np-opt-sub">R$80/kg</div></div>
                 </div>
               </div>
-              <button class="btn btn-primary" style="margin-top:.75rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
+              <div style="margin-top:.85rem">
+                <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
+                <input type="text" id="obs-sal" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddSalgado()">+ Adicionar ao carrinho</button>
             </div>
 
             <!-- UNITÁRIOS -->
@@ -1530,10 +1562,12 @@ function npAddBolo(){
   const total=base+tierAdd[tier]+extra;
   const tamNome=tam.firstChild.textContent.trim();
   const cobNome=cob.firstChild.textContent.trim();
-  const detalheEstruturado = `Massa: ${mas}\nTamanho: ${tamNome}\nRecheio: ${recs.join(' + ')}\nCobertura: ${cobNome}`;
+  const _obs_bolo=document.getElementById('obs-bolo')?.value.trim()||'';
+  const detalheEstruturado = `Massa: ${mas}\nTamanho: ${tamNome}\nRecheio: ${recs.join(' + ')}\nCobertura: ${cobNome}${_obs_bolo?'\nObs: '+_obs_bolo:''}`;
   npCarrAdd(`Bolo Decorado`, detalheEstruturado, total);
   ['np-dec-mas','np-dec-tam','np-dec-rec','np-dec-cob'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-dec-preview','');
+  if(document.getElementById('obs-bolo')) document.getElementById('obs-bolo').value='';
 }
 
 function npAddSimples(){
@@ -1543,9 +1577,11 @@ function npAddSimples(){
   const key=tam.dataset.key;const preco=parseFloat(sab.dataset[key]||0);
   const sabNome = sab.firstChild.textContent.trim();
   const tamNomeSim = tam.firstChild.textContent.trim();
-  npCarrAdd(`Bolo Simples`, `Sabor: ${sabNome}\nTamanho: ${tamNomeSim}`, preco);
+  const _obs_simples=document.getElementById('obs-simples')?.value.trim()||'';
+  npCarrAdd(`Bolo Simples`, `Sabor: ${sabNome}\nTamanho: ${tamNomeSim}${_obs_simples?'\nObs: '+_obs_simples:''}`, preco);
   ['np-sim-sab','np-sim-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-sim-preview','');
+  if(document.getElementById('obs-simples')) document.getElementById('obs-simples').value='';
 }
 
 function npAddVulcao(){
@@ -1554,9 +1590,11 @@ function npAddVulcao(){
   if(!cob){notif('Escolha a cobertura','error');return}
   if(!tam){notif('Escolha o tamanho','error');return}
   const key=tam.dataset.key;const preco=parseFloat(cob.dataset[key]||0);
-  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas}\nCobertura/Recheio: ${cob.firstChild.textContent.trim()}\nTamanho: ${tam.firstChild.textContent.trim()}`,preco);
+  const _obs_vulcao=document.getElementById('obs-vulcao')?.value.trim()||'';
+  npCarrAdd(`Bolo Vulcão`,`Massa: ${mas}\nCobertura/Recheio: ${cob.firstChild.textContent.trim()}\nTamanho: ${tam.firstChild.textContent.trim()}${_obs_vulcao?'\nObs: '+_obs_vulcao:''}`,preco);
   ['np-vul-mas','np-vul-cob','np-vul-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   npPreviewEl('np-vul-preview','');
+  if(document.getElementById('obs-vulcao')) document.getElementById('obs-vulcao').value='';
 }
 
 // Tabelas de preço
@@ -1640,10 +1678,13 @@ function npAddDoces(){
       }
     }
   }
+  const _obs_doces=document.getElementById('obs-doces')?.value.trim()||'';
+  if(_obs_doces) detalhe+=`\nObs: ${_obs_doces}`;
   npCarrAdd(item, detalhe, preco);
   document.querySelectorAll('#np-doc-item .selected').forEach(e=>e.classList.remove('selected'));
   npQtys['doc']=25;
   document.getElementById('np-q-doc').textContent='25';
+  if(document.getElementById('obs-doces')) document.getElementById('obs-doces').value='';
 }
 
 function npAddSobremesa(){
@@ -1656,8 +1697,10 @@ function npAddSobremesa(){
     const tk=tam.includes('Grande')||tam.includes('(G)')?'G':tam.includes('Pequeno')||tam.includes('(P)')?'P':'M';
     preco=t[tk]||0;
   }
-  npCarrAdd(`Sobremesa`,`Tipo: ${item}\nTamanho: ${tam}`,preco);
+  const _obs_sob=document.getElementById('obs-sob')?.value.trim()||'';
+  npCarrAdd(`Sobremesa`,`Tipo: ${item}\nTamanho: ${tam}${_obs_sob?'\nObs: '+_obs_sob:''}`,preco);
   ['np-sob-item','np-sob-tam'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  if(document.getElementById('obs-sob')) document.getElementById('obs-sob').value='';
 }
 
 function npAddKit(){
@@ -1666,22 +1709,28 @@ function npAddKit(){
   if(!mas){notif('Escolha a massa','error');return}
   if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
   const preco=parseFloat(kit.dataset.preco||0);
-  npCarrAdd(`Kit Festa`,`Kit: ${kit.firstChild.textContent.trim()}\nMassa: ${mas}\nRecheio: ${recs.join(' + ')}`,preco);
+  const _obs_kit=document.getElementById('obs-kit')?.value.trim()||'';
+  npCarrAdd(`Kit Festa`,`Kit: ${kit.firstChild.textContent.trim()}\nMassa: ${mas}\nRecheio: ${recs.join(' + ')}${_obs_kit?'\nObs: '+_obs_kit:''}`,preco);
   ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  if(document.getElementById('obs-kit')) document.getElementById('obs-kit').value='';
 }
 
 function npAddOutros(){
   const item=npGetEl('np-out-item');if(!item){notif('Escolha o item','error');return}
   const qty=npQtys['out']||1;const unit=parseFloat(item.dataset.unit||0);
-  npCarrAdd(`${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada`,unit*qty);
+  const _obs_outros=document.getElementById('obs-outros')?.value.trim()||'';
+  npCarrAdd(`${item.firstChild.textContent.trim()}`,`${qty} unidade${qty>1?'s':''} · R$${unit.toFixed(2).replace('.',',')} cada${_obs_outros?'\nObs: '+_obs_outros:''}`,unit*qty);
   document.querySelectorAll('#np-out-item .selected').forEach(e=>e.classList.remove('selected'));
   npQtys['out']=1;document.getElementById('np-q-out').textContent='1';
+  if(document.getElementById('obs-outros')) document.getElementById('obs-outros').value='';
 }
 
 function npAddSalgado(){
   const item=npGetV('np-sal-item');if(!item){notif('Escolha o item','error');return}
-  npCarrAdd(`${item}`,`Confirmar tamanho/peso e valor`,0);
+  const _obs_sal=document.getElementById('obs-sal')?.value.trim()||'';
+  npCarrAdd(`${item}`,`Confirmar tamanho/peso e valor${_obs_sal?'\nObs: '+_obs_sal:''}`,0);
   document.querySelectorAll('#np-sal-item .selected').forEach(e=>e.classList.remove('selected'));
+  if(document.getElementById('obs-sal')) document.getElementById('obs-sal').value='';
 }
 
 // ========== UNITÁRIOS ==========
