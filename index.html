@@ -418,6 +418,25 @@
   }
   .whatsapp-float:hover .wa-tooltip { opacity: 1; }
 
+
+  /* BOTÃO CARDÁPIO DESTAQUE */
+  .btn-cardapio {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+    color: #fff; padding: 1rem 2.5rem; border-radius: 2rem;
+    font-size: 0.88rem; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; text-decoration: none;
+    box-shadow: 0 6px 24px rgba(160,90,101,0.35);
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .btn-cardapio::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn-cardapio:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(160,90,101,0.45); }
+  .btn-cardapio:hover::before { opacity: 1; }
+
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2VQS64MLCD"></script>
@@ -460,6 +479,9 @@
     <div class="btn-group">
       <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Vi%20seu%20site%20e%20gostaria%20de%20fazer%20um%20or%C3%A7amento%20para%20um%20bolo.%20%F0%9F%8E%82" target="_blank" class="btn-primary">💬 Pedir Orçamento</a>
       <a href="#bolos" class="btn-outline">🎂 Ver Criações</a>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <a href="cardapio.html" class="btn-cardapio">🎂 Monte seu Pedido — Ver Cardápio Completo</a>
     </div>
   </div>
 </section>
