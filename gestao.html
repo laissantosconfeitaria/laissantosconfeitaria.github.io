@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.5 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.6 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -712,7 +712,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             </div>
             <div class="form-row" style="margin-bottom:.75rem">
               <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option></select></div>
-              <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="confirmado">Confirmado</option><option value="entregue">Entregue</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option></select></div>
+              <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="entregue">Entregue</option></select></div>
             </div>
             <div><label>Observações gerais do pedido</label><input type="text" id="ped-obs" placeholder="Ex: horário, endereço de entrega, informações gerais..."></div>
           </div>
@@ -1207,10 +1207,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div><label>Status</label>
           <select id="edit-status">
             <option value="agendado">📅 Agendado</option>
-            <option value="confirmado">✓ Confirmado</option>
             <option value="entregue">✅ Entregue</option>
-            <option value="pendente">⏳ Pendente</option>
-            <option value="cancelado">✕ Cancelado</option>
           </select>
         </div>
         <div><label>Canal</label>
@@ -2026,18 +2023,7 @@ function deletePedido(id){
   setData('pedidos',getData('pedidos').filter(p=>p.id!==id));
   renderPedidos();
 }
-function alterarStatus(id, novoStatus, protegido){
-  if(protegido){
-    // Restaura o select para o valor anterior e pede senha
-    renderPedidos();
-    senhaPendente={acao:'status',id,novoStatus};
-    document.getElementById('senha-prot-input').value='';
-    document.getElementById('senha-prot-erro').style.display='none';
-    document.getElementById('modal-senha-prot').style.display='flex';
-    document.body.style.overflow='hidden';
-    setTimeout(()=>document.getElementById('senha-prot-input').focus(),200);
-    return;
-  }
+function alterarStatus(id, novoStatus){
   const pedidos=getData('pedidos');
   const idx=pedidos.findIndex(p=>p.id==id);
   if(idx<0)return;
@@ -2046,8 +2032,8 @@ function alterarStatus(id, novoStatus, protegido){
   renderPedidos();
   if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
   if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
-  const labels={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue ✓',pendente:'Pendente',cancelado:'Cancelado'};
-  notif('Status atualizado: '+labels[novoStatus]);
+  const labels={agendado:'Agendado 📅',entregue:'Entregue ✅'};
+  notif('Status: '+labels[novoStatus]);
 }
 
 function renderPedidos(){
@@ -2102,16 +2088,13 @@ function renderPedidos(){
         ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.3rem">📝 ${p.obs}</div>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-        <select onchange="alterarStatus(${p.id},this.value,${protegido})" style="
+        <select onchange="alterarStatus(${p.id},this.value,false)" style="
           flex:1;min-width:130px;padding:.4rem .6rem;font-size:.8rem;border-radius:8px;
           border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);
-          font-family:'DM Sans',sans-serif;${protegido?'opacity:.6':''}
+          font-family:'DM Sans',sans-serif;
         ">
           <option value="agendado"   ${p.status==='agendado'  ?'selected':''}>📅 Agendado</option>
-          <option value="confirmado" ${p.status==='confirmado'?'selected':''}>✓ Confirmado</option>
           <option value="entregue"   ${p.status==='entregue'  ?'selected':''}>✅ Entregue</option>
-          <option value="pendente"   ${p.status==='pendente'  ?'selected':''}>⏳ Pendente</option>
-          <option value="cancelado"  ${p.status==='cancelado' ?'selected':''}>✕ Cancelado</option>
         </select>
         <button onclick="${protegido?`pedirSenhaProt('editar',${p.id})`:`abrirModal(${p.id})`}" style="
           padding:.4rem .8rem;border-radius:8px;border:1.5px solid var(--borda);
@@ -2578,12 +2561,6 @@ function confirmarSenhaProt(){
   fecharSenhaProt();
   if(senhaPendente.acao==='editar') abrirModal(senhaPendente.id);
   if(senhaPendente.acao==='excluir') deletePedido(senhaPendente.id);
-  if(senhaPendente.acao==='status'){
-    const{id,novoStatus}=senhaPendente;
-    const pedidos=getData('pedidos');
-    const idx=pedidos.findIndex(p=>p.id==id);
-    if(idx>=0){pedidos[idx].status=novoStatus;setData('pedidos',pedidos);renderPedidos();}
-  }
 }
 
 // ========== DASHBOARD URGENTES ==========
