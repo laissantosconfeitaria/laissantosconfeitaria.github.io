@@ -437,6 +437,77 @@
   .btn-cardapio:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(160,90,101,0.45); }
   .btn-cardapio:hover::before { opacity: 1; }
 
+
+  /* E-BOOK CARD */
+  .ebook-card {
+    background: #fff;
+    border: 1.5px solid var(--rose);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 32px rgba(201,128,138,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .ebook-card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--rose-light) 0%, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .ebook-badge-wrap { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .ebook-badge {
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--blush); color: var(--rose-dark);
+    padding: 0.25rem 0.8rem; border-radius: 2rem; font-weight: 500;
+  }
+  .ebook-badge-new {
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--rose); color: #fff;
+    padding: 0.25rem 0.8rem; border-radius: 2rem; font-weight: 500;
+  }
+  .ebook-body { display: flex; gap: 2rem; align-items: flex-start; }
+  @media (max-width: 600px) { .ebook-body { flex-direction: column; gap: 1rem; } }
+  .ebook-icon-wrap {
+    font-size: 4rem; flex-shrink: 0;
+    background: var(--rose-light); border-radius: 1rem;
+    width: 90px; height: 90px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ebook-content { flex: 1; }
+  .ebook-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 400; color: var(--dark);
+    line-height: 1.2; margin-bottom: 0.2rem;
+  }
+  .ebook-sub {
+    font-size: 0.85rem; color: var(--rose-dark); font-weight: 500;
+    font-style: italic; margin-bottom: 0.8rem;
+  }
+  .ebook-desc {
+    font-size: 0.9rem; color: var(--taupe); line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+  .ebook-topics { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .ebook-topic {
+    font-size: 0.78rem; color: var(--rose-dark);
+    background: var(--rose-light); border-radius: 2rem;
+    padding: 0.25rem 0.8rem; font-weight: 400;
+  }
+  .ebook-cta {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--rose); color: #fff;
+    padding: 0.85rem 1.8rem; border-radius: 2rem;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 16px rgba(201,128,138,0.3);
+  }
+  .ebook-cta:hover { background: var(--rose-dark); transform: translateY(-2px); }
+
 </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2VQS64MLCD"></script>
@@ -772,14 +843,38 @@
   <div class="container">
     <p class="section-label">✦ Em breve</p>
     <h2 class="section-title">Novidades <em>chegando</em></h2>
-    <p class="section-text">Estou preparando coisas incríveis para adoçar ainda mais a sua vida! Fique de olho. 🎀</p>
-    <div class="futuro-grid">
-      <div class="futuro-card">
-        <span class="futuro-badge">Em breve</span>
-        <div class="futuro-icon">📚</div>
-        <div class="futuro-title">E-books de receitas</div>
-        <p class="futuro-desc">Receitas exclusivas da Lais para você aprender a confeitaria artesanal em casa.</p>
+    <p class="section-text">Estou preparando coisas incríveis para adoçar ainda mais a sua vida! 🎀</p>
+
+    <!-- E-BOOK DESTAQUE -->
+    <div class="ebook-card">
+      <div class="ebook-badge-wrap">
+        <span class="ebook-badge">Em breve</span>
+        <span class="ebook-badge-new">Lançamento 2025</span>
       </div>
+      <div class="ebook-body">
+        <div class="ebook-icon-wrap">📚</div>
+        <div class="ebook-content">
+          <h3 class="ebook-title">Recheios que Vendem</h3>
+          <p class="ebook-sub">As Receitas Secretas da Lais Santos Confeitaria</p>
+          <p class="ebook-desc">Após 9 anos e mais de 2.000 bolos entregues, vou revelar as receitas que fazem meus clientes pedirem bolo toda semana. Massas, recheios tradicionais e especiais, segredo do chantininho perfeito para o clima de Cuiabá e muito mais — tudo passo a passo.</p>
+          <div class="ebook-topics">
+            <span class="ebook-topic">✦ Massas artesanais</span>
+            <span class="ebook-topic">✦ Recheios tradicionais</span>
+            <span class="ebook-topic">✦ Recheios especiais</span>
+            <span class="ebook-topic">✦ Segredo do chantininho</span>
+            <span class="ebook-topic">✦ Dicas de precificação</span>
+            <span class="ebook-topic">✦ Montagem e decoração</span>
+          </div>
+          <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C%20Lais%21%20Quero%20ser%20avisada%20quando%20o%20e-book%20de%20receitas%20lan%C3%A7ar%21%20%F0%9F%8E%82"
+             target="_blank" class="ebook-cta">
+            💬 Quero ser avisada no lançamento
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMAIS NOVIDADES -->
+    <div class="futuro-grid" style="margin-top:1.5rem;">
       <div class="futuro-card">
         <span class="futuro-badge">Em breve</span>
         <div class="futuro-icon">🛒</div>
@@ -793,8 +888,10 @@
         <p class="futuro-desc">Um espaço aconchegante em Cuiabá para te receber e adoçar seu dia.</p>
       </div>
     </div>
+
   </div>
 </section>
+
 
 <!-- FOOTER -->
 <footer>
