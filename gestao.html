@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.6 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.7 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -414,6 +414,23 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <div class="cards-row" id="dash-cards"></div>
+
+      <!-- PAINEL ORIGEM DOS CLIENTES -->
+      <div class="chart-card" style="margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <h2>Origem dos clientes</h2>
+          <select id="canal-periodo" onchange="renderCanalChart()" style="padding:.35rem .6rem;font-size:.75rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+            <option value="mes">Este mês</option>
+            <option value="3meses">Últimos 3 meses</option>
+            <option value="ano">Este ano</option>
+            <option value="tudo">Tudo</option>
+          </select>
+        </div>
+        <div id="canal-chart-wrap" style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+          <canvas id="chart-canal" width="160" height="160" style="max-width:160px;flex-shrink:0"></canvas>
+          <div id="canal-legenda" style="flex:1;min-width:160px"></div>
+        </div>
+      </div>
       <div class="chart-card">
         <h2>Faturamento dos últimos 30 dias</h2>
         <canvas id="chart-linha" height="80"></canvas>
@@ -744,12 +761,12 @@ tr:hover td{background:rgba(255,255,255,.02)}
               </div>
               <div class="np-step"><div class="np-step-label">Tamanho</div>
                 <div class="np-grid" id="np-dec-tam">
-                  <div class="np-opt" data-preco="60" onclick="npSel(this,'np-dec-tam')"><div>PP · Bento</div><div class="np-opt-sub">~2 fatias · a partir de R$ 60</div></div>
-                  <div class="np-opt" data-preco="99" onclick="npSel(this,'np-dec-tam')"><div>P · 15cm</div><div class="np-opt-sub">8–10 fatias · a partir de R$ 99</div></div>
-                  <div class="np-opt" data-preco="198" onclick="npSel(this,'np-dec-tam')"><div>M · 18cm ⭐</div><div class="np-opt-sub">18–20 fatias · a partir de R$ 198</div></div>
-                  <div class="np-opt" data-preco="297" onclick="npSel(this,'np-dec-tam')"><div>G · 21cm</div><div class="np-opt-sub">28–30 fatias · a partir de R$ 297</div></div>
-                  <div class="np-opt" data-preco="396" onclick="npSel(this,'np-dec-tam')"><div>GG · 23cm</div><div class="np-opt-sub">38–40 fatias · a partir de R$ 396</div></div>
-                  <div class="np-opt" data-preco="495" onclick="npSel(this,'np-dec-tam')"><div>EX · 26cm</div><div class="np-opt-sub">48–50 fatias · a partir de R$ 495</div></div>
+                  <div class="np-opt" data-preco="60" data-tamkey="PP" onclick="npSel(this,'np-dec-tam')"><div>PP · Bento</div><div class="np-opt-sub">~2 fatias · a partir de R$ 60</div></div>
+                  <div class="np-opt" data-preco="99" data-tamkey="P" onclick="npSel(this,'np-dec-tam')"><div>P · 15cm</div><div class="np-opt-sub">8–10 fatias · a partir de R$ 99</div></div>
+                  <div class="np-opt" data-preco="198" data-tamkey="M" onclick="npSel(this,'np-dec-tam')"><div>M · 18cm ⭐</div><div class="np-opt-sub">18–20 fatias · a partir de R$ 198</div></div>
+                  <div class="np-opt" data-preco="297" data-tamkey="G" onclick="npSel(this,'np-dec-tam')"><div>G · 21cm</div><div class="np-opt-sub">28–30 fatias · a partir de R$ 297</div></div>
+                  <div class="np-opt" data-preco="396" data-tamkey="GG" onclick="npSel(this,'np-dec-tam')"><div>GG · 23cm</div><div class="np-opt-sub">38–40 fatias · a partir de R$ 396</div></div>
+                  <div class="np-opt" data-preco="495" data-tamkey="EX" onclick="npSel(this,'np-dec-tam')"><div>EX · 26cm</div><div class="np-opt-sub">48–50 fatias · a partir de R$ 495</div></div>
                 </div>
               </div>
               <div class="np-step"><div class="np-step-label">Recheio(s) <span style="font-weight:400;font-size:.75rem">— até 2</span></div>
@@ -1517,7 +1534,10 @@ function npPreviewEl(id,html){const e=document.getElementById(id);if(e){e.innerH
 function npUpdatePreviewDec(){
   const tam=npGetEl('np-dec-tam');const recs=npGetMulti('np-dec-rec');const cob=npGetEl('np-dec-cob');
   if(!tam&&!recs.length&&!cob){npPreviewEl('np-dec-preview','');return}
-  const base=tam?parseFloat(tam.dataset.preco||0):0;
+  const tamKey2=tam?tam.dataset.tamkey||'M':'M';
+  const tier2=recs.length?recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo','Ninho c'].some(k=>r.includes(k)))?'esp':'trad':'trad';
+  const PRECO_BOLO2={trad:{PP:60,P:99,M:198,G:297,GG:396,EX:495},esp:{PP:76,P:125,M:249,G:374,GG:499,EX:624},prem:{PP:88,P:145,M:289,G:434,GG:579,EX:724}};
+  const base=tam?PRECO_BOLO2[tier2][tamKey2]||0:0;
   const extra=cob?parseFloat(cob.dataset.extra||0):0;
   const tier=recs.some(r=>r.includes('Pistache')||r.includes('Kinder')||r.includes('Ouro')||r.includes('Nozes')||r.includes('praliné')||r.includes('Marta'))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','coco','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
   const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
@@ -1552,11 +1572,16 @@ function npAddBolo(){
   if(!tam){notif('Escolha o tamanho','error');return}
   if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
   if(!cob){notif('Escolha a cobertura','error');return}
-  const base=parseFloat(tam.dataset.preco||0);
+  const tamKey=tam.dataset.tamkey||'M';
   const extra=parseFloat(cob.dataset.extra||0);
-  const tier=recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
-  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
-  const total=base+tierAdd[tier]+extra;
+  const tier=recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo','Ninho c'].some(k=>r.includes(k)))?'esp':'trad';
+  // Tabela de preços exata por tamanho e tier
+  const PRECO_BOLO={
+    trad:{PP:60,P:99,M:198,G:297,GG:396,EX:495},
+    esp: {PP:76,P:125,M:249,G:374,GG:499,EX:624},
+    prem:{PP:88,P:145,M:289,G:434,GG:579,EX:724}
+  };
+  const total=(PRECO_BOLO[tier][tamKey]||PRECO_BOLO[tier]['M'])+extra;
   const tamNome=tam.firstChild.textContent.trim();
   const cobNome=cob.firstChild.textContent.trim();
   const _obs_bolo=document.getElementById('obs-bolo')?.value.trim()||'';
@@ -2604,6 +2629,78 @@ function renderDashUrgentes(){
   cont.innerHTML=html;
 }
 
+// ========== CANAL CHART ==========
+function renderCanalChart(){
+  const pedidos=getData('pedidos').filter(p=>p.status!=='cancelado');
+  const periodo=document.getElementById('canal-periodo')?.value||'mes';
+  const hoje=dataLocal();
+  const mesStr=hoje.substring(0,7);
+  const ano=hoje.substring(0,4);
+
+  let filtrados=pedidos;
+  if(periodo==='mes') filtrados=pedidos.filter(p=>p.data.startsWith(mesStr));
+  else if(periodo==='3meses'){
+    const d=new Date();d.setMonth(d.getMonth()-3);
+    const lim=dataLocal(d);
+    filtrados=pedidos.filter(p=>p.data>=lim);
+  } else if(periodo==='ano') filtrados=pedidos.filter(p=>p.data.startsWith(ano));
+
+  const canais={whatsapp:0,google:0,indicacao:0};
+  let totalFatCanal={whatsapp:0,google:0,indicacao:0};
+  filtrados.forEach(p=>{
+    const c=p.canal||'whatsapp';
+    const key=c.includes('google')?'google':c.includes('indica')?'indicacao':'whatsapp';
+    canais[key]=(canais[key]||0)+1;
+    totalFatCanal[key]=(totalFatCanal[key]||0)+p.valor;
+  });
+
+  const total=Object.values(canais).reduce((s,v)=>s+v,0);
+  if(!total){
+    document.getElementById('canal-legenda').innerHTML='<div style="font-size:.8rem;color:var(--texto-dim)">Nenhum pedido no período</div>';
+    return;
+  }
+
+  const cores={whatsapp:'#4ecb8d',google:'#5cb8f0',indicacao:'#a78bfa'};
+  const labels={whatsapp:'WhatsApp',google:'Google',indicacao:'Indicação'};
+  const icons={whatsapp:'💬',google:'🔍',indicacao:'🤝'};
+
+  // Gráfico
+  if(chartCanal){chartCanal.destroy();chartCanal=null}
+  const ctx=document.getElementById('chart-canal')?.getContext('2d');
+  if(ctx){
+    chartCanal=new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:Object.keys(canais).map(k=>labels[k]),
+        datasets:[{data:Object.values(canais),backgroundColor:Object.keys(canais).map(k=>cores[k]),borderWidth:3,borderColor:'var(--card)'}]
+      },
+      options:{plugins:{legend:{display:false}},cutout:'68%'}
+    });
+  }
+
+  // Legenda com detalhes
+  const sorted=Object.entries(canais).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('canal-legenda').innerHTML=sorted.map(([k,v])=>{
+    const pct=total?Math.round((v/total)*100):0;
+    const fat=totalFatCanal[k];
+    const investGoogle=getData('despesas').filter(d=>d.cat==='googleads').reduce((s,d)=>s+d.valor,0);
+    return `<div style="margin-bottom:.85rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:10px;height:10px;border-radius:50%;background:${cores[k]};flex-shrink:0"></div>
+          <span style="font-size:.85rem;font-weight:500;color:var(--texto)">${icons[k]} ${labels[k]}</span>
+        </div>
+        <span style="font-size:.85rem;font-weight:600;color:${cores[k]}">${v} ped. (${pct}%)</span>
+      </div>
+      <div style="height:5px;background:var(--borda);border-radius:3px;overflow:hidden;margin-bottom:.25rem">
+        <div style="height:5px;background:${cores[k]};border-radius:3px;width:${pct}%;transition:width .5s"></div>
+      </div>
+      <div style="font-size:.73rem;color:var(--texto-dim)">Faturamento: ${fmtBRL(fat)}${k==='google'&&investGoogle>0?` · Ads: ${fmtBRL(investGoogle)} · ROI: ${fat>0?Math.round((fat/investGoogle)*10)/10+'x':'—'}`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ========== DESPESAS ==========
 function salvarDespesa(){
   const data=document.getElementById('desp-data').value;
@@ -2661,7 +2758,7 @@ function renderDespesas(){
 }
 
 // ========== DASHBOARD ==========
-let chartLinha,chartProd,chartBarras;
+let chartLinha,chartProd,chartBarras,chartCanal;
 function renderDashboard(){
   const pedidos=getData('pedidos');
   const despesas=getData('despesas');
@@ -2676,6 +2773,7 @@ function renderDashboard(){
   const now=new Date();
   document.getElementById('dash-data').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   renderDashUrgentes();
+  renderCanalChart();
   document.getElementById('dash-cards').innerHTML=`
     <div class="card-stat"><div class="label">Faturamento do mês</div><div class="value">${maskVal(fat)}</div></div>
     <div class="card-stat"><div class="label">Despesas do mês</div><div class="value red">${maskVal(desp)}</div></div>
