@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.7 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.8 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -419,12 +419,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="chart-card" style="margin-bottom:1.25rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
           <h2>Origem dos clientes</h2>
-          <select id="canal-periodo" onchange="renderCanalChart()" style="padding:.35rem .6rem;font-size:.75rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+          <select id="canal-periodo" onchange="onCanalPeriodoChange()" style="padding:.35rem .6rem;font-size:.75rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
             <option value="mes">Este mês</option>
+            <option value="mes-ant">Mês anterior</option>
             <option value="3meses">Últimos 3 meses</option>
             <option value="ano">Este ano</option>
             <option value="tudo">Tudo</option>
+            <option value="custom">Período personalizado</option>
           </select>
+        </div>
+        <div id="canal-custom-dates" style="display:none;margin-bottom:.85rem">
+          <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px">
+              <label style="font-size:.68rem;color:var(--texto-dim);display:block;margin-bottom:.25rem">De</label>
+              <input type="date" id="canal-data-ini" style="padding:.4rem .6rem;font-size:.8rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);width:100%" onchange="renderCanalChart()">
+            </div>
+            <div style="flex:1;min-width:120px">
+              <label style="font-size:.68rem;color:var(--texto-dim);display:block;margin-bottom:.25rem">Até</label>
+              <input type="date" id="canal-data-fim" style="padding:.4rem .6rem;font-size:.8rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);width:100%" onchange="renderCanalChart()">
+            </div>
+            <button onclick="renderCanalChart()" style="padding:.4rem .85rem;border-radius:8px;border:none;background:var(--rosa);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;margin-top:1.1rem">Filtrar</button>
+          </div>
         </div>
         <div id="canal-chart-wrap" style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
           <canvas id="chart-canal" width="160" height="160" style="max-width:160px;flex-shrink:0"></canvas>
@@ -2630,20 +2645,44 @@ function renderDashUrgentes(){
 }
 
 // ========== CANAL CHART ==========
+function onCanalPeriodoChange(){
+  const v=document.getElementById('canal-periodo').value;
+  const customDiv=document.getElementById('canal-custom-dates');
+  if(customDiv) customDiv.style.display=v==='custom'?'block':'none';
+  if(v==='custom'){
+    const ini=document.getElementById('canal-data-ini');
+    const fim=document.getElementById('canal-data-fim');
+    if(ini&&!ini.value) ini.value=mesAtual()+'-01';
+    if(fim&&!fim.value) fim.value=hoje();
+    return;
+  }
+  renderCanalChart();
+}
+
 function renderCanalChart(){
   const pedidos=getData('pedidos').filter(p=>p.status!=='cancelado');
   const periodo=document.getElementById('canal-periodo')?.value||'mes';
-  const hoje=dataLocal();
-  const mesStr=hoje.substring(0,7);
-  const ano=hoje.substring(0,4);
+  const hojeStr=hoje();
+  const mesStr=hojeStr.substring(0,7);
+  const ano=hojeStr.substring(0,4);
 
   let filtrados=pedidos;
-  if(periodo==='mes') filtrados=pedidos.filter(p=>p.data.startsWith(mesStr));
-  else if(periodo==='3meses'){
+  if(periodo==='mes'){
+    filtrados=pedidos.filter(p=>p.data.startsWith(mesStr));
+  } else if(periodo==='mes-ant'){
+    const d=new Date();d.setMonth(d.getMonth()-1);
+    const mAnt=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    filtrados=pedidos.filter(p=>p.data.startsWith(mAnt));
+  } else if(periodo==='3meses'){
     const d=new Date();d.setMonth(d.getMonth()-3);
-    const lim=dataLocal(d);
-    filtrados=pedidos.filter(p=>p.data>=lim);
-  } else if(periodo==='ano') filtrados=pedidos.filter(p=>p.data.startsWith(ano));
+    filtrados=pedidos.filter(p=>p.data>=dataLocal(d));
+  } else if(periodo==='ano'){
+    filtrados=pedidos.filter(p=>p.data.startsWith(ano));
+  } else if(periodo==='custom'){
+    const ini=document.getElementById('canal-data-ini')?.value;
+    const fim=document.getElementById('canal-data-fim')?.value;
+    if(ini&&fim) filtrados=pedidos.filter(p=>p.data>=ini&&p.data<=fim);
+  }
 
   const canais={whatsapp:0,google:0,indicacao:0};
   let totalFatCanal={whatsapp:0,google:0,indicacao:0};
@@ -2763,6 +2802,11 @@ function renderDashboard(){
   const pedidos=getData('pedidos');
   const despesas=getData('despesas');
   const mes=mesAtual();
+  const now=new Date();
+  const diaAtual=now.getDate();
+  const diasNoMes=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+
+  // Mês atual
   const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
   const despMes=despesas.filter(d=>d.data.startsWith(mes));
   const fat=pedMes.reduce((s,p)=>s+p.valor,0);
@@ -2770,16 +2814,90 @@ function renderDashboard(){
   const lucro=fat-desp;
   const qPed=pedMes.length;
   const ticket=qPed?fat/qPed:0;
-  const now=new Date();
+
+  // Mês anterior
+  const dAnt=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const mesAnt=`${dAnt.getFullYear()}-${String(dAnt.getMonth()+1).padStart(2,'0')}`;
+  const pedAnt=pedidos.filter(p=>p.data.startsWith(mesAnt)&&p.status!=='cancelado');
+  const despAnt=despesas.filter(d=>d.data.startsWith(mesAnt));
+  const fatAnt=pedAnt.reduce((s,p)=>s+p.valor,0);
+  const despAntV=pedAnt.reduce(()=>0,0)||despAnt.reduce((s,d)=>s+d.valor,0);
+  const lucroAnt=fatAnt-despAntV;
+  const qPedAnt=pedAnt.length;
+  const ticketAnt=qPedAnt?fatAnt/qPedAnt:0;
+
+  // Projeção (regra de 3 simples: se hoje é dia X de N dias, projetar para N dias)
+  const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
+  const fatProj=Math.round(fat*fatorProj);
+  const despProj=Math.round(desp*fatorProj);
+  const lucroProj=fatProj-despProj;
+  const qPedProj=Math.round(qPed*fatorProj);
+  const ticketProj=ticket; // ticket médio não muda com projeção
+
+  // Variação em relação ao mês anterior
+  function varPct(atual,ant){
+    if(!ant) return null;
+    return Math.round(((atual-ant)/ant)*100);
+  }
+  function varHtml(pct){
+    if(pct===null) return '';
+    const cor=pct>=0?'var(--verde)':'var(--vermelho)';
+    const seta=pct>=0?'↑':'↓';
+    return `<span style="font-size:.72rem;color:${cor};font-weight:500">${seta}${Math.abs(pct)}% vs mês ant.</span>`;
+  }
+  function projHtml(proj,label){
+    return `<div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">Proj: <span style="color:var(--azul)">${label}</span></div>`;
+  }
+
+  const vFat=varPct(fat,fatAnt);
+  const vDesp=varPct(desp,despAntV);
+  const vLucro=varPct(lucro,lucroAnt);
+  const vPed=varPct(qPed,qPedAnt);
+  const vTicket=varPct(ticket,ticketAnt);
+
   document.getElementById('dash-data').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   renderDashUrgentes();
   renderCanalChart();
+
   document.getElementById('dash-cards').innerHTML=`
-    <div class="card-stat"><div class="label">Faturamento do mês</div><div class="value">${maskVal(fat)}</div></div>
-    <div class="card-stat"><div class="label">Despesas do mês</div><div class="value red">${maskVal(desp)}</div></div>
-    <div class="card-stat"><div class="label">Lucro estimado</div><div class="value ${lucro>=0?'green':'red'}">${maskVal(lucro)}</div></div>
-    <div class="card-stat"><div class="label">Pedidos no mês</div><div class="value">${qPed}</div></div>
-    <div class="card-stat"><div class="label">Ticket médio</div><div class="value">${maskVal(ticket)}</div></div>
+    <div class="card-stat">
+      <div class="label">Faturamento do mês</div>
+      <div class="value">${maskVal(fat)}</div>
+      ${varHtml(vFat)}
+      ${projHtml(maskVal(fatProj),'faturamento')}
+    </div>
+    <div class="card-stat">
+      <div class="label">Despesas do mês</div>
+      <div class="value red">${maskVal(desp)}</div>
+      ${varHtml(vDesp===null?null:-vDesp)}
+      ${projHtml(maskVal(despProj),'despesas')}
+    </div>
+    <div class="card-stat">
+      <div class="label">Lucro estimado</div>
+      <div class="value ${lucro>=0?'green':'red'}">${maskVal(lucro)}</div>
+      ${varHtml(vLucro)}
+      ${projHtml(maskVal(lucroProj),'lucro')}
+    </div>
+    <div class="card-stat">
+      <div class="label">Pedidos no mês</div>
+      <div class="value">${qPed}</div>
+      ${varHtml(vPed)}
+      ${projHtml(qPedProj+' pedidos','pedidos')}
+    </div>
+    <div class="card-stat">
+      <div class="label">Ticket médio</div>
+      <div class="value">${maskVal(ticket)}</div>
+      ${varHtml(vTicket)}
+      <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">Ant: <span style="color:var(--texto-sec)">${maskVal(ticketAnt)}</span></div>
+    </div>
+    <div class="card-stat" style="border:1px solid rgba(92,184,240,.2);background:rgba(92,184,240,.04)">
+      <div class="label" style="color:var(--azul)">Progresso do mês</div>
+      <div class="value blue">${diaAtual}/${diasNoMes}</div>
+      <div style="background:var(--borda);border-radius:20px;height:5px;margin:.5rem 0">
+        <div style="height:5px;border-radius:20px;background:var(--azul);width:${Math.round((diaAtual/diasNoMes)*100)}%;transition:width .5s"></div>
+      </div>
+      <div style="font-size:.7rem;color:var(--texto-dim)">${Math.round((diaAtual/diasNoMes)*100)}% do mês concluído</div>
+    </div>
   `;
 
   // Linha — últimos 30 dias
