@@ -498,7 +498,8 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-sal-item">
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-price">Sem geleia R$ 110/kg · Com geleia de morango R$ 129/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-desc">Sem geleia de morango</div><div class="si-price">R$ 110/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria com Geleia</div><div class="si-desc">Com geleia de morango artesanal</div><div class="si-price">R$ 129/kg</div></div>
           <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Pão Italiano</div><div class="si-desc">Presunto, queijo, tomate, orégano</div><div class="si-price">Médio R$ 60 · Grande R$ 90</div></div>
           <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Frango c/ catupiry</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
           <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Alho poró c/ queijo</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
@@ -561,7 +562,7 @@ var RECHEIO_TIPO = {
   'Dois amores com morango':'esp','Creme de coco com abacaxi':'esp','Leite ninho com Nutella':'esp',
   '4 leites com abacaxi':'esp','4 leites com Oreo':'esp','Caramelo salgado c/ mousse':'esp','Floresta Negra':'esp',
   'Pistache':'prem','Kinder Bueno':'prem','Ouro Branco ou Sonho de Valsa':'prem',
-  'Nozes com praline':'prem','Doce de leite c/ praline de nozes':'prem','Marta Rocha':'prem'
+  'Nozes com praliné':'prem','Doce de leite c/ praliné de nozes':'prem','Marta Rocha':'prem'
 };
 
 // Bolos Simples - por sabor e tamanho (M, G)
@@ -643,7 +644,8 @@ var P_BROWNIE = {
 
 // Salgados
 var P_SALGADO = {
-  'Torta de Frango Fria': 'R$ 110/kg (sem geleia) ou R$ 129/kg (com geleia de morango)',
+  'Torta de Frango Fria': 'R$ 110/kg',
+  'Torta de Frango Fria com Geleia': 'R$ 129/kg',
   'Pão Italiano': 'Médio R$ 60 | Grande R$ 90',
   'Quiche — Frango c/ catupiry': 'R$ 80 (600g) | R$ 150 (1,1kg)',
   'Quiche — Alho poró c/ queijo': 'R$ 80 (600g) | R$ 150 (1,1kg)',
