@@ -3,10 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Monte seu pedido de bolo personalizado em Cuiabá MT: escolha tamanho, recheio e cobertura com preço na hora. Bolos decorados, bento cake, kit festa, doces e salgados. Envie pelo WhatsApp!">
-<meta name="keywords" content="cardápio bolos cuiabá, preço bolo personalizado cuiabá, encomendar bolo cuiabá, bolo decorado preço cuiabá, kit festa cuiabá">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://laissantosconfeitaria.github.io/cardapio.html">
+<meta name="description" content="Cardápio completo da Lais Santos Confeitaria — Monte seu pedido e envie pelo WhatsApp!">
 <meta property="og:title" content="Cardápio - Lais Santos Confeitaria">
 <meta property="og:description" content="Monte seu pedido de bolo artesanal personalizado e envie direto pelo WhatsApp!">
 <title>Cardápio - Lais Santos Confeitaria</title>
@@ -171,34 +168,6 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   .cs-total-value { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--rose-dark); font-weight: 300; }
   .cs-note { font-size: 0.72rem; color: var(--taupe); font-style: italic; margin-top: 0.3rem; text-align: right; }
 
-
-  /* WHATSAPP FLUTUANTE */
-  .wa-float {
-    position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 300;
-    width: 58px; height: 58px; border-radius: 50%;
-    background: #25d366;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
-    text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
-  .wa-float svg { width: 30px; height: 30px; fill: #fff; }
-  .wa-float-tooltip {
-    position: absolute; right: 70px; top: 50%; transform: translateY(-50%);
-    background: var(--dark, #3d2b2e); color: #fff;
-    font-size: 0.78rem; font-weight: 400; font-family: 'Jost', sans-serif;
-    padding: 0.5rem 0.9rem; border-radius: 2rem;
-    white-space: nowrap; pointer-events: none;
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .wa-float-tooltip::after {
-    content: ''; position: absolute; left: 100%; top: 50%;
-    transform: translateY(-50%);
-    border: 6px solid transparent;
-    border-left-color: var(--dark, #3d2b2e);
-  }
-  .wa-float:hover .wa-float-tooltip { opacity: 1; }
-
 </style>
 </head>
 <body>
@@ -241,12 +210,12 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">2</div><div class="step-label">Escolha o tamanho</div></div>
         <div class="options-grid" id="g-dec-tam">
-          <div class="opt-card" data-bento="true" onclick="sel(this,'g-dec-tam')"><div class="opt-name">PP · Bento</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$ 60</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho P</div><div class="opt-info">8-10 fatias · 15cm</div><div class="opt-price">a partir de R$ 99</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-badge badge-popular">Mais pedido</div><div class="opt-name">Tamanho M</div><div class="opt-info">18-20 fatias · 18cm</div><div class="opt-price">a partir de R$ 198</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho G</div><div class="opt-info">28-30 fatias · 21cm</div><div class="opt-price">a partir de R$ 297</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho GG</div><div class="opt-info">38-40 fatias · 23cm</div><div class="opt-price">a partir de R$ 396</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho EX</div><div class="opt-info">48-50 fatias · 26cm</div><div class="opt-price">a partir de R$ 495</div></div>
+          <div class="opt-card" data-bento="true" onclick="sel(this,'g-dec-tam')"><div class="opt-name">PP · Bento</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$ 66</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho P</div><div class="opt-info">8-10 fatias · 15cm</div><div class="opt-price">a partir de R$ 109</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-badge badge-popular">Mais pedido</div><div class="opt-name">Tamanho M</div><div class="opt-info">18-20 fatias · 18cm</div><div class="opt-price">a partir de R$ 218</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho G</div><div class="opt-info">28-30 fatias · 21cm</div><div class="opt-price">a partir de R$ 327</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho GG</div><div class="opt-info">38-40 fatias · 23cm</div><div class="opt-price">a partir de R$ 436</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho EX</div><div class="opt-info">48-50 fatias · 26cm</div><div class="opt-price">a partir de R$ 544</div></div>
         </div>
       </div>
 
@@ -270,6 +239,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">Dois amores com morango</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">Creme de coco com abacaxi</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">Leite ninho com Nutella</div></div>
+          <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">Ninho c/ morango</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">4 leites com abacaxi</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">4 leites com Oreo</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-esp">Especial</div><div class="opt-name">Caramelo salgado c/ mousse</div></div>
@@ -288,10 +258,10 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <div class="options-grid wide" id="g-dec-cob">
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho</div><div class="opt-price">Sem adicional</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Naked Cake</div><div class="opt-price">Sem adicional</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho Personalizado</div><div class="opt-price">+ R$ 20</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Cobertura de Brigadeiro</div><div class="opt-price">+ R$ 25</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache de Chocolate</div><div class="opt-price">+ R$ 40</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache Saborizada</div><div class="opt-info">Pistache · Morango · Maracujá · Limão</div><div class="opt-price">+ R$ 35</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho Personalizado</div><div class="opt-price">+ R$ 22</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Cobertura de Brigadeiro</div><div class="opt-price">+ R$ 28</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache de Chocolate</div><div class="opt-price">+ R$ 44</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache Saborizada</div><div class="opt-info">Pistache · Morango · Maracujá · Limão</div><div class="opt-price">+ R$ 38</div></div>
         </div>
       </div>
       <div class="price-preview" id="price-preview"></div>
@@ -306,18 +276,18 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o sabor</div></div>
         <div class="si-grid" id="g-sim-sab">
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá</div><div class="si-price">M R$ 40 · G R$ 60</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate sem cobertura</div><div class="si-price">M R$ 32 · G R$ 58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate com cobertura</div><div class="si-price">M R$ 45 · G R$ 70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro sem cobertura</div><div class="si-price">M R$ 38 · G R$ 58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro com cobertura</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá cremoso</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Milho</div><div class="si-price">M R$ 45 · G R$ 65</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Toalha felpuda</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Laranja</div><div class="si-price">M R$ 45 · G R$ 58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 50 · G R$ 68</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado</div><div class="si-price">M R$ 35 · G R$ 58</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado com cobertura</div><div class="si-price">M R$ 50 · G R$ 70</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá</div><div class="si-price">M R$ 44 · G R$ 66</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate sem cobertura</div><div class="si-price">M R$ 35 · G R$ 64</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Chocolate com cobertura</div><div class="si-price">M R$ 50 · G R$ 77</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro sem cobertura</div><div class="si-price">M R$ 42 · G R$ 64</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Formigueiro com cobertura</div><div class="si-price">M R$ 55 · G R$ 77</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Fubá cremoso</div><div class="si-price">M R$ 55 · G R$ 77</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Milho</div><div class="si-price">M R$ 50 · G R$ 72</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Toalha felpuda</div><div class="si-price">M R$ 55 · G R$ 77</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Laranja</div><div class="si-price">M R$ 50 · G R$ 64</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 55 · G R$ 75</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado</div><div class="si-price">M R$ 38 · G R$ 64</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sim-sab')"><div class="si-name">Mesclado com cobertura</div><div class="si-price">M R$ 55 · G R$ 77</div></div>
         </div>
       </div>
       <div class="step">
@@ -347,13 +317,13 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">2</div><div class="step-label">Escolha a cobertura</div></div>
         <div class="si-grid" id="g-vul-cob">
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Dois amores</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com Nutella</div><div class="si-price">M R$ 65 · G R$ 90</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cream cheese</div><div class="si-price">M R$ 75 · G R$ 99</div></div>
-          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 60 · G R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Brigadeiro</div><div class="si-price">M R$ 66 · G R$ 93</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Dois amores</div><div class="si-price">M R$ 66 · G R$ 93</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho</div><div class="si-price">M R$ 66 · G R$ 93</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com brigadeiro</div><div class="si-price">M R$ 66 · G R$ 93</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Leite ninho com Nutella</div><div class="si-price">M R$ 72 · G R$ 99</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cream cheese</div><div class="si-price">M R$ 82 · G R$ 109</div></div>
+          <div class="si-card" onclick="ssel(this,'g-vul-cob')"><div class="si-name">Cenoura com brigadeiro</div><div class="si-price">M R$ 66 · G R$ 93</div></div>
         </div>
       </div>
       <div class="step">
@@ -375,14 +345,14 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-doc-item">
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Tradicionais</div><div class="si-desc">Brigadeiro, beijinho, bicho de pé, limão, maracujá, dois amores, churros, prestígio, ninho</div><div class="si-price">25un R$ 50 · 50un R$ 100 · 100un R$ 190</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Especiais</div><div class="si-desc">Surpresa de uva, Oreo, pistache, cajuzinho, Romeu e Julieta, ninho com nutella, olho de sogra, banoffee</div><div class="si-price">25un R$ 75 · 50un R$ 120 · 100un R$ 220</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Caixa Degustação</div><div class="si-desc">Doces variados em caixa pétala</div><div class="si-price">15 doces R$ 55 · 20 doces R$ 70 · 25 doces R$ 100</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas de Chocolate</div><div class="si-desc">Brigadeiro · Beijinho · Dois amores · Prestígio · Doce de leite · Brigadeiro branco</div><div class="si-price">R$ 4,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas com Frutas</div><div class="si-desc">Morango, damasco, ameixa, uva, abacaxi, cereja</div><div class="si-price">R$ 4,80/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Copinho de Chocolate com Cereja</div><div class="si-price">R$ 4,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Bombom Negresco</div><div class="si-price">R$ 4,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufa Meio Amarga (cacau 50%)</div><div class="si-price">Cento R$ 250</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Tradicionais</div><div class="si-desc">Brigadeiro, beijinho, bicho de pé, limão, maracujá, dois amores, churros, prestígio, ninho</div><div class="si-price">25un R$ 55 · 50un R$ 110 · 100un R$ 209</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Docinhos Especiais</div><div class="si-desc">Surpresa de uva, Oreo, pistache, cajuzinho, Romeu e Julieta, ninho com nutella, olho de sogra, banoffee</div><div class="si-price">25un R$ 83 · 50un R$ 132 · 100un R$ 242</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Caixa Degustação</div><div class="si-desc">Doces variados em caixa pétala</div><div class="si-price">15 doces R$ 61 · 20 doces R$ 77 · 25 doces R$ 110</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas de Chocolate</div><div class="si-desc">Brigadeiro · Beijinho · Dois amores · Prestígio · Doce de leite · Brigadeiro branco</div><div class="si-price">R$ 4,40/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufas com Frutas</div><div class="si-desc">Morango, damasco, ameixa, uva, abacaxi, cereja</div><div class="si-price">R$ 5,30/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Copinho de Chocolate com Cereja</div><div class="si-price">R$ 4,40/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Bombom Negresco</div><div class="si-price">R$ 5,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-doc-item')"><div class="si-name">Trufa Meio Amarga (cacau 50%)</div><div class="si-price">Cento R$ 275</div></div>
         </div>
       </div>
       <div class="qty-wrap">
@@ -406,12 +376,12 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha a sobremesa</div></div>
         <div class="si-grid wide" id="g-sob-item">
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa da Felicidade</div><div class="si-desc">Creme 4 leites, frutas in natura, brownie de chocolate</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa Red Velvet</div><div class="si-desc">Red velvet, creme 4 leites, geleia de morango artesanal, chocolate branco</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 219</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Bombom Aberto</div><div class="si-desc">Creme 4 leites, morango/uva/abacaxi, ganache de chocolate nobre</div><div class="si-price">P R$ 80 · M R$ 130 · G R$ 199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Banoffee</div><div class="si-desc">Doce de leite artesanal, doce de banana, bolacha artesanal, chantininho</div><div class="si-price">M R$ 130 · G R$ 199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Torta</div><div class="si-desc">Limão · Maracujá · Prestígio · Brigadeiro · Dois amores</div><div class="si-price">8p R$ 129 · 13p R$ 199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Pudim de Leite Condensado</div><div class="si-desc">Cremoso com calda caramelizada</div><div class="si-price">Médio R$ 65 · Grande R$ 85</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa da Felicidade</div><div class="si-desc">Creme 4 leites, frutas in natura, brownie de chocolate</div><div class="si-price">P R$ 88 · M R$ 143 · G R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Travessa Red Velvet</div><div class="si-desc">Red velvet, creme 4 leites, geleia de morango artesanal, chocolate branco</div><div class="si-price">P R$ 88 · M R$ 143 · G R$ 241</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Bombom Aberto</div><div class="si-desc">Creme 4 leites, morango/uva/abacaxi, ganache de chocolate nobre</div><div class="si-price">P R$ 88 · M R$ 143 · G R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Banoffee</div><div class="si-desc">Doce de leite artesanal, doce de banana, bolacha artesanal, chantininho</div><div class="si-price">M R$ 143 · G R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Torta</div><div class="si-desc">Limão · Maracujá · Prestígio · Brigadeiro · Dois amores</div><div class="si-price">8p R$ 142 · 13p R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sob-item')"><div class="si-name">Pudim de Leite Condensado</div><div class="si-desc">Cremoso com calda caramelizada</div><div class="si-price">Médio R$ 72 · Grande R$ 94</div></div>
         </div>
       </div>
       <div class="step">
@@ -434,11 +404,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o kit</div></div>
         <div class="si-grid" id="g-kit-tam">
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 200</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 325</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 450</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 649</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 815</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 220</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 358</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 495</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 714</div></div>
+          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 897</div></div>
         </div>
       </div>
       <div class="step">
@@ -473,19 +443,19 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-out-item">
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Chantininho</div><div class="si-desc">Mín. 20un · Recheios: brigadeiro, 4 leites, doce de leite</div><div class="si-price">R$ 8,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 12,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Chantininho</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 6,50/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 9,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Pequeno</div><div class="si-desc">Mín. 10un · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 6,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Grande</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 10,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (P)</div><div class="si-price">R$ 8,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (G)</div><div class="si-price">R$ 12,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito Simples</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 9,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Pasta e Papel de Arroz</div><div class="si-price">R$ 14,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Sprinkles</div><div class="si-price">R$ 20,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Simples (6x6cm)</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 6,00/un</div></div>
-          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Recheado (6x6cm)</div><div class="si-desc">Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 12,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Chantininho</div><div class="si-desc">Mín. 20un · Recheios: brigadeiro, 4 leites, doce de leite</div><div class="si-price">R$ 9,35/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Grande + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 13,20/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Chantininho</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 7,15/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Cupcake Pequeno + Brigadeiro</div><div class="si-desc">Mín. 20un</div><div class="si-price">R$ 9,90/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Pequeno</div><div class="si-desc">Mín. 10un · Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 6,60/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Grande</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 11,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (P)</div><div class="si-price">R$ 8,80/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pão de Mel Personalizado (G)</div><div class="si-price">R$ 13,20/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito Simples</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 9,90/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Pasta e Papel de Arroz</div><div class="si-price">R$ 15,40/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Pirulito com Sprinkles</div><div class="si-price">R$ 22,00/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Simples (6x6cm)</div><div class="si-desc">Mín. 10un</div><div class="si-price">R$ 6,60/un</div></div>
+          <div class="si-card" onclick="ssel(this,'g-out-item')"><div class="si-name">Brownie Recheado (6x6cm)</div><div class="si-desc">Recheios: brigadeiro, beijinho, doce de leite, 4 leites</div><div class="si-price">R$ 13,20/un</div></div>
         </div>
       </div>
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('out',-1)">−</button><span class="qty-num" id="q-out">1</span><button class="qty-btn" onclick="chgQ('out',1)">+</button></div></div>
@@ -501,17 +471,16 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o item</div></div>
         <div class="si-grid wide" id="g-sal-item">
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-desc">Sem geleia de morango</div><div class="si-price">R$ 110/kg</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria com Geleia</div><div class="si-desc">Com geleia de morango artesanal</div><div class="si-price">R$ 129/kg</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Pão Italiano</div><div class="si-desc">Presunto, queijo, tomate, orégano</div><div class="si-price">Médio R$ 60 · Grande R$ 90</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Frango c/ catupiry</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Alho poró c/ queijo</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon e calabresa</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Carne seca c/ banana</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon c/ abacaxi</div><div class="si-price">600g R$ 80 · 1,1kg R$ 150</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche de Camarão</div><div class="si-desc">Camarão com catupiry</div><div class="si-price">600g R$ 100 · 1,1kg R$ 199</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Frango</div><div class="si-price">R$ 80/kg</div></div>
-          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Carne moída</div><div class="si-price">R$ 80/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta de Frango Fria</div><div class="si-price">Sem geleia R$ 121/kg · Com geleia de morango R$ 142/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Pão Italiano</div><div class="si-desc">Presunto, queijo, tomate, orégano</div><div class="si-price">Médio R$ 66 · Grande R$ 99</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Frango c/ catupiry</div><div class="si-price">600g R$ 88 · 1,1kg R$ 165</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Alho poró c/ queijo</div><div class="si-price">600g R$ 88 · 1,1kg R$ 165</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon e calabresa</div><div class="si-price">600g R$ 88 · 1,1kg R$ 165</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Carne seca c/ banana</div><div class="si-price">600g R$ 88 · 1,1kg R$ 165</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche — Bacon c/ abacaxi</div><div class="si-price">600g R$ 88 · 1,1kg R$ 165</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Quiche de Camarão</div><div class="si-desc">Camarão com catupiry</div><div class="si-price">600g R$ 110 · 1,1kg R$ 219</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Frango</div><div class="si-price">R$ 88/kg</div></div>
+          <div class="si-card" onclick="ssel(this,'g-sal-item')"><div class="si-name">Torta Assada — Carne moída</div><div class="si-price">R$ 88/kg</div></div>
         </div>
       </div>
       <div class="price-preview" id="price-preview-sal"></div>
@@ -552,50 +521,50 @@ var qtys = { doc: 5, out: 1 };
 // ============================================================
 
 // Bolos Decorados - por tier e tamanho
-var P_TRAD = { PP:60, P:99, M:198, G:297, GG:396, EX:495 };
-var P_ESP  = { PP:70, P:125, M:249, G:375, GG:499, EX:625 };
-var P_PREM = { PP:null, P:145, M:289, G:435, GG:579, EX:725 };
-var P_COB  = { 'Chantininho Personalizado':20, 'Chantininho':0, 'Naked Cake':0, 'Cobertura de Brigadeiro':25, 'Ganache de Chocolate':40, 'Ganache Saborizada':35 };
+var P_TRAD = { PP:66, P:109, M:218, G:327, GG:436, EX:544 };
+var P_ESP  = { PP:84, P:138, M:274, G:411, GG:549, EX:686 };
+var P_PREM = { PP:97, P:160, M:318, G:477, GG:637, EX:796 };
+var P_COB  = { 'Chantininho Personalizado':22, 'Chantininho':0, 'Naked Cake':0, 'Cobertura de Brigadeiro':28, 'Ganache de Chocolate':44, 'Ganache Saborizada':38 };
 
 var RECHEIO_TIPO = {
   'Brigadeiro gourmet 50% cacau':'trad','Beijinho de coco':'trad','Doce de leite artesanal':'trad',
   'Dois amores':'trad','Prestigio':'trad','Leite ninho':'trad','4 leites':'trad',
   'Mousse de chocolate':'trad','Brigadeiro de maracuja':'trad','Brigadeiro de limao':'trad',
   '4 leites com morango':'esp','Brigadeiro com morango':'esp','Doce de leite com ameixa':'esp',
-  'Dois amores com morango':'esp','Creme de coco com abacaxi':'esp','Leite ninho com Nutella':'esp',
+  'Dois amores com morango':'esp','Creme de coco com abacaxi':'esp','Leite ninho com Nutella':'esp','Ninho c/ morango':'esp',
   '4 leites com abacaxi':'esp','4 leites com Oreo':'esp','Caramelo salgado c/ mousse':'esp','Floresta Negra':'esp',
   'Pistache':'prem','Kinder Bueno':'prem','Ouro Branco ou Sonho de Valsa':'prem',
-  'Nozes com praliné':'prem','Doce de leite c/ praliné de nozes':'prem','Marta Rocha':'prem'
+  'Nozes com praline':'prem','Doce de leite c/ praline de nozes':'prem','Marta Rocha':'prem'
 };
 
 // Bolos Simples - por sabor e tamanho (M, G)
 var P_SIMPLES = {
-  'Fubá':{M:40,G:60},
-  'Chocolate sem cobertura':{M:32,G:58},
-  'Chocolate com cobertura':{M:45,G:70},
-  'Formigueiro sem cobertura':{M:38,G:58},
-  'Formigueiro com cobertura':{M:50,G:70},
-  'Fubá cremoso':{M:50,G:70},
-  'Milho':{M:45,G:65},
-  'Toalha felpuda':{M:50,G:70},
-  'Laranja':{M:45,G:58},
-  'Cenoura com brigadeiro':{M:50,G:68},
-  'Mesclado com cobertura':{M:50,G:70},
-  'Mesclado':{M:35,G:58}
+  'Fubá':{M:44,G:66},
+  'Chocolate sem cobertura':{M:35,G:64},
+  'Chocolate com cobertura':{M:50,G:77},
+  'Formigueiro sem cobertura':{M:42,G:64},
+  'Formigueiro com cobertura':{M:55,G:77},
+  'Fubá cremoso':{M:55,G:77},
+  'Milho':{M:50,G:72},
+  'Toalha felpuda':{M:55,G:77},
+  'Laranja':{M:50,G:64},
+  'Cenoura com brigadeiro':{M:55,G:75},
+  'Mesclado com cobertura':{M:55,G:77},
+  'Mesclado':{M:38,G:64}
 };
 
 // Bolo Vulcao - por cobertura e tamanho (M, G)
 var P_VULCAO = {
-  'Brigadeiro':{M:60,G:85},'Dois amores':{M:60,G:85},'Leite ninho':{M:60,G:85},
-  'Leite ninho com brigadeiro':{M:60,G:85},'Leite ninho com Nutella':{M:65,G:90},
-  'Cream cheese':{M:75,G:99},'Cenoura com brigadeiro':{M:60,G:85}
+  'Brigadeiro':{M:66,G:93},'Dois amores':{M:66,G:93},'Leite ninho':{M:66,G:93},
+  'Leite ninho com brigadeiro':{M:66,G:93},'Leite ninho com Nutella':{M:72,G:99},
+  'Cream cheese':{M:82,G:109},'Cenoura com brigadeiro':{M:66,G:93}
 };
 
 // Doces - por tipo e quantidade
 var P_DOCES = {
-  'Docinhos Tradicionais': {25:50, 50:100, 100:190},
-  'Docinhos Especiais':    {25:75, 50:120, 100:220},
-  'Caixa Degustação': {15:55, 20:70, 25:100},
+  'Docinhos Tradicionais': {25:55, 50:110, 100:209},
+  'Docinhos Especiais':    {25:83, 50:132, 100:242},
+  'Caixa Degustação': {15:61, 20:77, 25:110},
   'Trufas de Chocolate': 'R$ 4,00/unid',
   'Trufas com Frutas': 'R$ 4,80/unid',
   'Copinho de Chocolate com Cereja': 'R$ 4,00/unid',
@@ -605,50 +574,49 @@ var P_DOCES = {
 
 // Sobremesas - por tipo e tamanho
 var P_SOBREMESAS = {
-  'Travessa da Felicidade':    {P:80, M:130, G:199},
-  'Travessa Red Velvet':       {P:80, M:130, G:219},
-  'Bombom Aberto':             {P:80, M:130, G:199},
-  'Banoffee':                  {M:130, G:199},
-  'Torta':                     {'8p':129, '13p':199},
-  'Pudim de Leite Condensado': {M:65, G:85}
+  'Travessa da Felicidade':    {P:88, M:143, G:219},
+  'Travessa Red Velvet':       {P:88, M:143, G:241},
+  'Bombom Aberto':             {P:88, M:143, G:219},
+  'Banoffee':                  {M:143, G:219},
+  'Torta':                     {'8p':142, '13p':219},
+  'Pudim de Leite Condensado': {M:72, G:94}
 };
 
 // Kit Festa
-var P_KIT = { P:200, M:325, G:450, GG:649, EX:815 };
+var P_KIT = { P:220, M:358, G:495, GG:714, EX:897 };
 
 // Cupcakes
 var P_CUPCAKE = {
-  'Cupcake Grande + Chantininho': 8.50,
-  'Cupcake Grande + Brigadeiro': 12.00,
-  'Cupcake Pequeno + Chantininho': 6.50,
-  'Cupcake Pequeno + Brigadeiro': 9.00
+  'Cupcake Grande + Chantininho': 9.35,
+  'Cupcake Grande + Brigadeiro': 13.20,
+  'Cupcake Pequeno + Chantininho': 7.15,
+  'Cupcake Pequeno + Brigadeiro': 9.90
 };
 
 // Pao de mel
 var P_PAODEMEL = {
-  'Pão de Mel Pequeno': 6.00,
-  'Pão de Mel Grande': 10.00,
-  'Pão de Mel Personalizado (P)': 8.00,
-  'Pão de Mel Personalizado (G)': 12.00
+  'Pão de Mel Pequeno': 6.60,
+  'Pão de Mel Grande': 11.00,
+  'Pão de Mel Personalizado (P)': 8.80,
+  'Pão de Mel Personalizado (G)': 13.20
 };
 
 // Pirulitos
 var P_PIRULITO = {
-  'Pirulito Simples': 9.00,
-  'Pirulito com Pasta e Papel de Arroz': 14.00,
-  'Pirulito com Sprinkles': 20.00
+  'Pirulito Simples': 9.90,
+  'Pirulito com Pasta e Papel de Arroz': 15.40,
+  'Pirulito com Sprinkles': 22.00
 };
 
 // Brownies
 var P_BROWNIE = {
-  'Brownie Simples (6x6cm)': 6.00,
-  'Brownie Recheado (6x6cm)': 12.00
+  'Brownie Simples (6x6cm)': 6.60,
+  'Brownie Recheado (6x6cm)': 13.20
 };
 
 // Salgados
 var P_SALGADO = {
-  'Torta de Frango Fria': 'R$ 110/kg',
-  'Torta de Frango Fria com Geleia': 'R$ 129/kg',
+  'Torta de Frango Fria': 'R$ 110/kg (sem geleia) ou R$ 129/kg (com geleia de morango)',
   'Pão Italiano': 'Médio R$ 60 | Grande R$ 90',
   'Quiche — Frango c/ catupiry': 'R$ 80 (600g) | R$ 150 (1,1kg)',
   'Quiche — Alho poró c/ queijo': 'R$ 80 (600g) | R$ 150 (1,1kg)',
@@ -1293,15 +1261,6 @@ function showToast(msg) {
 updateCart();
 </script>
 
-
-
-<!-- WHATSAPP FLUTUANTE -->
-<a href="https://wa.me/5565992094491?text=Ola%2C+Lais%21+Estou+no+seu+cardapio+e+tenho+uma+duvida+sobre+meu+pedido." target="_blank" class="wa-float" title="Fale comigo no WhatsApp">
-  <span class="wa-float-tooltip">Tire suas duvidas!</span>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-</a>
 
 </body>
 </html>
