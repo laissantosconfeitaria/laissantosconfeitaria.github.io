@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.1 · jun/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.2 · jun/26</span>
       </div>
     </div>
     <nav>
@@ -1586,16 +1586,14 @@ function npPreviewEl(id,html){const e=document.getElementById(id);if(e){e.innerH
 function npUpdatePreviewDec(){
   const tam=npGetEl('np-dec-tam');const recs=npGetMulti('np-dec-rec');const cob=npGetEl('np-dec-cob');
   if(!tam&&!recs.length&&!cob){npPreviewEl('np-dec-preview','');return}
-  const tamKey2=tam?tam.dataset.tamkey||'M':'M';
-  const tier2=recs.length?recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo','Ninho c'].some(k=>r.includes(k)))?'esp':'trad':'trad';
-  const PRECO_BOLO2={trad:{PP:60,P:99,M:198,G:297,GG:396,EX:495},esp:{PP:76,P:125,M:249,G:374,GG:499,EX:624},prem:{PP:88,P:145,M:289,G:434,GG:579,EX:724}};
-  const base=tam?PRECO_BOLO2[tier2][tamKey2]||0:0;
+  const tamKey=tam?tam.dataset.tamkey||'M':'M';
+  const tier=recs.length?recs.some(r=>['Pistache','Kinder','Ouro','Nozes','praliné','Marta'].some(k=>r.includes(k)))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','Floresta','Caramelo','Ninho c'].some(k=>r.includes(k)))?'esp':'trad':'trad';
+  const PRECO_BOLO={trad:{PP:60,P:99,M:198,G:297,GG:396,EX:495},esp:{PP:76,P:125,M:249,G:374,GG:499,EX:624},prem:{PP:88,P:145,M:289,G:434,GG:579,EX:724}};
+  const base=tam?(PRECO_BOLO[tier][tamKey]||0):0;
   const extra=cob?parseFloat(cob.dataset.extra||0):0;
-  const tier=recs.some(r=>r.includes('Pistache')||r.includes('Kinder')||r.includes('Ouro')||r.includes('Nozes')||r.includes('praliné')||r.includes('Marta'))?'prem':recs.some(r=>['morango','ameixa','abacaxi','Oreo','Nutella','coco','Floresta','Caramelo'].some(k=>r.includes(k)))?'esp':'trad';
-  const tierAdd={trad:0,esp:Math.round(base*0.26),prem:Math.round(base*0.46)};
-  const total=base+tierAdd[tier]+extra;
+  const total=base+extra;
   const label={trad:'Tradicional',esp:'Especial',prem:'Premium'};
-  let html=`<strong>Estimativa:</strong> R$ ${total.toLocaleString('pt-BR')}`;
+  let html=`<strong>Estimativa: R$ ${total.toLocaleString('pt-BR')}</strong>`;
   if(recs.length) html+=` · Recheio ${label[tier]}`;
   if(extra>0) html+=` · Cobertura +R$${extra}`;
   npPreviewEl('np-dec-preview',html);
@@ -2972,6 +2970,10 @@ function renderDashboard(){
   const qPedAnt=pedAnt.length;
   const ticketAnt=qPedAnt?fatTotalAnt/qPedAnt:0;
 
+  // Breakdown pedidos mês atual
+  const qEntregue=pedMes.filter(p=>p.status==='entregue').length;
+  const qAgendado=pedMes.filter(p=>p.status==='agendado').length;
+
   // Projeção (regra de 3 simples: se hoje é dia X de N dias, projetar para N dias)
   const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
   const fatProj=Math.round(fat*fatorProj);
@@ -3034,7 +3036,11 @@ function renderDashboard(){
       <div class="label">Pedidos no mês</div>
       <div class="value">${qPed}</div>
       ${projLabel(qPedProj,qPedAnt,qPedProj+' pedidos')}
-      <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${qPedAnt} pedidos</div>
+      <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">
+        <span style="color:var(--verde)">✅ ${qEntregue} entregues</span>
+        <span style="margin:0 .3rem;color:var(--borda)">·</span>
+        <span style="color:var(--azul)">📅 ${qAgendado} agendados</span>
+      </div>
     </div>
     <div class="card-stat">
       <div class="label">Ticket médio</div>
