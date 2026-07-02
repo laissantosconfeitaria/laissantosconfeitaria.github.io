@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.2 · jun/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.3 · jun/26</span>
       </div>
     </div>
     <nav>
@@ -2948,11 +2948,11 @@ function renderDashboard(){
   const diaAtual=now.getDate();
   const diasNoMes=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
 
-  // Mês atual — usa valorRecebido para faturamento real
+  // Mês atual — usa valorRecebido se cadastrado, senão valor total do pedido
   const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
   const despMes=despesas.filter(d=>d.data.startsWith(mes));
-  const fat=pedMes.reduce((s,p)=>s+(p.valorRecebido||0),0);
-  const fatTotal=pedMes.reduce((s,p)=>s+p.valor,0); // valor total encomendado
+  const fat=pedMes.reduce((s,p)=>s+(p.valorRecebido!=null?p.valorRecebido:p.valor),0);
+  const fatTotal=pedMes.reduce((s,p)=>s+p.valor,0);
   const desp=despMes.reduce((s,d)=>s+d.valor,0);
   const lucro=fat-desp;
   const qPed=pedMes.length;
@@ -2963,7 +2963,8 @@ function renderDashboard(){
   const mesAnt=`${dAnt.getFullYear()}-${String(dAnt.getMonth()+1).padStart(2,'0')}`;
   const pedAnt=pedidos.filter(p=>p.data.startsWith(mesAnt)&&p.status!=='cancelado');
   const despAnt=despesas.filter(d=>d.data.startsWith(mesAnt));
-  const fatAnt=pedAnt.reduce((s,p)=>s+(p.valorRecebido||0),0);
+  // Para mês anterior: usa valorRecebido se existir, senão usa valor total (pedidos antigos)
+  const fatAnt=pedAnt.reduce((s,p)=>s+(p.valorRecebido!=null?p.valorRecebido:p.valor),0);
   const fatTotalAnt=pedAnt.reduce((s,p)=>s+p.valor,0);
   const despAntV=despAnt.reduce((s,d)=>s+d.valor,0);
   const lucroAnt=fatAnt-despAntV;
