@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.0 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.1 · jun/26</span>
       </div>
     </div>
     <nav>
@@ -1207,6 +1207,34 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
+<!-- MODAL RECEBIMENTO -->
+<div id="modal-recebimento" style="display:none;position:fixed;inset:0;z-index:560;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1rem">
+  <div style="background:var(--card);border-radius:18px;border:1px solid var(--borda);width:100%;max-width:380px;box-shadow:var(--sombra);overflow:hidden">
+    <div style="background:linear-gradient(135deg,rgba(93,191,122,.15),rgba(93,191,122,.05));padding:1.25rem;border-bottom:1px solid var(--borda)">
+      <div style="font-size:1.3rem;margin-bottom:.3rem" id="rec-icon">💰</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)" id="rec-titulo">Registrar recebimento</div>
+      <div style="font-size:.78rem;color:var(--texto-dim);margin-top:.2rem" id="rec-sub"></div>
+    </div>
+    <div style="padding:1.25rem">
+      <div style="background:var(--bg2);border-radius:10px;padding:.85rem;margin-bottom:1rem">
+        <div style="font-size:.7rem;color:var(--texto-dim);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em">Valor total do pedido</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--rosa)" id="rec-total-pedido">R$ 0,00</div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.5rem">Quanto você recebeu agora?</label>
+        <input type="number" id="rec-valor" step="0.01" min="0" placeholder="0,00" inputmode="decimal" style="width:100%;padding:.75rem;font-size:1rem;border-radius:10px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none;text-align:center" onfocus="this.style.borderColor='var(--verde)'" onblur="this.style.borderColor='var(--borda)'">
+      </div>
+      <!-- Atalhos rápidos -->
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem" id="rec-atalhos"></div>
+      <div style="font-size:.75rem;color:var(--texto-dim);text-align:center;margin-bottom:1rem" id="rec-restante"></div>
+    </div>
+    <div style="padding:.85rem 1.25rem;border-top:1px solid var(--borda);display:flex;gap:.6rem">
+      <button onclick="confirmarRecebimento()" style="flex:1;padding:.8rem;border-radius:10px;border:none;background:linear-gradient(135deg,#2ea86e,var(--verde));color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer">✓ Confirmar</button>
+      <button onclick="pularRecebimento()" style="padding:.8rem 1rem;border-radius:10px;border:1.5px solid var(--borda);background:none;color:var(--texto-sec);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer">Pular</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL SENHA PROTEÇÃO -->
 <div id="modal-senha-prot" style="display:none;position:fixed;inset:0;z-index:600;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1rem">
   <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:340px;padding:1.75rem;box-shadow:var(--sombra);text-align:center">
@@ -2032,7 +2060,9 @@ function conclusaoWhatsApp(){
 function fecharModalConclusao(){
   document.getElementById('modal-conclusao').style.display = 'none';
   document.body.style.overflow = '';
-  notif('Pedido finalizado ♡');
+  // Abre modal de recebimento ao confirmar o pedido
+  const pid = conclusaoPedidoId;
+  setTimeout(()=>{ if(pid) abrirModalRecebimento(pid,'confirmacao'); }, 300);
 }
 
 document.getElementById('modal-conclusao').addEventListener('click', function(e){
@@ -2120,6 +2150,10 @@ function alterarStatus(id, novoStatus){
   if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
   const labels={agendado:'Agendado 📅',entregue:'Entregue ✅'};
   notif('Status: '+labels[novoStatus]);
+  // Abre recebimento ao marcar como entregue
+  if(novoStatus==='entregue'){
+    setTimeout(()=>abrirModalRecebimento(id,'entrega'),400);
+  }
 }
 
 function renderPedidos(){
@@ -2172,6 +2206,7 @@ function renderPedidos(){
           : `<div style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem">${prods}</div>`
         }
         ${p.obs?`<div style="font-size:.75rem;color:var(--amarelo);margin-top:.3rem">📝 ${p.obs}</div>`:''}
+        ${(p.valorRecebido||0)>0?`<div style="font-size:.75rem;color:var(--verde);margin-top:.3rem">💰 Recebido: ${fmtBRL(p.valorRecebido)}${p.valorRecebido<p.valor?' · Falta: '+fmtBRL(p.valor-p.valorRecebido):' ✓'}</div>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
         <select onchange="alterarStatus(${p.id},this.value,false)" style="
@@ -2786,6 +2821,69 @@ function renderCanalChart(){
   }).join('');
 }
 
+// ========== RECEBIMENTO ==========
+let _recPedidoId=null,_recContexto='';
+function abrirModalRecebimento(pedidoId,contexto){
+  _recPedidoId=pedidoId;_recContexto=contexto;
+  const pedidos=getData('pedidos');
+  const p=pedidos.find(x=>x.id==pedidoId);if(!p)return;
+  const totalPedido=p.valor||0;
+  const jaRecebido=p.valorRecebido||0;
+  const restante=Math.max(0,totalPedido-jaRecebido);
+  document.getElementById('rec-icon').textContent=contexto==='entrega'?'✅':'💰';
+  document.getElementById('rec-titulo').textContent=contexto==='entrega'?'Recebimento na entrega':'Recebimento na confirmação';
+  document.getElementById('rec-sub').textContent=`${p.cliente}${jaRecebido>0?' · já recebido '+fmtBRL(jaRecebido):''}`;
+  document.getElementById('rec-total-pedido').textContent=fmtBRL(totalPedido);
+  document.getElementById('rec-valor').value='';
+  // Atalhos
+  const atalhos=[];
+  const meio=Math.round(totalPedido*0.5);
+  if(jaRecebido===0&&meio!==totalPedido) atalhos.push({l:`50% — ${fmtBRL(meio)}`,v:meio});
+  if(restante>0) atalhos.push({l:`Restante — ${fmtBRL(restante)}`,v:restante});
+  if(jaRecebido===0) atalhos.push({l:`À vista — ${fmtBRL(totalPedido)}`,v:totalPedido});
+  document.getElementById('rec-atalhos').innerHTML=atalhos.map(a=>`
+    <button onclick="document.getElementById('rec-valor').value='${a.v}';atualizarRestanteModal()" style="
+      flex:1;padding:.45rem .3rem;border-radius:8px;border:1px solid rgba(93,191,122,.25);
+      background:rgba(93,191,122,.08);color:var(--verde);cursor:pointer;
+      font-size:.7rem;font-family:'DM Sans',sans-serif;line-height:1.3;text-align:center">${a.l}</button>`).join('');
+  document.getElementById('rec-restante').textContent=jaRecebido>0?`Já recebido: ${fmtBRL(jaRecebido)}`:'';
+  document.getElementById('rec-valor').oninput=atualizarRestanteModal;
+  document.getElementById('modal-recebimento').style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('rec-valor').focus(),250);
+}
+function atualizarRestanteModal(){
+  const val=parseFloat(document.getElementById('rec-valor').value)||0;
+  const pedidos=getData('pedidos');
+  const p=pedidos.find(x=>x.id==_recPedidoId);if(!p)return;
+  const novo=(p.valorRecebido||0)+val;
+  const restante=Math.max(0,p.valor-novo);
+  document.getElementById('rec-restante').textContent=restante>0
+    ?`Após confirmar: restará ${fmtBRL(restante)}`
+    :novo>=p.valor?'✓ Pagamento completo!':'';
+}
+function confirmarRecebimento(){
+  const val=parseFloat(document.getElementById('rec-valor').value)||0;
+  if(val<0){notif('Valor inválido','error');return}
+  const pedidos=getData('pedidos');
+  const idx=pedidos.findIndex(x=>x.id==_recPedidoId);
+  if(idx<0){fecharModalRecebimento();return}
+  pedidos[idx].valorRecebido=(pedidos[idx].valorRecebido||0)+val;
+  if(!pedidos[idx].recebimentos) pedidos[idx].recebimentos=[];
+  if(val>0) pedidos[idx].recebimentos.push({data:hoje(),valor:val,tipo:_recContexto});
+  setData('pedidos',pedidos);
+  fecharModalRecebimento();
+  renderPedidos();renderDashboard();
+  if(val>0) notif(fmtBRL(val)+' registrado ✓');
+}
+function pularRecebimento(){fecharModalRecebimento();}
+function fecharModalRecebimento(){
+  document.getElementById('modal-recebimento').style.display='none';
+  document.body.style.overflow='';
+  _recPedidoId=null;
+}
+document.getElementById('modal-recebimento').addEventListener('click',function(e){if(e.target===this)fecharModalRecebimento()});
+
 // ========== DESPESAS ==========
 function salvarDespesa(){
   const data=document.getElementById('desp-data').value;
@@ -2852,25 +2950,27 @@ function renderDashboard(){
   const diaAtual=now.getDate();
   const diasNoMes=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
 
-  // Mês atual
+  // Mês atual — usa valorRecebido para faturamento real
   const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
   const despMes=despesas.filter(d=>d.data.startsWith(mes));
-  const fat=pedMes.reduce((s,p)=>s+p.valor,0);
+  const fat=pedMes.reduce((s,p)=>s+(p.valorRecebido||0),0);
+  const fatTotal=pedMes.reduce((s,p)=>s+p.valor,0); // valor total encomendado
   const desp=despMes.reduce((s,d)=>s+d.valor,0);
   const lucro=fat-desp;
   const qPed=pedMes.length;
-  const ticket=qPed?fat/qPed:0;
+  const ticket=qPed?fatTotal/qPed:0; // ticket médio usa valor total do pedido
 
   // Mês anterior
   const dAnt=new Date(now.getFullYear(),now.getMonth()-1,1);
   const mesAnt=`${dAnt.getFullYear()}-${String(dAnt.getMonth()+1).padStart(2,'0')}`;
   const pedAnt=pedidos.filter(p=>p.data.startsWith(mesAnt)&&p.status!=='cancelado');
   const despAnt=despesas.filter(d=>d.data.startsWith(mesAnt));
-  const fatAnt=pedAnt.reduce((s,p)=>s+p.valor,0);
-  const despAntV=pedAnt.reduce(()=>0,0)||despAnt.reduce((s,d)=>s+d.valor,0);
+  const fatAnt=pedAnt.reduce((s,p)=>s+(p.valorRecebido||0),0);
+  const fatTotalAnt=pedAnt.reduce((s,p)=>s+p.valor,0);
+  const despAntV=despAnt.reduce((s,d)=>s+d.valor,0);
   const lucroAnt=fatAnt-despAntV;
   const qPedAnt=pedAnt.length;
-  const ticketAnt=qPedAnt?fatAnt/qPedAnt:0;
+  const ticketAnt=qPedAnt?fatTotalAnt/qPedAnt:0;
 
   // Projeção (regra de 3 simples: se hoje é dia X de N dias, projetar para N dias)
   const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
@@ -2912,9 +3012,10 @@ function renderDashboard(){
 
   document.getElementById('dash-cards').innerHTML=`
     <div class="card-stat">
-      <div class="label">Faturamento do mês</div>
+      <div class="label">Recebido no mês</div>
       <div class="value">${maskVal(fat)}</div>
-      ${projLabel(fatProj,fatAnt)}
+      ${fat<fatTotal?`<div style="font-size:.7rem;color:var(--amarelo);margin-top:.1rem">Total encomendado: ${maskVal(fatTotal)}</div>`:''}
+      ${projLabel(Math.round(fat*fatorProj),fatAnt)}
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(fatAnt)}</div>
     </div>
     <div class="card-stat">
