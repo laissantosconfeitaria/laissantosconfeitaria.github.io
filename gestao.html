@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v4.9 · mai/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.0 · mai/26</span>
       </div>
     </div>
     <nav>
@@ -960,11 +960,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="np-tab-content" id="np-kit">
               <div class="np-step"><div class="np-step-label">Kit</div>
                 <div class="np-grid np-grid-wide" id="np-kit-tam">
-                  <div class="np-opt" data-preco="200" onclick="npSel(this,'np-kit-tam')">Kit P — R$200<div class="np-opt-sub">Bolo 15cm · 8-10 fatias · 70 docinhos</div></div>
-                  <div class="np-opt" data-preco="325" onclick="npSel(this,'np-kit-tam')">Kit M — R$325<div class="np-opt-sub">Bolo 18cm · 18-20 fatias · 100 docinhos</div></div>
-                  <div class="np-opt" data-preco="450" onclick="npSel(this,'np-kit-tam')">Kit G — R$450<div class="np-opt-sub">Bolo 21cm · 28-30 fatias · 150 docinhos</div></div>
-                  <div class="np-opt" data-preco="649" onclick="npSel(this,'np-kit-tam')">Kit GG — R$649<div class="np-opt-sub">Bolo 23cm · 38-40 fatias · 200 docinhos</div></div>
-                  <div class="np-opt" data-preco="815" onclick="npSel(this,'np-kit-tam')">Kit EX — R$815<div class="np-opt-sub">Bolo 26cm · 48-50 fatias · 250 docinhos</div></div>
+                  <div class="np-opt" data-preco="200" data-kitkey="P" onclick="npSel(this,'np-kit-tam');npAtualizarDoceKit()">Kit P — R$200<div class="np-opt-sub">Bolo 15cm · 8-10 fatias · 70 docinhos</div></div>
+                  <div class="np-opt" data-preco="325" data-kitkey="M" onclick="npSel(this,'np-kit-tam');npAtualizarDoceKit()">Kit M — R$325<div class="np-opt-sub">Bolo 18cm · 18-20 fatias · 100 docinhos</div></div>
+                  <div class="np-opt" data-preco="450" data-kitkey="G" onclick="npSel(this,'np-kit-tam');npAtualizarDoceKit()">Kit G — R$450<div class="np-opt-sub">Bolo 21cm · 28-30 fatias · 150 docinhos</div></div>
+                  <div class="np-opt" data-preco="649" data-kitkey="GG" onclick="npSel(this,'np-kit-tam');npAtualizarDoceKit()">Kit GG — R$649<div class="np-opt-sub">Bolo 23cm · 38-40 fatias · 200 docinhos</div></div>
+                  <div class="np-opt" data-preco="815" data-kitkey="EX" onclick="npSel(this,'np-kit-tam');npAtualizarDoceKit()">Kit EX — R$815<div class="np-opt-sub">Bolo 26cm · 48-50 fatias · 250 docinhos</div></div>
                 </div>
               </div>
               <div class="np-step"><div class="np-step-label">Massa</div>
@@ -973,7 +973,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt" onclick="npSel(this,'np-kit-mas')">Baunilha</div>
                 </div>
               </div>
-              <div class="np-step"><div class="np-step-label">Recheio(s) — até 2</div>
+              <div class="np-step"><div class="np-step-label">Recheio(s) do bolo — até 2</div>
                 <div class="np-grid np-grid-wide" id="np-kit-rec">
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Brigadeiro 50%</div>
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Beijinho</div>
@@ -985,9 +985,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
                   <div class="np-opt np-multi" onclick="npMulti(this,'np-kit-rec',2)">Dois amores</div>
                 </div>
               </div>
+              <div class="np-step">
+                <div class="np-step-label" id="np-kit-doc-label">Sabores dos docinhos <span style="font-size:.72rem;font-weight:400;color:var(--texto-dim)">(selecione o kit primeiro)</span></div>
+                <div id="np-kit-doc-hint" style="font-size:.75rem;color:var(--texto-dim);margin-bottom:.6rem;font-style:italic"></div>
+                <div class="np-grid" id="np-kit-doc">
+                  <div class="np-opt np-multi" onclick="npMultiKit(this)">🍫 Brigadeiro<div class="np-opt-sub">chocolate</div></div>
+                  <div class="np-opt np-multi" onclick="npMultiKit(this)">🥥 Beijinho<div class="np-opt-sub">coco</div></div>
+                  <div class="np-opt np-multi" onclick="npMultiKit(this)">🍬 Dois amores<div class="np-opt-sub">chocolate + coco</div></div>
+                </div>
+              </div>
               <div style="margin-top:.85rem">
                 <label style="font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--texto-dim);display:block;margin-bottom:.4rem">Observação do item <span style="font-weight:300;text-transform:none">(opcional)</span></label>
-                <input type="text" id="obs-kit" placeholder="Ex: escrever 'Feliz Aniversário', cor específica, sabores dos docinhos..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
+                <input type="text" id="obs-kit" placeholder="Ex: escrever 'Feliz Aniversário', cor específica..." style="width:100%;font-size:.83rem;padding:.55rem .75rem;border-radius:8px;border:1.5px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none" onfocus="this.style.borderColor='var(--rosa)'" onblur="this.style.borderColor='var(--borda)'">
               </div>
               <button class="btn btn-primary" style="margin-top:.85rem" onclick="npAddKit()">+ Adicionar ao carrinho</button>
             </div>
@@ -1740,16 +1749,53 @@ function npAddSobremesa(){
   if(document.getElementById('obs-sob')) document.getElementById('obs-sob').value='';
 }
 
+function npAtualizarDoceKit(){
+  const kit=npGetEl('np-kit-tam');
+  if(!kit) return;
+  const key=kit.dataset.kitkey||'M';
+  const isP=key==='P';
+  const maxDoc=isP?2:3;
+  const hint=document.getElementById('np-kit-doc-hint');
+  const label=document.getElementById('np-kit-doc-label');
+  if(hint) hint.textContent=isP
+    ? 'Kit P: escolha até 2 sabores de docinhos'
+    : `Kit ${key}: escolha até 3 sabores de docinhos`;
+  if(label) label.innerHTML=`Sabores dos docinhos <span style="font-size:.72rem;font-weight:400;color:var(--rosa)">até ${maxDoc} sabores</span>`;
+  // Desseleciona se selecionados a mais
+  const sels=document.querySelectorAll('#np-kit-doc .selected');
+  if(sels.length>maxDoc) [...sels].slice(maxDoc).forEach(e=>e.classList.remove('selected'));
+}
+
+function npMultiKit(el){
+  const kit=npGetEl('np-kit-tam');
+  const key=kit?kit.dataset.kitkey||'M':'M';
+  const max=key==='P'?2:3;
+  if(el.classList.contains('selected')){el.classList.remove('selected');return}
+  const sels=document.querySelectorAll('#np-kit-doc .selected');
+  if(sels.length>=max){notif(`Kit ${key}: máximo ${max} sabores de docinhos`,'error');return}
+  el.classList.add('selected');
+}
+
 function npAddKit(){
   const kit=npGetEl('np-kit-tam'),mas=npGetV('np-kit-mas'),recs=npGetMulti('np-kit-rec');
   if(!kit){notif('Escolha o kit','error');return}
   if(!mas){notif('Escolha a massa','error');return}
-  if(!recs.length){notif('Escolha pelo menos 1 recheio','error');return}
+  if(!recs.length){notif('Escolha pelo menos 1 recheio do bolo','error');return}
+  // Doces
+  const docEls=[...document.querySelectorAll('#np-kit-doc .selected')];
+  if(!docEls.length){notif('Escolha pelo menos 1 sabor de docinho','error');return}
+  const doces=docEls.map(e=>e.firstChild.textContent.trim().replace(/^\S+\s*/,''));
   const preco=parseFloat(kit.dataset.preco||0);
+  const kitNome=kit.firstChild.textContent.trim();
   const _obs_kit=document.getElementById('obs-kit')?.value.trim()||'';
-  npCarrAdd(`Kit Festa`,`Kit: ${kit.firstChild.textContent.trim()}\nMassa: ${mas}\nRecheio: ${recs.join(' + ')}${_obs_kit?'\nObs: '+_obs_kit:''}`,preco);
-  ['np-kit-tam','np-kit-mas','np-kit-rec'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
+  npCarrAdd(`Kit Festa`,`Kit: ${kitNome}\nMassa: ${mas}\nRecheio do bolo: ${recs.join(' + ')}\nDocinhos: ${doces.join(' + ')}${_obs_kit?'\nObs: '+_obs_kit:''}`,preco);
+  ['np-kit-tam','np-kit-mas','np-kit-rec','np-kit-doc'].forEach(g=>document.querySelectorAll('#'+g+' .selected').forEach(e=>e.classList.remove('selected')));
   if(document.getElementById('obs-kit')) document.getElementById('obs-kit').value='';
+  // Reset hint
+  const hint=document.getElementById('np-kit-doc-hint');
+  if(hint) hint.textContent='';
+  const label=document.getElementById('np-kit-doc-label');
+  if(label) label.innerHTML='Sabores dos docinhos <span style="font-size:.72rem;font-weight:400;color:var(--texto-dim)">(selecione o kit primeiro)</span>';
 }
 
 function npAddOutros(){
