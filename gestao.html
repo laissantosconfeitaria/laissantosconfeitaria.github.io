@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.8 · jun/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.0 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -2988,18 +2988,12 @@ function renderDashboard(){
   const qEntregue=pedMes.filter(p=>p.status==='entregue').length;
   const qAgendado=pedMes.filter(p=>p.status==='agendado').length;
 
-  // Projeção: entregues (ritmo atual) + agendados confirmados (já garantidos)
+  // Projeção — regra de 3: total encomendado até hoje ÷ dias passados × dias do mês
   const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
-  // Fat projetado = recebido já + valor total dos pedidos agendados ainda a receber
-  const fatAgendado=pedMes.filter(p=>p.status==='agendado').reduce((s,p)=>{
-    const recebido=p.valorRecebido||0;
-    return s+(p.valor-recebido);
-  },0);
-  const fatProj=Math.round(fat+fatAgendado);
+  const fatProj=Math.round(fatTotal*fatorProj);   // ex: R$5.239 ÷ 7 × 31 = R$23.201
   const despProj=Math.round(desp*fatorProj);
-  const lucroProj=fatProj-despProj;
-  // Pedidos projetados = entregues no ritmo atual + agendados já confirmados
-  const qPedProj=Math.round(qEntregue*fatorProj)+qAgendado;
+  const lucroProj=fatProj-despProj;               // ex: R$23.201 - R$6.568 = R$16.633
+  const qPedProj=qEntregue+qAgendado;
   const ticketProj=ticket;
 
   // Variação em relação ao mês anterior
@@ -3037,7 +3031,10 @@ function renderDashboard(){
       <div class="label">Recebido no mês</div>
       <div class="value">${maskVal(fat)}</div>
       ${fat<fatTotal?`<div style="font-size:.7rem;color:var(--amarelo);margin-top:.1rem">Total encomendado: ${maskVal(fatTotal)}</div>`:''}
-      ${projLabel(fatProj,fatAnt)}
+      <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
+        Projeção: <span style="color:var(--azul);font-weight:500">${maskVal(fatProj)}</span>
+        ${vFat!==null?`<span style="color:${vFat>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vFat>=0?'↑':'↓'}${Math.abs(vFat)}%)</span>`:''}
+      </div>
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(fatAnt)}</div>
     </div>
     <div class="card-stat">
@@ -3049,13 +3046,19 @@ function renderDashboard(){
     <div class="card-stat">
       <div class="label">Lucro estimado</div>
       <div class="value ${lucro>=0?'green':'red'}">${maskVal(lucro)}</div>
-      ${projLabel(lucroProj,lucroAnt)}
+      <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
+        Projeção: <span style="color:var(--azul);font-weight:500">${maskVal(lucroProj)}</span>
+        ${vLucro!==null?`<span style="color:${vLucro>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vLucro>=0?'↑':'↓'}${Math.abs(vLucro)}%)</span>`:''}
+      </div>
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(lucroAnt)}</div>
     </div>
     <div class="card-stat">
       <div class="label">Pedidos no mês</div>
       <div class="value">${qPed}</div>
-      ${projLabel(qPedProj,qPedAnt,qPedProj+' pedidos')}
+      <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
+        Total confirmados: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>
+        ${vPed!==null?`<span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vPed>=0?'↑':'↓'}${Math.abs(vPed)}%)</span>`:''}
+      </div>
       <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">
         <span style="color:var(--verde)">✅ ${qEntregue} entregues</span>
         <span style="margin:0 .3rem;color:var(--borda)">·</span>
