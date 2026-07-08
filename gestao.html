@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.7 · jun/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v5.8 · jun/26</span>
       </div>
     </div>
     <nav>
@@ -2989,9 +2989,9 @@ function renderDashboard(){
   const qAgendado=pedMes.filter(p=>p.status==='agendado').length;
 
   // Projeção: entregues (ritmo atual) + agendados confirmados (já garantidos)
+  const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
   // Fat projetado = recebido já + valor total dos pedidos agendados ainda a receber
   const fatAgendado=pedMes.filter(p=>p.status==='agendado').reduce((s,p)=>{
-    // Do agendado, desconta o que já recebeu (entrada) e soma o restante
     const recebido=p.valorRecebido||0;
     return s+(p.valor-recebido);
   },0);
@@ -3037,7 +3037,7 @@ function renderDashboard(){
       <div class="label">Recebido no mês</div>
       <div class="value">${maskVal(fat)}</div>
       ${fat<fatTotal?`<div style="font-size:.7rem;color:var(--amarelo);margin-top:.1rem">Total encomendado: ${maskVal(fatTotal)}</div>`:''}
-      ${projLabel(Math.round(fat*fatorProj),fatAnt)}
+      ${projLabel(fatProj,fatAnt)}
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(fatAnt)}</div>
     </div>
     <div class="card-stat">
