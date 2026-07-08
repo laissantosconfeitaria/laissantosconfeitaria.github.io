@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.0 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.1 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1628,7 +1628,7 @@ function npAddBolo(){
   // Tabela de preços exata por tamanho e tier
   const PRECO_BOLO={
     trad:{PP:66,P:109,M:218,G:327,GG:436,EX:544},
-    esp: {PP:76,P:125,M:249,G:374,GG:499,EX:624},
+    esp: {PP:84,P:138,M:274,G:411,GG:549,EX:686},
     prem:{PP:97,P:160,M:318,G:477,GG:637,EX:796}
   };
   const total=(PRECO_BOLO[tier][tamKey]||PRECO_BOLO[tier]['M'])+extra;
@@ -3057,7 +3057,7 @@ function renderDashboard(){
       <div class="value">${qPed}</div>
       <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
         Total confirmados: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>
-        ${vPed!==null?`<span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vPed>=0?'↑':'↓'}${Math.abs(vPed)}%)</span>`:''}
+        ${vPed!==null?`<span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vPed>=0?'↑':'↓'}${Math.abs(vPed)}% vs mês ant.)</span>`:''}
       </div>
       <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">
         <span style="color:var(--verde)">✅ ${qEntregue} entregues</span>
