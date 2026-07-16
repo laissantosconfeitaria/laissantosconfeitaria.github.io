@@ -168,17 +168,127 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   .cs-total-value { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--rose-dark); font-weight: 300; }
   .cs-note { font-size: 0.72rem; color: var(--taupe); font-style: italic; margin-top: 0.3rem; text-align: right; }
 
+
+  /* ══ NAV MELHORIAS ══ */
+  .nav-actions { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+  .nav-back { font-size: 0.82rem; color: var(--taupe); text-decoration: none;
+              padding: 0.4rem 0.9rem; border: 1px solid var(--blush);
+              border-radius: 2rem; transition: all 0.2s; }
+  .nav-back:hover { background: var(--rose-light); color: var(--rose); }
+  .nav-wa-btn { display: inline-flex; align-items: center; gap: 0.4rem;
+                background: #25d366; color: #fff; font-size: 0.82rem; font-weight: 500;
+                padding: 0.4rem 1rem; border-radius: 2rem; text-decoration: none;
+                transition: all 0.2s; box-shadow: 0 2px 8px rgba(37,211,102,0.3); }
+  .nav-wa-btn:hover { background: #1da851; transform: translateY(-1px); }
+
+  /* ══ HOW-TO STEPS ══ */
+  .how-steps { display: flex; align-items: center; justify-content: center;
+               gap: 0.5rem; margin: 1.2rem 0 0.8rem; flex-wrap: wrap; }
+  .how-step { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  .how-num { width: 32px; height: 32px; border-radius: 50%;
+             background: var(--rose); color: #fff; font-size: 0.85rem; font-weight: 700;
+             display: flex; align-items: center; justify-content: center; }
+  .how-text { font-size: 0.72rem; color: var(--taupe); text-align: center;
+              max-width: 70px; line-height: 1.3; }
+  .how-arrow { font-size: 1rem; color: var(--blush); flex-shrink: 0; }
+
+  /* ══ DOUBT BAR ══ */
+  .doubt-bar { display: flex; align-items: center; justify-content: center;
+               gap: 0.8rem; background: var(--rose-light);
+               border: 1px solid var(--blush); border-radius: 0.8rem;
+               padding: 0.7rem 1.2rem; margin: 0.8rem 0 1.2rem; flex-wrap: wrap; }
+  .doubt-bar span { font-size: 0.85rem; color: var(--dark); }
+  .doubt-btn { display: inline-flex; align-items: center; gap: 0.3rem;
+               background: #25d366; color: #fff; font-size: 0.82rem; font-weight: 500;
+               padding: 0.4rem 1rem; border-radius: 2rem; text-decoration: none;
+               transition: all 0.2s; white-space: nowrap; }
+  .doubt-btn:hover { background: #1da851; }
+
+  /* ══ DOUBT MINI ══ */
+  .doubt-mini { display: block; text-align: center; margin-top: 0.6rem;
+                font-size: 0.78rem; color: var(--taupe); text-decoration: none;
+                transition: color 0.2s; }
+  .doubt-mini:hover { color: var(--rose); }
+
+  /* ══ CART WA DOUBT ══ */
+  .cart-wa-doubt { display: flex; align-items: center; justify-content: center;
+                   gap: 0.6rem; padding: 0.8rem 1.5rem;
+                   border-top: 0.5px solid var(--blush); background: var(--cream); }
+  .cart-wa-doubt span { font-size: 0.82rem; color: var(--taupe); }
+  .cart-wa-doubt a { font-size: 0.82rem; color: var(--rose); font-weight: 500;
+                     text-decoration: none; }
+  .cart-wa-doubt a:hover { text-decoration: underline; }
+
+  /* ══ BTN-WA ══ */
+  .btn-wa { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+  /* ══ WA FLOAT ══ */
+  .wa-float { position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 300;
+              width: 58px; height: 58px; border-radius: 50%; background: #25d366;
+              display: flex; align-items: center; justify-content: center;
+              box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
+              transition: transform 0.2s, box-shadow 0.2s; }
+  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+  .wa-float svg { width: 30px; height: 30px; fill: #fff; }
+  .wa-float-tooltip { position: absolute; right: 68px; top: 50%; transform: translateY(-50%);
+                      background: #25d366; color: #fff; font-size: 0.75rem;
+                      padding: 0.4rem 0.8rem; border-radius: 2rem; white-space: nowrap;
+                      opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .wa-float:hover .wa-float-tooltip { opacity: 1; }
+
+  /* ══ TAB SCROLL ══ */
+  .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch;
+             scrollbar-width: none; padding-bottom: 2px; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  /* ══ MOBILE ══ */
+  @media (max-width: 600px) {
+    .how-arrow { display: none; }
+    .how-steps { gap: 0.6rem; }
+    .how-step { flex-direction: row; max-width: none; }
+    .how-text { max-width: none; text-align: left; }
+    .doubt-bar { gap: 0.5rem; }
+  }
+
+
+  /* ══ COBERTURA PERSONALIZADO ══ */
+  .opt-sub { font-size: 0.72rem; color: var(--taupe); font-style: italic;
+             font-weight: 300; display: block; margin-top: 2px; }
+  .opt-price-var { color: var(--rose) !important; font-style: italic; }
+  .opt-card-var .opt-price-var::after { content: '*'; font-size: 0.7rem; }
+
 </style>
 </head>
 <body>
 <nav>
-  <a href="https://laissantosconfeitaria.github.io" class="nav-brand">Lais Santos Confeitaria</a>
-  <a href="https://laissantosconfeitaria.github.io" class="nav-back">← Voltar ao site</a>
+  <a href="https://laissantosconfeitaria.github.io" class="nav-brand">🎂 Lais Santos Confeitaria</a>
+  <div class="nav-actions">
+    <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="nav-wa-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Falar com a Lais
+    </a>
+    <a href="https://laissantosconfeitaria.github.io" class="nav-back">← Voltar ao site</a>
+  </div>
 </nav>
 <div class="wrap">
   <p class="page-eyebrow">✦ Cardápio Completo</p>
   <h1 class="page-title">Monte seu <em>pedido</em></h1>
-  <p class="page-sub">Navegue pelas categorias, selecione os itens e adicione ao carrinho. Depois envie pelo WhatsApp com um clique! 🌸</p>
+  <p class="page-sub">Escolha a categoria, selecione os itens e envie pelo WhatsApp em segundos. É simples! 🌸</p>
+
+  <div class="how-steps">
+    <div class="how-step"><div class="how-num">1</div><div class="how-text">Escolha a categoria</div></div>
+    <div class="how-arrow">→</div>
+    <div class="how-step"><div class="how-num">2</div><div class="how-text">Monte seu pedido</div></div>
+    <div class="how-arrow">→</div>
+    <div class="how-step"><div class="how-num">3</div><div class="how-text">Adicione ao carrinho</div></div>
+    <div class="how-arrow">→</div>
+    <div class="how-step"><div class="how-num">4</div><div class="how-text">Envie pelo WhatsApp</div></div>
+  </div>
+
+  <div class="doubt-bar">
+    <span>💬 Ficou com dúvida em algum item?</span>
+    <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-btn">Falar com a Lais agora</a>
+  </div>
 
   <!-- ABAS -->
   <div class="tab-bar">
@@ -258,7 +368,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <div class="options-grid wide" id="g-dec-cob">
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho</div><div class="opt-price">Sem adicional</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Naked Cake</div><div class="opt-price">Sem adicional</div></div>
-          <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Chantininho Personalizado</div><div class="opt-price">+ R$ 22</div></div>
+          <div class="opt-card" onclick="sel(this,'g-dec-cob')" class="opt-card-var"><div class="opt-name">Chantininho Personalizado<br><span class="opt-sub">ou Topo Personalizado</span></div><div class="opt-price opt-price-var">a partir de R$ 20</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Cobertura de Brigadeiro</div><div class="opt-price">+ R$ 28</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache de Chocolate</div><div class="opt-price">+ R$ 44</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-cob')"><div class="opt-name">Ganache Saborizada</div><div class="opt-info">Pistache · Morango · Maracujá · Limão</div><div class="opt-price">+ R$ 38</div></div>
@@ -266,6 +376,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview"></div>
       <button class="add-btn" onclick="addBolo()">🎂 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -299,6 +410,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview-simples"></div>
       <button class="add-btn" onclick="addSimples()">🍰 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -335,6 +447,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview-vulcao"></div>
       <button class="add-btn" onclick="addVulcao()">🌋 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -366,6 +479,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview-doces"></div>
       <button class="add-btn" onclick="addDoces()">🍬 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -394,6 +508,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview-sob"></div>
       <button class="add-btn" onclick="addSobremesa()">🍮 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -404,11 +519,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o kit</div></div>
         <div class="si-grid" id="g-kit-tam">
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 220</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 358</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 495</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 714</div></div>
-          <div class="si-card" onclick="ssel(this,'g-kit-tam')"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 897</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 220</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 358</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 495</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 714</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 897</div></div>
         </div>
       </div>
       <div class="step">
@@ -431,8 +546,22 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Dois amores</div></div>
         </div>
       </div>
+      
+      <div class="step" id="step-kit-doce" style="display:none;">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-label">Sabor dos docinhos</div>
+          <span class="step-hint" id="kit-doce-hint">escolha 2 sabores</span>
+        </div>
+        <div class="options-grid wide" id="g-kit-doce">
+          <div class="opt-card" onclick="kitDoceSelect(this)"><div class="opt-name">🍫 Brigadeiro</div></div>
+          <div class="opt-card" onclick="kitDoceSelect(this)"><div class="opt-name">🥥 Beijinho de Coco</div></div>
+          <div class="opt-card" onclick="kitDoceSelect(this)"><div class="opt-name">🩷 Dois Amores</div></div>
+        </div>
+      </div>
       <div class="price-preview" id="price-preview-kit"></div>
       <button class="add-btn" onclick="addKit()">🎉 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -461,6 +590,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="qty-wrap"><span class="qty-label">Quantidade</span><div class="qty-controls"><button class="qty-btn" onclick="chgQ('out',-1)">−</button><span class="qty-num" id="q-out">1</span><button class="qty-btn" onclick="chgQ('out',1)">+</button></div></div>
       <div class="price-preview" id="price-preview-outros"></div>
       <button class="add-btn" onclick="addCupcakes()">🧁 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -485,6 +615,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
       <div class="price-preview" id="price-preview-sal"></div>
       <button class="add-btn" onclick="addSalgado()">🥐 Adicionar ao carrinho</button>
+      <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="doubt-mini">Tenho uma dúvida sobre este item 💬</a>
     </div>
   </div>
 
@@ -503,11 +634,19 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <label class="obs-label" style="margin-top:1rem;">Observacoes / data do evento</label>
         <textarea class="cart-obs" id="cart-obs" placeholder="Ex: Aniversario no dia 15/06, escrever Feliz Aniversario Ana..."></textarea>
         <div class="cart-actions">
-          <button class="btn-wa" onclick="sendWA()">Enviar pedido pelo WhatsApp</button>
-          <button class="btn-clear" onclick="clearCart()">Limpar carrinho</button>
+          <button class="btn-wa" onclick="sendWA()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar pedido pelo WhatsApp
+          </button>
+          <button class="btn-clear" onclick="clearCart()">🗑 Limpar carrinho</button>
         </div>
-</div>
-<div class="toast" id="toast"></div>
+        <div class="cart-wa-doubt">
+          <span>Dúvida sobre algum item?</span>
+          <a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank">💬 Falar com a Lais</a>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
 
 
 </div><!-- /wrap -->
@@ -522,19 +661,19 @@ var qtys = { doc: 5, out: 1 };
 
 // Bolos Decorados - por tier e tamanho
 var P_TRAD = { PP:66, P:109, M:218, G:327, GG:436, EX:544 };
-var P_ESP  = { PP:84, P:138, M:274, G:411, GG:549, EX:686 };
-var P_PREM = { PP:97, P:160, M:318, G:477, GG:637, EX:796 };
-var P_COB  = { 'Chantininho Personalizado':22, 'Chantininho':0, 'Naked Cake':0, 'Cobertura de Brigadeiro':28, 'Ganache de Chocolate':44, 'Ganache Saborizada':38 };
+var P_ESP  = { PP:77, P:138, M:274, G:413, GG:549, EX:688 };
+var P_PREM = { PP:null, P:160, M:318, G:479, GG:637, EX:798 };
+var P_COB  = { 'Chantininho Personalizado':20, 'Chantininho':0, 'Naked Cake':0, 'Cobertura de Brigadeiro':28, 'Ganache de Chocolate':44, 'Ganache Saborizada':38 };
 
 var RECHEIO_TIPO = {
   'Brigadeiro gourmet 50% cacau':'trad','Beijinho de coco':'trad','Doce de leite artesanal':'trad',
-  'Dois amores':'trad','Prestigio':'trad','Leite ninho':'trad','4 leites':'trad',
-  'Mousse de chocolate':'trad','Brigadeiro de maracuja':'trad','Brigadeiro de limao':'trad',
+  'Dois amores':'trad','Prestígio':'trad','Leite ninho':'trad','4 leites':'trad',
+  'Mousse de chocolate':'trad','Brigadeiro de maracujá':'trad','Brigadeiro de limão':'trad',
   '4 leites com morango':'esp','Brigadeiro com morango':'esp','Doce de leite com ameixa':'esp',
   'Dois amores com morango':'esp','Creme de coco com abacaxi':'esp','Leite ninho com Nutella':'esp','Ninho c/ morango':'esp',
   '4 leites com abacaxi':'esp','4 leites com Oreo':'esp','Caramelo salgado c/ mousse':'esp','Floresta Negra':'esp',
   'Pistache':'prem','Kinder Bueno':'prem','Ouro Branco ou Sonho de Valsa':'prem',
-  'Nozes com praline':'prem','Doce de leite c/ praline de nozes':'prem','Marta Rocha':'prem'
+  'Nozes com praliné':'prem','Doce de leite c/ praliné de nozes':'prem','Marta Rocha':'prem'
 };
 
 // Bolos Simples - por sabor e tamanho (M, G)
@@ -587,10 +726,10 @@ var P_KIT = { P:220, M:358, G:495, GG:714, EX:897 };
 
 // Cupcakes
 var P_CUPCAKE = {
-  'Cupcake Grande + Chantininho': 9.35,
-  'Cupcake Grande + Brigadeiro': 13.20,
-  'Cupcake Pequeno + Chantininho': 7.15,
-  'Cupcake Pequeno + Brigadeiro': 9.90
+  'Cupcake Grande + Chantininho': 9.50,
+  'Cupcake Grande + Brigadeiro': 13.00,
+  'Cupcake Pequeno + Chantininho': 7.00,
+  'Cupcake Pequeno + Brigadeiro': 10.00
 };
 
 // Pao de mel
@@ -732,11 +871,20 @@ function updatePreview() {
   } else if (tam) {
     rows.push([tam, 'selecione o recheio']);
   }
+  var isPersonalizado = cob && cob.indexOf('Personalizado') >= 0;
   if (cob) {
-    rows.push(['Cobertura: ' + cob, cobExtra > 0 ? '+ ' + fmt(cobExtra) : 'gratis']);
+    if (isPersonalizado) {
+      rows.push(['Cobertura: ' + cob, 'a partir de ' + fmt(cobExtra) + '+']);
+      rows.push(['⚠️ Valor pode variar', 'confirmado pela Lais']);
+    } else {
+      rows.push(['Cobertura: ' + cob, cobExtra > 0 ? '+ ' + fmt(cobExtra) : 'grátis']);
+    }
   }
   var total = (base !== null && base !== undefined) ? fmt(base + cobExtra) : null;
-  preview.innerHTML = buildPreviewHTML(rows, total, 'Valor final confirmado pela Lais no WhatsApp');
+  var totalNote = isPersonalizado
+    ? 'Estimativa — cobertura personalizada a confirmar'
+    : 'Valor final confirmado pela Lais no WhatsApp';
+  preview.innerHTML = buildPreviewHTML(rows, total, totalNote);
 }
 
 function updatePreviewSimples() {
@@ -1003,8 +1151,11 @@ function addBolo() {
   var tamKey = getTamKey(t), tier = getTier(recs);
   var base = tier === 'trad' ? P_TRAD[tamKey] : tier === 'esp' ? P_ESP[tamKey] : P_PREM[tamKey];
   var cobExtra = getCobExtra(c);
-  var precoStr = (base !== null && base !== undefined) ? ' | Estimativa: ' + fmt(base + cobExtra) : '';
-  cart.push({ name: 'Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c + precoStr });
+  var isPersonalizado = c.indexOf('Personalizado') >= 0;
+  var precoBase = (base !== null && base !== undefined) ? base + cobExtra : null;
+  var precoStr = precoBase !== null ? ' | Estimativa: ' + fmt(precoBase) + (isPersonalizado ? '+' : '') : '';
+  var disclaimer = isPersonalizado ? ' | ⚠️ O valor da cobertura poderá variar de acordo com a personalização escolhida' : '';
+  cart.push({ name: 'Bolo Decorado', detail: 'Massa: ' + m + ' | Tamanho: ' + t + ' | Recheio: ' + recs.join(' + ') + ' | Cobertura: ' + c + precoStr + disclaimer });
   ['g-dec-mas','g-dec-tam','g-dec-rec','g-dec-cob'].forEach(function(g) {
     document.querySelectorAll('#' + g + ' .selected').forEach(function(e) { e.classList.remove('selected'); });
   });
@@ -1259,8 +1410,45 @@ function showToast(msg) {
 }
 
 updateCart();
+
+function kitDoceSelect(el) {
+  var tam = document.querySelector('#g-kit-tam .selected');
+  if (!tam) return;
+  var isP = tam.querySelector('.si-name').textContent.trim() === 'Kit P';
+  var maxDoc = isP ? 2 : 3;
+  var cards = Array.from(document.querySelectorAll('#g-kit-doce .opt-card'));
+  var selected = cards.filter(c => c.classList.contains('selected'));
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+  } else {
+    if (selected.length < maxDoc) {
+      el.classList.add('selected');
+    } else {
+      selected[0].classList.remove('selected');
+      el.classList.add('selected');
+    }
+  }
+  updatePreview();
+}
+
+function onKitTamSelect(el) {
+  ssel(el, 'g-kit-tam');
+  var stepDoce = document.getElementById('step-kit-doce');
+  if (stepDoce) stepDoce.style.display = 'block';
+  var isP = el.querySelector('.si-name').textContent.trim() === 'Kit P';
+  var maxDoc = isP ? 2 : 3;
+  var hint = document.getElementById('kit-doce-hint');
+  if (hint) hint.textContent = 'escolha ' + maxDoc + ' sabor' + (maxDoc > 1 ? 'es' : '');
+  document.querySelectorAll('#g-kit-doce .opt-card').forEach(c => c.classList.remove('selected'));
+  updatePreview();
+}
+
 </script>
 
 
+<a href="https://wa.me/5565992094491?text=Ol%C3%A1%2C+Lais%21+Estou+vendo+o+card%C3%A1pio+e+tenho+uma+d%C3%BAvida.+Pode+me+ajudar%3F" target="_blank" class="wa-float" title="Falar com a Lais">
+  <span class="wa-float-tooltip">Falar com a Lais</span>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
 </body>
 </html>
