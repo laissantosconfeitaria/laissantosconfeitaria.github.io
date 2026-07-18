@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.1 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.3 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1434,6 +1434,52 @@ function toggleMenu(){
 }
 
 // ========== NOTIFICAÇÃO ==========
+// ========== SOM ==========
+function tocar(tipo){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const g=ctx.createGain();
+    g.connect(ctx.destination);
+
+    const sons={
+      pedido:[
+        // Acorde alegre ascendente: dó-mi-sol
+        {f:523,t:0,   dur:.12,vol:.25},
+        {f:659,t:.1,  dur:.12,vol:.25},
+        {f:784,t:.2,  dur:.22,vol:.3},
+      ],
+      entregue:[
+        // Dois tons conclusivos: sol-dó
+        {f:784,t:0,   dur:.14,vol:.25},
+        {f:1047,t:.15,dur:.28,vol:.3},
+      ],
+      despesa:[
+        // Tom neutro discreto: nota única suave
+        {f:440,t:0,   dur:.18,vol:.15},
+      ],
+      orcamento:[
+        // Dois tons suaves: mi-sol
+        {f:659,t:0,   dur:.12,vol:.18},
+        {f:784,t:.12, dur:.18,vol:.2},
+      ],
+    };
+
+    (sons[tipo]||sons.pedido).forEach(({f,t,dur,vol})=>{
+      const osc=ctx.createOscillator();
+      const gn=ctx.createGain();
+      osc.connect(gn);gn.connect(ctx.destination);
+      osc.type='sine';osc.frequency.value=f;
+      gn.gain.setValueAtTime(0,ctx.currentTime+t);
+      gn.gain.linearRampToValueAtTime(vol,ctx.currentTime+t+.02);
+      gn.gain.linearRampToValueAtTime(0,ctx.currentTime+t+dur);
+      osc.start(ctx.currentTime+t);
+      osc.stop(ctx.currentTime+t+dur+.05);
+    });
+
+    setTimeout(()=>ctx.close(),1500);
+  }catch(e){}
+}
+
 function notif(msg,tipo='ok'){
   const n=document.getElementById('notif');
   n.textContent=msg;
@@ -2131,6 +2177,7 @@ function salvarPedido(){
   renderPedidos();
   fecharModalNovoPedido();
   abrirModalConclusao(novoPedido.id);
+  tocar('pedido');
 }
 function deletePedido(id){
   if(!confirm('Remover este pedido?'))return;
@@ -2150,6 +2197,7 @@ function alterarStatus(id, novoStatus){
   notif('Status: '+labels[novoStatus]);
   // Abre recebimento ao marcar como entregue
   if(novoStatus==='entregue'){
+    tocar('entregue');
     setTimeout(()=>abrirModalRecebimento(id,'entrega'),400);
   }
 }
@@ -2520,6 +2568,7 @@ function salvarOrcamento(){
   }
   setData('orcamentos',orcs);
   fecharModalOrcamento();
+  tocar('orcamento');
   notif('Orçamento salvo ✓');
   if(document.getElementById('page-orcamentos').classList.contains('active')) renderOrcamentos();
 }
@@ -2652,6 +2701,7 @@ function salvarDespesaRapida(){
   setData('despesas',desp);
   fecharDespesaRapida();
   if(document.getElementById('page-despesas').classList.contains('active'))renderDespesas();
+  tocar('despesa');
   notif('Despesa registrada ✓');
 }
 
@@ -2896,6 +2946,7 @@ function salvarDespesa(){
   setData('despesas',desp);
   ['desp-data','desp-desc','desp-valor','desp-forn','desp-obs'].forEach(id=>document.getElementById(id).value='');
   renderDespesas();
+  tocar('despesa');
   notif('Despesa registrada');
 }
 function deleteDespesa(id){
@@ -2993,7 +3044,7 @@ function renderDashboard(){
   const fatProj=Math.round(fatTotal*fatorProj);   // ex: R$5.239 ÷ 7 × 31 = R$23.201
   const despProj=Math.round(desp*fatorProj);
   const lucroProj=fatProj-despProj;               // ex: R$23.201 - R$6.568 = R$16.633
-  const qPedProj=qEntregue+qAgendado;
+  const qPedProj=Math.round(qPed*fatorProj); // projeção no ritmo atual
   const ticketProj=ticket;
 
   // Variação em relação ao mês anterior
@@ -3056,7 +3107,7 @@ function renderDashboard(){
       <div class="label">Pedidos no mês</div>
       <div class="value">${qPed}</div>
       <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
-        Total confirmados: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>
+        Projeção: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>
         ${vPed!==null?`<span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vPed>=0?'↑':'↓'}${Math.abs(vPed)}% vs mês ant.)</span>`:''}
       </div>
       <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">
