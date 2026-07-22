@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.7 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.8 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -3738,41 +3738,45 @@ function editAtualizarTotal(){
 }
 
 function editAbrirCardapio(){
-  // Copia o cardápio do modal de novo pedido e adapta para edição
-  const src=document.getElementById('np-cardapio-content');
   const dst=document.getElementById('edit-cardapio-content');
-  if(!src||!dst) return;
-  dst.innerHTML=src.innerHTML;
+  if(!dst) return;
+
+  // Copia as abas de navegação
+  const srcTabs=document.getElementById('np-tabs');
+  const srcContent=document.getElementById('np-cardapio-content');
+  if(!srcTabs||!srcContent) return;
+
+  // Monta HTML completo: tabs + conteúdo
+  const tabsHtml=srcTabs.outerHTML
+    .replace(/id="np-tabs"/,'id="edit-tabs"')
+    .replace(/npTab\(/g,'npTabEdit(');
+
+  const contentHtml=srcContent.outerHTML
+    .replace(/id="np-cardapio-content"/,'id="edit-cardapio-inner"');
+
+  dst.innerHTML=tabsHtml+contentHtml;
+
   // Limpa seleções
   dst.querySelectorAll('.np-opt.selected').forEach(e=>e.classList.remove('selected'));
-  // Ativa primeira aba
+
+  // Ativa a primeira aba
+  dst.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  dst.querySelector('.np-tab')?.classList.add('active');
   dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
-  const first=dst.querySelector('.np-tab-content');
-  if(first) first.classList.add('active');
-  // Substitui onclick das tabs para usar npTabEdit
-  dst.querySelectorAll('.np-tab[onclick]').forEach(el=>{
-    el.setAttribute('onclick', el.getAttribute('onclick').replace(/npTab\(/g,'npTabEdit('));
-  });
-  // Substitui todos os botões "Adicionar ao carrinho" para usar editCarrAdd
-  // fazendo override de npCarrAdd temporariamente via flag
+  dst.querySelector('.np-tab-content')?.classList.add('active');
+
   _modoEdicao=true;
   document.getElementById('modal-edit-cardapio').style.display='block';
 }
 
-function editFecharCardapio(){
-  document.getElementById('modal-edit-cardapio').style.display='none';
-  _modoEdicao=false;
-}
-
 function npTabEdit(id,el){
-  const wrap=el.closest('div');
-  const parent=wrap?.parentElement;
-  if(!parent) return;
-  parent.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
-  parent.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
-  const content=parent.querySelector('#np-'+id);
-  if(content) content.classList.add('active');
+  const dst=document.getElementById('edit-cardapio-content');
+  if(!dst) return;
+  dst.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  const tab=dst.querySelector('#np-'+id);
+  if(tab) tab.classList.add('active');
 }
 
 function abrirModal(id){
