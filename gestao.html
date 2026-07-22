@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.3 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.6 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1251,13 +1251,16 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <!-- MODAL EDITAR PEDIDO -->
-<div id="modal-editar" style="display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
-  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:var(--sombra)">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1">
+<div id="modal-editar" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);overflow-y:auto;padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:600px;margin:0 auto;box-shadow:var(--sombra)">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
       <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)">✏️ Editar pedido</span>
       <button onclick="fecharModal()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
     </div>
     <div style="padding:1.25rem">
+
+      <!-- Dados -->
       <div class="form-row" style="margin-bottom:.9rem">
         <div><label>Data</label><input type="date" id="edit-data"></div>
         <div><label>Cliente</label><input type="text" id="edit-cliente" placeholder="Nome do cliente"></div>
@@ -1289,16 +1292,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div style="margin-bottom:1.25rem"><label>Observações</label><input type="text" id="edit-obs" placeholder="Ex: Escrever Feliz Aniversário Ana, decoração tema safari..."></div>
 
-      <!-- Itens -->
+      <!-- Carrinho de edição -->
       <div style="font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-dim);margin-bottom:.5rem">Itens do pedido</div>
-      <div id="edit-itens" style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);margin-bottom:.75rem;min-height:48px"></div>
-      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
-        <input type="text" id="edit-av-nome" placeholder="Adicionar item avulso" style="flex:1;font-size:.85rem">
-        <input type="number" id="edit-av-val" placeholder="R$" step="0.01" min="0" style="width:85px;font-size:.85rem">
-        <button class="btn btn-ghost btn-sm" onclick="editAddAvulso()">+ Add</button>
-      </div>
+      <div id="edit-carrinho" style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);margin-bottom:.75rem;min-height:48px"></div>
 
-      <!-- Ajustes -->
+      <!-- Ajustes de valor -->
       <div style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);padding:.85rem;margin-bottom:1rem">
         <div style="font-size:.72rem;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Ajustes de valor</div>
         <div style="display:flex;gap:.5rem;margin-bottom:.6rem">
@@ -1316,14 +1314,45 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <!-- Total -->
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--rosa-glow);border-radius:10px;border:1px solid rgba(232,145,184,.2);margin-bottom:1.25rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--rosa-glow);border-radius:10px;border:1px solid rgba(232,145,184,.2);margin-bottom:.75rem">
         <span style="font-size:.88rem;color:var(--texto-sec)">Total do pedido</span>
         <span id="edit-total" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--rosa)">R$ 0,00</span>
       </div>
+
+      <!-- Recebimento -->
+      <div style="background:rgba(78,203,141,.06);border:1px solid rgba(78,203,141,.2);border-radius:10px;padding:.85rem 1rem;margin-bottom:1.25rem">
+        <div style="font-size:.72rem;color:var(--verde);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">💰 Valor recebido</div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <input type="number" id="edit-valor-recebido" step="0.01" min="0" placeholder="0,00" inputmode="decimal"
+            style="flex:1;font-size:.95rem;padding:.5rem .75rem;border-radius:8px;border:1.5px solid rgba(78,203,141,.3);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;outline:none"
+            onfocus="this.style.borderColor='var(--verde)'" onblur="this.style.borderColor='rgba(78,203,141,.3)'">
+          <div style="font-size:.75rem;color:var(--texto-dim);text-align:right;line-height:1.4">Edite o valor<br>já recebido</div>
+        </div>
+        <div id="edit-rec-status" style="font-size:.72rem;margin-top:.4rem;color:var(--texto-dim)"></div>
+      </div>
+
+      <!-- Botão abrir cardápio -->
+      <button onclick="editAbrirCardapio()" style="width:100%;padding:.75rem;border-radius:10px;border:1.5px dashed var(--borda);background:none;color:var(--texto-sec);font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;margin-bottom:1.25rem;transition:all .2s" onmouseover="this.style.borderColor='var(--rosa)';this.style.color='var(--rosa)'" onmouseout="this.style.borderColor='var(--borda)';this.style.color='var(--texto-sec)'">
+        🎂 Adicionar / alterar itens do cardápio
+      </button>
+
       <div style="display:flex;gap:.75rem">
         <button class="btn btn-primary" style="flex:1;padding:.85rem" onclick="salvarEdicao()">Salvar alterações</button>
         <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CARDÁPIO DE EDIÇÃO -->
+<div id="modal-edit-cardapio" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.75);overflow-y:auto;padding:1rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:600px;margin:0 auto;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
+      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">🎂 Cardápio — adicionar item</span>
+      <button onclick="editFecharCardapio()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem">✕</button>
+    </div>
+    <div style="padding:1rem">
+      <div id="edit-cardapio-content"></div>
     </div>
   </div>
 </div>
@@ -2263,11 +2292,11 @@ function renderPedidos(){
           <option value="agendado"   ${p.status==='agendado'  ?'selected':''}>📅 Agendado</option>
           <option value="entregue"   ${p.status==='entregue'  ?'selected':''}>✅ Entregue</option>
         </select>
-        <button onclick="${protegido?`pedirSenhaProt('editar',${p.id})`:`abrirModal(${p.id})`}" style="
+        <button onclick="abrirModal(${p.id})" style="
           padding:.4rem .8rem;border-radius:8px;border:1.5px solid var(--borda);
-          background:var(--bg2);color:${protegido?'var(--texto-dim)':'var(--texto-sec)'};cursor:pointer;font-size:.82rem;
+          background:var(--bg2);color:var(--texto-sec);cursor:pointer;font-size:.82rem;
           font-family:'DM Sans',sans-serif;white-space:nowrap;
-        ">${protegido?'🔒':'✏️'} Editar</button>
+        ">✏️ Editar</button>
         <button onclick="${protegido?`pedirSenhaProt('excluir',${p.id})`:`deletePedido(${p.id})`}" style="
           padding:.4rem .7rem;border-radius:8px;
           border:1.5px solid ${protegido?'var(--borda)':'rgba(240,96,96,.3)'};
@@ -3660,135 +3689,182 @@ function renderAgenda(){
 
 
 // ========== EDITAR PEDIDO ==========
-let editId = null;
-let editItens = [];
+// ========== EDIÇÃO DE PEDIDO ==========
+let editId=null;
+let carrinhoEdit=[];
 
-function abrirModal(id){
-  const pedidos = getData('pedidos');
-  const p = pedidos.find(x=>x.id==id);
-  if(!p) return;
-  editId = id;
-  editItens = p.itens ? p.itens.map(i=>({...i})) : p.produtos.map(n=>({nome:n,detalhe:'',preco:0}));
-
-  document.getElementById('edit-data').value = p.data;
-  document.getElementById('edit-hora').value = p.hora||'';
-  document.getElementById('edit-local').value = p.local||'retirada';
-  document.getElementById('edit-cliente').value = p.cliente;
-  document.getElementById('edit-status').value = p.status;
-  document.getElementById('edit-canal').value = p.canal||'whatsapp';
-  document.getElementById('edit-obs').value = p.obs||'';
-  document.getElementById('edit-extra-desc').value = p.extra?.desc||'';
-  document.getElementById('edit-extra-val').value = p.extra?.val||'';
-  document.getElementById('edit-desc-val').value = p.desconto||'';
-  document.getElementById('edit-desc-tipo').value = p.descontoTipo||'reais';
-  document.getElementById('edit-av-nome').value = '';
-  document.getElementById('edit-av-val').value = '';
-
-  renderEditItens();
-  const modal = document.getElementById('modal-editar');
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+function editCarrAdd(nome,detalhe,preco){
+  carrinhoEdit.push({id:Date.now()+Math.random(),nome,detalhe,preco});
+  renderEditCarrinho();
+  editFecharCardapio();
+  notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ✓');
 }
 
-function fecharModal(){
-  document.getElementById('modal-editar').style.display = 'none';
-  document.body.style.overflow = '';
-  editId = null;
-  editItens = [];
-}
-
-function renderEditItens(){
-  const cont = document.getElementById('edit-itens');
-  if(!editItens.length){
-    cont.innerHTML = '<div class="empty" style="padding:1rem;font-size:.82rem">Nenhum item</div>';
-    editAtualizarTotal();
-    return;
+function renderEditCarrinho(){
+  const cont=document.getElementById('edit-carrinho');
+  if(!cont) return;
+  if(!carrinhoEdit.length){
+    cont.innerHTML='<div class="empty" style="padding:1rem;font-size:.82rem">Nenhum item — use o botão abaixo para adicionar</div>';
+    editAtualizarTotal(); return;
   }
-  cont.innerHTML = editItens.map((item,i)=>`
-    <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-bottom:1px solid var(--borda)">
+  cont.innerHTML=carrinhoEdit.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-bottom:1px solid var(--borda)">
       <div style="flex:1;min-width:0">
-        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${item.nome}</div>
-        ${item.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec)">${item.detalhe}</div>`:''}
+        <div style="font-size:.88rem;font-weight:500;color:var(--texto)">${normP(item.nome)}</div>
+        ${item.detalhe?`<div style="font-size:.73rem;color:var(--texto-sec);margin-top:.15rem">${fmtDetalhe(item.detalhe)}</div>`:''}
       </div>
       <input type="number" value="${item.preco||0}" min="0" step="0.01"
-        style="width:80px;font-size:.82rem;padding:.3rem .5rem;text-align:right"
-        oninput="editItens[${i}].preco=parseFloat(this.value)||0;editAtualizarTotal()">
-      <button onclick="editRemoverItem(${i})" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.1rem .3rem;opacity:.6" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.6;this.style.color='var(--texto-dim)'">✕</button>
+        style="width:80px;font-size:.82rem;padding:.3rem .5rem;text-align:right;border-radius:6px;border:1px solid var(--borda);background:var(--bg);color:var(--rosa)"
+        oninput="carrinhoEdit[${i}].preco=parseFloat(this.value)||0;editAtualizarTotal()">
+      <button onclick="carrinhoEdit.splice(${i},1);renderEditCarrinho()" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.9rem;padding:.2rem .4rem;opacity:.6" onmouseover="this.style.opacity=1;this.style.color='var(--vermelho)'" onmouseout="this.style.opacity=.6;this.style.color='var(--texto-dim)'">✕</button>
     </div>`).join('');
   editAtualizarTotal();
 }
 
-function editRemoverItem(i){
-  editItens.splice(i,1);
-  renderEditItens();
-}
-
-function editAddAvulso(){
-  const nome = document.getElementById('edit-av-nome').value.trim();
-  const preco = parseFloat(document.getElementById('edit-av-val').value)||0;
-  if(!nome){notif('Digite o nome do item','error');return}
-  editItens.push({nome, detalhe:'', preco});
-  document.getElementById('edit-av-nome').value='';
-  document.getElementById('edit-av-val').value='';
-  renderEditItens();
-}
-
 function editAtualizarTotal(){
-  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
-  const extraV = parseFloat(document.getElementById('edit-extra-val')?.value)||0;
-  const dv = parseFloat(document.getElementById('edit-desc-val')?.value)||0;
-  const dt = document.getElementById('edit-desc-tipo')?.value||'reais';
-  const desc = dt==='pct' ? (sub+extraV)*(dv/100) : dv;
-  const total = Math.max(0, sub+extraV-desc);
-  document.getElementById('edit-total').textContent = fmtBRL(total);
+  const sub=carrinhoEdit.reduce((s,i)=>s+(i.preco||0),0);
+  const extraV=parseFloat(document.getElementById('edit-extra-val')?.value)||0;
+  const dv=parseFloat(document.getElementById('edit-desc-val')?.value)||0;
+  const dt=document.getElementById('edit-desc-tipo')?.value||'reais';
+  const desc=dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const el=document.getElementById('edit-total');
+  if(el) el.textContent=fmtBRL(Math.max(0,sub+extraV-desc));
+}
+
+function editAbrirCardapio(){
+  // Copia o cardápio do modal de novo pedido e adapta para edição
+  const src=document.getElementById('np-cardapio-content');
+  const dst=document.getElementById('edit-cardapio-content');
+  if(!src||!dst) return;
+  dst.innerHTML=src.innerHTML;
+  // Limpa seleções
+  dst.querySelectorAll('.np-opt.selected').forEach(e=>e.classList.remove('selected'));
+  // Ativa primeira aba
+  dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  const first=dst.querySelector('.np-tab-content');
+  if(first) first.classList.add('active');
+  // Substitui onclick das tabs para usar npTabEdit
+  dst.querySelectorAll('.np-tab[onclick]').forEach(el=>{
+    el.setAttribute('onclick', el.getAttribute('onclick').replace(/npTab\(/g,'npTabEdit('));
+  });
+  // Substitui todos os botões "Adicionar ao carrinho" para usar editCarrAdd
+  // fazendo override de npCarrAdd temporariamente via flag
+  _modoEdicao=true;
+  document.getElementById('modal-edit-cardapio').style.display='block';
+}
+
+function editFecharCardapio(){
+  document.getElementById('modal-edit-cardapio').style.display='none';
+  _modoEdicao=false;
+}
+
+// Flag de modo edição para interceptar npCarrAdd
+let _modoEdicao=false;
+// Salva referência original antes de sobrescrever
+const _npCarrAddOrigEdit=_npCarrAddBase;
+
+// Override: redireciona para carrinhoEdit quando em modo edição
+function _npCarrAddBase(nome,detalhe,preco){
+  if(_modoEdicao){
+    editCarrAdd(nome,detalhe,preco);
+  } else {
+    carrinho.push({id:Date.now(),nome,detalhe,preco});
+    renderCarrinho();
+    notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
+  }
+}
+
+function npTabEdit(id,el){
+  const wrap=el.closest('div');
+  const parent=wrap?.parentElement;
+  if(!parent) return;
+  parent.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  parent.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  const content=parent.querySelector('#np-'+id);
+  if(content) content.classList.add('active');
+  el.classList.add('active');
+}
+
+function abrirModal(id){
+  const pedidos=getData('pedidos');
+  const p=pedidos.find(x=>x.id==id);
+  if(!p) return;
+  editId=id;
+  carrinhoEdit=(p.itens?p.itens.map(i=>({...i,id:Date.now()+Math.random()})):
+    (p.produtos||[]).map(n=>({id:Date.now()+Math.random(),nome:n,detalhe:'',preco:0})));
+
+  document.getElementById('edit-data').value=p.data;
+  document.getElementById('edit-hora').value=p.hora||'';
+  document.getElementById('edit-local').value=p.local||'retirada';
+  document.getElementById('edit-cliente').value=p.cliente;
+  document.getElementById('edit-status').value=p.status;
+  document.getElementById('edit-canal').value=p.canal||'whatsapp';
+  document.getElementById('edit-obs').value=p.obs||'';
+  document.getElementById('edit-extra-desc').value=p.extra?.desc||'';
+  document.getElementById('edit-extra-val').value=p.extra?.val||'';
+  document.getElementById('edit-desc-val').value=p.desconto||'';
+  document.getElementById('edit-desc-tipo').value=p.descontoTipo||'reais';
+  const vrEl=document.getElementById('edit-valor-recebido');
+  if(vrEl) vrEl.value=p.valorRecebido!=null?p.valorRecebido:'';
+  const recSt=document.getElementById('edit-rec-status');
+  if(recSt&&p.valor){
+    const falta=Math.max(0,p.valor-(p.valorRecebido||0));
+    recSt.textContent=falta>0?`Falta receber: ${fmtBRL(falta)}`:(p.valorRecebido||0)>0?'✓ Pagamento completo':'Nenhum valor recebido ainda';
+    recSt.style.color=falta>0?'var(--amarelo)':'var(--verde)';
+  }
+  renderEditCarrinho();
+  const modal=document.getElementById('modal-editar');
+  modal.style.display='block';
+  document.body.style.overflow='hidden';
+  modal.scrollTop=0;
+}
+
+function fecharModal(){
+  document.getElementById('modal-editar').style.display='none';
+  document.getElementById('modal-edit-cardapio').style.display='none';
+  document.body.style.overflow='';
+  editId=null; carrinhoEdit=[]; _modoEdicao=false;
 }
 
 function salvarEdicao(){
   if(!editId) return;
-  const data = document.getElementById('edit-data').value;
-  const cliente = document.getElementById('edit-cliente').value.trim();
+  const data=document.getElementById('edit-data').value;
+  const cliente=document.getElementById('edit-cliente').value.trim();
   if(!data||!cliente){notif('Preencha data e cliente','error');return}
-
-  const extraDesc = document.getElementById('edit-extra-desc').value.trim();
-  const extraV = parseFloat(document.getElementById('edit-extra-val').value)||0;
-  const dv = parseFloat(document.getElementById('edit-desc-val').value)||0;
-  const dt = document.getElementById('edit-desc-tipo').value;
-  const sub = editItens.reduce((s,i)=>s+(i.preco||0),0);
-  const desc = dt==='pct'?(sub+extraV)*(dv/100):dv;
-  const total = Math.max(0, sub+extraV-desc);
-
-  const pedidos = getData('pedidos');
-  const idx = pedidos.findIndex(p=>p.id==editId);
+  const extraDesc=document.getElementById('edit-extra-desc').value.trim();
+  const extraV=parseFloat(document.getElementById('edit-extra-val').value)||0;
+  const dv=parseFloat(document.getElementById('edit-desc-val').value)||0;
+  const dt=document.getElementById('edit-desc-tipo').value;
+  const sub=carrinhoEdit.reduce((s,i)=>s+(i.preco||0),0);
+  const desc=dt==='pct'?(sub+extraV)*(dv/100):dv;
+  const total=Math.max(0,sub+extraV-desc);
+  const vrNovo=document.getElementById('edit-valor-recebido')?.value;
+  const valorRecebido=vrNovo!==''&&vrNovo!=null?parseFloat(vrNovo)||0:undefined;
+  const pedidos=getData('pedidos');
+  const idx=pedidos.findIndex(p=>p.id==editId);
   if(idx<0) return;
-
-  pedidos[idx] = {
+  pedidos[idx]={
     ...pedidos[idx],
-    data,
-    hora: document.getElementById('edit-hora').value||'',
-    local: document.getElementById('edit-local').value||'retirada',
-    cliente,
-    status: document.getElementById('edit-status').value,
-    canal: document.getElementById('edit-canal').value,
-    obs: document.getElementById('edit-obs').value.trim(),
-    valor: total,
-    itens: editItens,
-    produtos: editItens.map(i=>i.nome),
-    extra: {desc:extraDesc, val:extraV},
-    desconto: dv,
-    descontoTipo: dt,
+    data, hora:document.getElementById('edit-hora').value||'',
+    local:document.getElementById('edit-local').value||'retirada',
+    cliente, status:document.getElementById('edit-status').value,
+    canal:document.getElementById('edit-canal').value,
+    obs:document.getElementById('edit-obs').value.trim(),
+    valor:total, valorRecebido:valorRecebido!==undefined?valorRecebido:pedidos[idx].valorRecebido,
+    itens:[...carrinhoEdit], produtos:carrinhoEdit.map(i=>i.nome),
+    extra:{desc:extraDesc,val:extraV}, desconto:dv, descontoTipo:dt,
   };
-  setData('pedidos', pedidos);
+  setData('pedidos',pedidos);
   fecharModal();
   renderPedidos();
-  if(document.getElementById('page-agenda').classList.contains('active')) renderAgenda();
-  if(document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
+  if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
+  if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
   notif('Pedido atualizado ✓');
 }
 
 // Fechar modal clicando fora
-document.getElementById('modal-editar').addEventListener('click', function(e){
-  if(e.target===this) fecharModal();
-});
+document.getElementById('modal-editar').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+document.getElementById('modal-edit-cardapio').addEventListener('click',function(e){if(e.target===this)editFecharCardapio()});
 
 if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
