@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.6 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.7 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1997,7 +1997,8 @@ function unitDeletar(id){
 // ========== CARRINHO ==========
 let carrinho = [];
 
-function _npCarrAddBase(nome, detalhe, preco){
+// Nota: npCarrAdd() é o roteador principal — veja declaração abaixo
+function _addAoPedido(nome, detalhe, preco){
   carrinho.push({id:Date.now(), nome, detalhe, preco});
   renderCarrinho();
   notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
@@ -2694,13 +2695,18 @@ function orcConverterPedidoSalvo(id){
   });
 }
 
-// npCarrAdd roteia para orçamento ou pedido conforme o modo ativo
-let _modoOrcamento = false;
-function npCarrAdd(nome, detalhe, preco){
-  if(_modoOrcamento){
-    orcCarrAdd(nome, detalhe, preco);
+// npCarrAdd — roteador único para pedido, orçamento e edição
+let _modoOrcamento=false;
+let _modoEdicao=false;
+function npCarrAdd(nome,detalhe,preco){
+  if(_modoEdicao){
+    editCarrAdd(nome,detalhe,preco);
+  } else if(_modoOrcamento){
+    orcCarrAdd(nome,detalhe,preco);
   } else {
-    _npCarrAddBase(nome, detalhe, preco);
+    carrinho.push({id:Date.now(),nome,detalhe,preco});
+    renderCarrinho();
+    notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
   }
 }
 
@@ -3756,22 +3762,6 @@ function editAbrirCardapio(){
 function editFecharCardapio(){
   document.getElementById('modal-edit-cardapio').style.display='none';
   _modoEdicao=false;
-}
-
-// Flag de modo edição para interceptar npCarrAdd
-let _modoEdicao=false;
-// Salva referência original antes de sobrescrever
-const _npCarrAddOrigEdit=_npCarrAddBase;
-
-// Override: redireciona para carrinhoEdit quando em modo edição
-function _npCarrAddBase(nome,detalhe,preco){
-  if(_modoEdicao){
-    editCarrAdd(nome,detalhe,preco);
-  } else {
-    carrinho.push({id:Date.now(),nome,detalhe,preco});
-    renderCarrinho();
-    notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ♡');
-  }
 }
 
 function npTabEdit(id,el){
