@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.1 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.2 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1255,7 +1255,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:600px;margin:0 auto;box-shadow:var(--sombra)">
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
-      <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)">✏️ Editar pedido</span>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--texto)">✏️ Editar pedido</div>
+        <div id="edit-header-info" style="font-size:.78rem;color:var(--texto-sec);margin-top:.15rem"></div>
+      </div>
       <button onclick="fecharModal()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
     </div>
     <div style="padding:1.25rem">
@@ -3794,6 +3797,12 @@ function abrirModal(id){
     recSt.style.color=falta>0?'var(--amarelo)':'var(--verde)';
   }
   renderEditCarrinho();
+  // Mostra nome e data no header para confirmar de quem é o pedido
+  const headerInfo=document.getElementById('edit-header-info');
+  if(headerInfo){
+    const dtFmt=p.data?new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
+    headerInfo.textContent=`${p.cliente}${dtFmt?' · '+dtFmt:''}${p.hora?' · '+p.hora:''}`;
+  }
   const modal=document.getElementById('modal-editar');
   modal.style.display='block';
   document.body.style.overflow='hidden';
