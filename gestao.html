@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v6.9 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.0 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -717,7 +717,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
-      <span style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--texto)">＋ Novo Pedido</span>
+      <span id="np-modal-titulo" style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--texto)">＋ Novo Pedido</span>
       <button onclick="fecharModalNovoPedido()" style="background:none;border:none;color:var(--texto-sec);font-size:1.4rem;cursor:pointer;padding:.2rem .5rem;line-height:1">✕</button>
     </div>
 
@@ -1344,18 +1344,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- MODAL CARDÁPIO DE EDIÇÃO -->
-<div id="modal-edit-cardapio" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.75);overflow-y:auto;padding:1rem">
-  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:600px;margin:0 auto;box-shadow:var(--sombra)">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
-      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">🎂 Cardápio — adicionar item</span>
-      <button onclick="editFecharCardapio()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem">✕</button>
-    </div>
-    <div style="padding:1rem">
-      <div id="edit-cardapio-content"></div>
-    </div>
-  </div>
-</div>
+<!-- MODAL CARDÁPIO DE EDIÇÃO: reutiliza modal-novo-pedido via flag -->
 
 <!-- MODAL CONFIRMAÇÃO WHATSAPP -->
 <div id="modal-wpp" style="display:none;position:fixed;inset:0;z-index:600;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
@@ -2171,8 +2160,13 @@ function abrirModalNovoPedido(){
 }
 
 function fecharModalNovoPedido(){
-  document.getElementById('modal-novo-pedido').style.display = 'none';
-  document.body.style.overflow = '';
+  if(_modoEdicao){
+    // Veio do cardápio de edição — transfere itens e volta para modal-editar
+    editFecharCardapio();
+    return;
+  }
+  document.getElementById('modal-novo-pedido').style.display='none';
+  document.body.style.overflow='';
 }
 
 
@@ -3698,11 +3692,11 @@ function renderAgenda(){
 // ========== EDIÇÃO DE PEDIDO ==========
 let editId=null;
 let carrinhoEdit=[];
+let _editCarrinhoBackup=[];
 
 function editCarrAdd(nome,detalhe,preco){
   carrinhoEdit.push({id:Date.now()+Math.random(),nome,detalhe,preco});
   renderEditCarrinho();
-  editFecharCardapio();
   notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ✓');
 }
 
@@ -3738,57 +3732,38 @@ function editAtualizarTotal(){
 }
 
 function editAbrirCardapio(){
-  const dst=document.getElementById('edit-cardapio-content');
-  if(!dst) return;
-
-  // Copia as abas de navegação
-  const srcTabs=document.getElementById('np-tabs');
-  const srcContent=document.getElementById('np-cardapio-content');
-  if(!srcTabs||!srcContent) return;
-
-  // Monta HTML: tabs + conteúdo com IDs únicos para edição
-  let tabsHtml=srcTabs.outerHTML
-    .replace(/id="np-tabs"/,'id="edit-np-tabs"')
-    .replace(/npTab\('(\w+)'/g,"npTabEdit('$1'");
-
-  let contentHtml=srcContent.outerHTML
-    .replace(/id="np-cardapio-content"/,'id="edit-cardapio-inner"')
-    // Renomeia todos os IDs internos para evitar conflito com modal de novo pedido
-    .replace(/id="np-/g,'id="edt-')
-    .replace(/'np-/g,"'edt-")
-    .replace(/"np-/g,'"edt-');
-
-  dst.innerHTML=tabsHtml+contentHtml;
-
-  // Limpa seleções
-  dst.querySelectorAll('.np-opt.selected').forEach(e=>e.classList.remove('selected'));
-
-  // Ativa a primeira aba (Bolo Decorado)
-  dst.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
-  dst.querySelector('.np-tab')?.classList.add('active');
-  dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
-  dst.querySelector('[id="edt-dec"]')?.classList.add('active');
-
+  // Reutiliza o modal de novo pedido como cardápio de edição
+  // Salva carrinho atual para não perder
+  _editCarrinhoBackup=[...carrinho];
+  // Carrega carrinhoEdit no carrinho principal temporariamente
+  carrinho=[...carrinhoEdit];
   _modoEdicao=true;
-  document.getElementById('modal-edit-cardapio').style.display='block';
+  // Abre modal no modo cardápio (sem formulário de dados)
+  const modal=document.getElementById('modal-novo-pedido');
+  document.getElementById('np-modal-titulo').textContent='🎂 Adicionar / Alterar itens';
+  modal.style.display='block';
+  document.body.style.overflow='hidden';
+  modal.scrollTop=0;
+  renderCarrinho();
+  renderUnitCardapio();
 }
 
 function editFecharCardapio(){
-  document.getElementById('modal-edit-cardapio').style.display='none';
+  // Transfere o carrinho de volta para carrinhoEdit
+  carrinhoEdit=[...carrinho];
+  // Restaura carrinho original do novo pedido
+  carrinho=[..._editCarrinhoBackup];
   _modoEdicao=false;
-  // Mantém overflow hidden pois modal-editar ainda está aberto
+  // Fecha modal-novo-pedido e reabre modal-editar
+  document.getElementById('modal-novo-pedido').style.display='none';
+  document.getElementById('np-modal-titulo').textContent='＋ Novo Pedido';
+  renderEditCarrinho();
+  // Garante que modal-editar continue visível
+  document.getElementById('modal-editar').style.display='block';
   document.body.style.overflow='hidden';
 }
 
-function npTabEdit(id,el){
-  const dst=document.getElementById('edit-cardapio-content');
-  if(!dst) return;
-  dst.querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
-  dst.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  const tab=dst.querySelector('[id="edt-'+id+'"]');
-  if(tab) tab.classList.add('active');
-}
+
 
 function abrirModal(id){
   const pedidos=getData('pedidos');
@@ -3826,9 +3801,9 @@ function abrirModal(id){
 
 function fecharModal(){
   document.getElementById('modal-editar').style.display='none';
-  document.getElementById('modal-edit-cardapio').style.display='none';
+  document.getElementById('modal-novo-pedido').style.display='none';
   document.body.style.overflow='';
-  editId=null; carrinhoEdit=[]; _modoEdicao=false;
+  editId=null; carrinhoEdit=[]; _editCarrinhoBackup=[]; _modoEdicao=false;
 }
 
 function salvarEdicao(){
@@ -3869,7 +3844,6 @@ function salvarEdicao(){
 
 // Fechar modal clicando fora
 document.getElementById('modal-editar').addEventListener('click',function(e){if(e.target===this)fecharModal()});
-document.getElementById('modal-edit-cardapio').addEventListener('click',function(e){if(e.target===this)editFecharCardapio()});
 
 if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
