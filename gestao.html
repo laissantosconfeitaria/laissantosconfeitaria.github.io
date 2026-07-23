@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.0 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.1 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -2161,11 +2161,12 @@ function abrirModalNovoPedido(){
 
 function fecharModalNovoPedido(){
   if(_modoEdicao){
-    // Veio do cardápio de edição — transfere itens e volta para modal-editar
     editFecharCardapio();
     return;
   }
-  document.getElementById('modal-novo-pedido').style.display='none';
+  const mnp=document.getElementById('modal-novo-pedido');
+  mnp.style.display='none';
+  mnp.style.zIndex='490';
   document.body.style.overflow='';
 }
 
@@ -3732,14 +3733,13 @@ function editAtualizarTotal(){
 }
 
 function editAbrirCardapio(){
-  // Reutiliza o modal de novo pedido como cardápio de edição
-  // Salva carrinho atual para não perder
+  // Salva carrinho do novo pedido e carrega itens do pedido em edição
   _editCarrinhoBackup=[...carrinho];
-  // Carrega carrinhoEdit no carrinho principal temporariamente
   carrinho=[...carrinhoEdit];
   _modoEdicao=true;
-  // Abre modal no modo cardápio (sem formulário de dados)
+  // Abre modal-novo-pedido acima do modal-editar (z-index maior)
   const modal=document.getElementById('modal-novo-pedido');
+  modal.style.zIndex='520'; // acima do modal-editar (500)
   document.getElementById('np-modal-titulo').textContent='🎂 Adicionar / Alterar itens';
   modal.style.display='block';
   document.body.style.overflow='hidden';
@@ -3754,11 +3754,12 @@ function editFecharCardapio(){
   // Restaura carrinho original do novo pedido
   carrinho=[..._editCarrinhoBackup];
   _modoEdicao=false;
-  // Fecha modal-novo-pedido e reabre modal-editar
-  document.getElementById('modal-novo-pedido').style.display='none';
+  // Fecha modal-novo-pedido, restaura z-index e volta para modal-editar
+  const mnp=document.getElementById('modal-novo-pedido');
+  mnp.style.display='none';
+  mnp.style.zIndex='490'; // restaura z-index original
   document.getElementById('np-modal-titulo').textContent='＋ Novo Pedido';
   renderEditCarrinho();
-  // Garante que modal-editar continue visível
   document.getElementById('modal-editar').style.display='block';
   document.body.style.overflow='hidden';
 }
@@ -3801,7 +3802,9 @@ function abrirModal(id){
 
 function fecharModal(){
   document.getElementById('modal-editar').style.display='none';
-  document.getElementById('modal-novo-pedido').style.display='none';
+  const mnp=document.getElementById('modal-novo-pedido');
+  mnp.style.display='none';
+  mnp.style.zIndex='490';
   document.body.style.overflow='';
   editId=null; carrinhoEdit=[]; _editCarrinhoBackup=[]; _modoEdicao=false;
 }
