@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.2 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.3 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -1347,7 +1347,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- MODAL CARDÁPIO DE EDIÇÃO: reutiliza modal-novo-pedido via flag -->
+<!-- MODAL CARDÁPIO DE EDIÇÃO -->
+<div id="modal-edit-card" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.8);overflow-y:auto;padding:.75rem">
+  <div style="background:var(--card);border-radius:16px;border:1px solid var(--borda);width:100%;max-width:600px;margin:0 auto;box-shadow:var(--sombra)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--borda);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0">
+      <span style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">🎂 Cardápio — adicionar item</span>
+      <button onclick="editCardFechar()" style="background:none;border:none;color:var(--texto-sec);font-size:1.3rem;cursor:pointer;padding:.2rem .5rem">✕</button>
+    </div>
+    <div style="padding:1rem">
+      <!-- Carrinho de edição resumido -->
+      <div id="edit-card-carr" style="background:var(--bg2);border-radius:10px;border:1px solid var(--borda);margin-bottom:1rem;min-height:40px;max-height:140px;overflow-y:auto"></div>
+      <!-- Abas do cardápio -->
+      <div id="edit-card-tabs" style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1rem"></div>
+      <!-- Conteúdo do cardápio -->
+      <div id="edit-card-content"></div>
+      <!-- Botão confirmar -->
+      <button onclick="editCardFechar()" style="width:100%;margin-top:1rem;padding:.85rem;border-radius:10px;border:none;background:linear-gradient(135deg,var(--rosa),#e891b8);color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer">
+        ✓ Confirmar itens e voltar
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL CONFIRMAÇÃO WHATSAPP -->
 <div id="modal-wpp" style="display:none;position:fixed;inset:0;z-index:600;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);padding:1rem">
@@ -2163,10 +2183,6 @@ function abrirModalNovoPedido(){
 }
 
 function fecharModalNovoPedido(){
-  if(_modoEdicao){
-    editFecharCardapio();
-    return;
-  }
   const mnp=document.getElementById('modal-novo-pedido');
   mnp.style.display='none';
   mnp.style.zIndex='490';
@@ -3700,7 +3716,8 @@ let _editCarrinhoBackup=[];
 
 function editCarrAdd(nome,detalhe,preco){
   carrinhoEdit.push({id:Date.now()+Math.random(),nome,detalhe,preco});
-  renderEditCarrinho();
+  editCardRenderCarr();
+  editAtualizarTotal();
   notif(nome.split(' ').slice(0,3).join(' ')+' adicionado ✓');
 }
 
@@ -3736,35 +3753,73 @@ function editAtualizarTotal(){
 }
 
 function editAbrirCardapio(){
-  // Salva carrinho do novo pedido e carrega itens do pedido em edição
-  _editCarrinhoBackup=[...carrinho];
-  carrinho=[...carrinhoEdit];
   _modoEdicao=true;
-  // Abre modal-novo-pedido acima do modal-editar (z-index maior)
-  const modal=document.getElementById('modal-novo-pedido');
-  modal.style.zIndex='520'; // acima do modal-editar (500)
-  document.getElementById('np-modal-titulo').textContent='🎂 Adicionar / Alterar itens';
+
+  // Copia tabs
+  const srcTabs=document.getElementById('np-tabs');
+  const tabsEl=document.getElementById('edit-card-tabs');
+  if(srcTabs&&tabsEl){
+    tabsEl.innerHTML=srcTabs.innerHTML
+      .replace(/onclick="npTab\('(\w+)',this\)"/g, "onclick=\"editCardTab('$1',this)\"");
+  }
+
+  // Copia conteúdo do cardápio
+  const srcContent=document.getElementById('np-cardapio-content');
+  const contentEl=document.getElementById('edit-card-content');
+  if(srcContent&&contentEl){
+    contentEl.innerHTML=srcContent.innerHTML;
+    // Limpa seleções anteriores
+    contentEl.querySelectorAll('.np-opt.selected,.np-multi.selected').forEach(e=>e.classList.remove('selected'));
+    // Ativa primeira aba
+    contentEl.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+    contentEl.querySelector('.np-tab-content')?.classList.add('active');
+  }
+
+  // Ativa primeira aba no nav
+  tabsEl?.querySelectorAll('.np-tab').forEach((t,i)=>{t.classList.toggle('active',i===0)});
+
+  editCardRenderCarr();
+
+  const modal=document.getElementById('modal-edit-card');
   modal.style.display='block';
   document.body.style.overflow='hidden';
   modal.scrollTop=0;
-  renderCarrinho();
-  renderUnitCardapio();
+}
+
+function editCardTab(id,el){
+  // Navega entre abas dentro do modal de edição
+  document.getElementById('edit-card-tabs').querySelectorAll('.np-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const content=document.getElementById('edit-card-content');
+  content.querySelectorAll('.np-tab-content').forEach(t=>t.classList.remove('active'));
+  content.querySelector('#np-'+id)?.classList.add('active');
+}
+
+function editCardRenderCarr(){
+  const cont=document.getElementById('edit-card-carr');
+  if(!cont) return;
+  if(!carrinhoEdit.length){
+    cont.innerHTML='<div style="padding:.6rem 1rem;font-size:.78rem;color:var(--texto-dim)">Nenhum item ainda</div>';
+    return;
+  }
+  cont.innerHTML=carrinhoEdit.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-bottom:1px solid var(--borda)">
+      <div style="flex:1;font-size:.82rem;color:var(--texto);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${normP(item.nome)}</div>
+      <div style="font-size:.8rem;color:var(--rosa);flex-shrink:0">${item.preco>0?fmtBRL(item.preco):'—'}</div>
+      <button onclick="carrinhoEdit.splice(${i},1);editCardRenderCarr();editAtualizarTotal()" style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:.82rem;padding:.1rem .3rem;flex-shrink:0">✕</button>
+    </div>`).join('');
 }
 
 function editFecharCardapio(){
-  // Transfere o carrinho de volta para carrinhoEdit
-  carrinhoEdit=[...carrinho];
-  // Restaura carrinho original do novo pedido
-  carrinho=[..._editCarrinhoBackup];
   _modoEdicao=false;
-  // Fecha modal-novo-pedido, restaura z-index e volta para modal-editar
-  const mnp=document.getElementById('modal-novo-pedido');
-  mnp.style.display='none';
-  mnp.style.zIndex='490'; // restaura z-index original
-  document.getElementById('np-modal-titulo').textContent='＋ Novo Pedido';
+  document.getElementById('modal-edit-card').style.display='none';
   renderEditCarrinho();
   document.getElementById('modal-editar').style.display='block';
   document.body.style.overflow='hidden';
+}
+
+function editCardFechar(){
+  editFecharCardapio();
 }
 
 
@@ -3811,9 +3866,7 @@ function abrirModal(id){
 
 function fecharModal(){
   document.getElementById('modal-editar').style.display='none';
-  const mnp=document.getElementById('modal-novo-pedido');
-  mnp.style.display='none';
-  mnp.style.zIndex='490';
+  document.getElementById('modal-edit-card').style.display='none';
   document.body.style.overflow='';
   editId=null; carrinhoEdit=[]; _editCarrinhoBackup=[]; _modoEdicao=false;
 }
@@ -3835,6 +3888,11 @@ function salvarEdicao(){
   const pedidos=getData('pedidos');
   const idx=pedidos.findIndex(p=>p.id==editId);
   if(idx<0) return;
+
+  // Se carrinho vazio, mantém itens e valor originais
+  const itensFinais=carrinhoEdit.length>0?[...carrinhoEdit]:pedidos[idx].itens||[];
+  const valorFinal=total>0?total:pedidos[idx].valor;
+
   pedidos[idx]={
     ...pedidos[idx],
     data, hora:document.getElementById('edit-hora').value||'',
@@ -3842,8 +3900,9 @@ function salvarEdicao(){
     cliente, status:document.getElementById('edit-status').value,
     canal:document.getElementById('edit-canal').value,
     obs:document.getElementById('edit-obs').value.trim(),
-    valor:total, valorRecebido:valorRecebido!==undefined?valorRecebido:pedidos[idx].valorRecebido,
-    itens:[...carrinhoEdit], produtos:carrinhoEdit.map(i=>i.nome),
+    valor:valorFinal,
+    valorRecebido:valorRecebido!==undefined?valorRecebido:pedidos[idx].valorRecebido,
+    itens:itensFinais, produtos:itensFinais.map(i=>i.nome),
     extra:{desc:extraDesc,val:extraV}, desconto:dv, descontoTipo:dt,
   };
   setData('pedidos',pedidos);
@@ -3856,6 +3915,7 @@ function salvarEdicao(){
 
 // Fechar modal clicando fora
 document.getElementById('modal-editar').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+document.getElementById('modal-edit-card').addEventListener('click',function(e){if(e.target===this)editCardFechar()});
 
 if(sessionStorage.getItem('ls_logado')){
   document.getElementById('login-screen').style.display='none';
