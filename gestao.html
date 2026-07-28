@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.3 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.4 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -2190,6 +2190,22 @@ function fecharModalNovoPedido(){
 }
 
 
+
+// ===== NUMERAÇÃO DE PEDIDOS / ORÇAMENTOS =====
+let _orcNumeroParaPedido=null;
+function proximoNumero(){
+  // Pega o maior número já usado entre pedidos e orçamentos
+  const pedidos = getData('pedidos');
+  const orcs = getData('orcamentos');
+  const nums = [
+    ...pedidos.map(p=>p.numero||0),
+    ...orcs.map(o=>o.numero||0)
+  ];
+  return nums.length ? Math.max(...nums)+1 : 1;
+}
+function fmtNumPedido(n){ return '#'+String(n).padStart(4,'0'); }
+function fmtNumOrc(n){ return '#ORC'+String(n).padStart(3,'0'); }
+
 function salvarPedido(){
   const data=document.getElementById('ped-data').value;
   const cliente=document.getElementById('ped-cliente').value.trim();
@@ -2204,7 +2220,8 @@ function salvarPedido(){
   if(!carrinho.length){notif('Adicione ao menos um produto ao carrinho','error');return}
   const{total}=calcTotais();
   const produtosNomes=carrinho.map(i=>i.nome.replace(/^[^\w\s]+\s/,''));
-  const novoPedido={id:Date.now(),data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}};
+  const _numPed=_orcNumeroParaPedido||proximoNumero(); _orcNumeroParaPedido=null;
+  const novoPedido={id:Date.now(),numero:_numPed,data,hora,local,cliente,valor:total,status,canal,obs,produtos:produtosNomes,itens:carrinho.map(i=>({nome:i.nome,detalhe:i.detalhe,preco:i.preco})),extra:{desc:extraDesc,val:extraV}};
   const pedidos=getData('pedidos');
   pedidos.push(novoPedido);
   setData('pedidos',pedidos);
@@ -2608,7 +2625,8 @@ function salvarOrcamento(){
     const idx = orcs.findIndex(o=>o.id==orcEditId);
     if(idx>=0) orcs[idx]={...orcs[idx],cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,updatedAt:Date.now()};
   } else {
-    orcs.push({id:Date.now(),cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,createdAt:Date.now(),status:'pendente'});
+    const _numOrc=proximoNumero();
+    orcs.push({id:Date.now(),numero:_numOrc,cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,createdAt:Date.now(),status:'pendente'});
   }
   setData('orcamentos',orcs);
   fecharModalOrcamento();
@@ -2633,7 +2651,7 @@ function renderOrcamentos(){
     html+=`<div style="background:var(--card);border-radius:14px;border:1px solid var(--borda);overflow:hidden">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:.85rem 1rem;background:var(--bg2);border-bottom:1px solid var(--borda)">
         <div style="flex:1;min-width:0">
-          <div style="font-size:.95rem;font-weight:600;color:var(--texto)">${orc.cliente}</div>
+          <div style="font-size:.95rem;font-weight:600;color:var(--texto)">${orc.numero?`<span style="font-size:.75rem;color:var(--roxo);font-weight:500;margin-right:.4rem">${fmtNumOrc(orc.numero)}</span>`:''}${orc.cliente}</div>
           <div style="font-size:.75rem;color:var(--texto-sec);margin-top:.1rem">📅 ${dt}</div>
           ${orc.obs?`<div style="font-size:.73rem;color:var(--texto-dim);margin-top:.1rem">📝 ${orc.obs}</div>`:''}
         </div>
@@ -2694,6 +2712,7 @@ function orcConverterPedidoSalvo(id){
   const orc=getData('orcamentos').find(o=>o.id==id);
   if(!orc)return;
   carrinho=(orc.itens||[]).map(i=>({...i, id:Date.now()+Math.random()}));
+  _orcNumeroParaPedido=orc.numero||null; // preserva numero do orçamento
   _modoOrcamento = false;
   abrirModalNovoPedido();
   // Preenche campos após modal estar visível
@@ -2812,7 +2831,7 @@ function renderDashUrgentes(){
         ${p.hora?`<span style="font-size:.72rem;color:${cor};font-weight:600">${p.hora}</span>`:''}
       </div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.9rem;font-weight:600;color:var(--texto)">${p.cliente}</div>
+        <div style="font-size:.9rem;font-weight:600;color:var(--texto)">${p.numero?'<span style="font-size:.75rem;color:var(--rosa);font-weight:500;margin-right:.4rem">'+fmtNumPedido(p.numero)+'</span>':''}${p.cliente}</div>
         <div style="font-size:.75rem;color:var(--texto-sec);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${itensStr}</div>
       </div>
       <div style="font-family:'Playfair Display',serif;font-size:.95rem;color:${cor};flex-shrink:0">${valoresOcultos?'••••':fmtBRL(p.valor)}</div>
@@ -3484,10 +3503,11 @@ function abrirConfirmacao(id){
     else if(obsLower.includes('entrega')) local = 'Entrega';
   }
 
+  const numStr=p.numero?fmtNumPedido(p.numero):'';
   const texto =
 `Olá, ${p.cliente}! 😊
 
-Segue a confirmação da sua encomenda:
+Segue a confirmação da sua encomenda:${numStr?'\n📋 Pedido '+numStr:''}
 
 * Produto: ${linhasProduto}
 * Data de entrega: ${dt}
@@ -3856,7 +3876,8 @@ function abrirModal(id){
   const headerInfo=document.getElementById('edit-header-info');
   if(headerInfo){
     const dtFmt=p.data?new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
-    headerInfo.textContent=`${p.cliente}${dtFmt?' · '+dtFmt:''}${p.hora?' · '+p.hora:''}`;
+    const numStr=p.numero?fmtNumPedido(p.numero)+' · ':'';
+    headerInfo.textContent=`${numStr}${p.cliente}${dtFmt?' · '+dtFmt:''}${p.hora?' · '+p.hora:''}`;
   }
   const modal=document.getElementById('modal-editar');
   modal.style.display='block';
