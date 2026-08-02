@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.0 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.1 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -339,6 +339,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <a data-page="pedidos" onclick="showPage('pedidos')"><span class="icon">♡</span> Pedidos</a>
       <a data-page="despesas" onclick="showPage('despesas')"><span class="icon">⊟</span> Despesas</a>
       <a data-page="relatorios" onclick="showPage('relatorios')"><span class="icon">◎</span> Relatórios</a>
+      <a data-page="logs" onclick="showPage('logs')"><span class="icon">🕐</span> Logs</a>
     </nav>
     <div class="sidebar-footer">
       <button id="pwa-install-btn" onclick="instalarPWA()" style="display:none;align-items:center;gap:.5rem;cursor:pointer;color:var(--rosa);background:var(--rosa-glow);border:1px solid rgba(232,145,184,.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;width:100%;margin-bottom:.6rem">
@@ -623,6 +624,31 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="table-head"><h2>Detalhamento mês a mês</h2></div>
           <div id="comp-tabela" style="overflow-x:auto"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="page" id="page-logs">
+      <div class="page-header">
+        <div><h1>Logs do Sistema</h1><p>Histórico de todas as ações</p></div>
+        <button onclick="limparLogs()" style="padding:.5rem 1rem;border-radius:10px;border:1px solid var(--borda);background:none;color:var(--texto-dim);font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer">🗑 Limpar logs</button>
+      </div>
+      <!-- Filtros -->
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <select id="log-filtro-tipo" onchange="renderLogs()" style="padding:.45rem .7rem;font-size:.8rem;border-radius:9px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+          <option value="todos">Todos os eventos</option>
+          <option value="pedido">➕ Novos pedidos</option>
+          <option value="status">🔄 Mudança de status</option>
+          <option value="edicao">✏️ Edições</option>
+          <option value="recebimento">💰 Recebimentos</option>
+          <option value="exclusao">🗑 Exclusões</option>
+          <option value="orcamento">📋 Orçamentos</option>
+          <option value="despesa">⊟ Despesas</option>
+        </select>
+        <input type="month" id="log-filtro-mes" onchange="renderLogs()" style="padding:.45rem .7rem;font-size:.8rem;border-radius:9px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+      </div>
+      <div class="table-card" id="lista-logs">
+        <div class="empty">Carregando logs...</div>
       </div>
     </div>
 
@@ -1503,6 +1529,7 @@ function showPage(id){
   if(id==='despesas')renderDespesas();
   if(id==='produtos')renderProdutos();
   if(id==='relatorios')initRelatorios();
+  if(id==='logs')renderLogs();
   if(window.innerWidth<=768)toggleMenu();
 }
 function toggleMenu(){
@@ -2261,6 +2288,7 @@ function salvarPedido(){
   const pedidos=getData('pedidos');
   pedidos.push(novoPedido);
   setData('pedidos',pedidos);
+  addLog('pedido',`Novo pedido — ${novoPedido.cliente}`,`${fmtNumPedido(novoPedido.numero)||''} · ${fmtBRL(novoPedido.valor)} · ${novoPedido.data}`);
   carrinho=[];
   renderCarrinho();
   document.getElementById('extra-desc').value='';
@@ -2278,6 +2306,8 @@ function salvarPedido(){
 }
 function deletePedido(id){
   if(!confirm('Remover este pedido?'))return;
+  const _pd=getData('pedidos').find(p=>p.id==id);
+  if(_pd) addLog('exclusao',`Pedido excluído — ${_pd.cliente}`,`${_pd.numero?fmtNumPedido(_pd.numero):''} · ${fmtBRL(_pd.valor)}`);
   setData('pedidos',getData('pedidos').filter(p=>p.id!==id));
   renderPedidos();
 }
@@ -2285,12 +2315,14 @@ function alterarStatus(id, novoStatus){
   const pedidos=getData('pedidos');
   const idx=pedidos.findIndex(p=>p.id==id);
   if(idx<0)return;
+  const statusAnt=pedidos[idx].status;
   pedidos[idx].status=novoStatus;
   setData('pedidos',pedidos);
+  const labels={agendado:'Agendado 📅',entregue:'Entregue ✅'};
+  addLog('status',`Status alterado — ${pedidos[idx].cliente}`,`${labels[statusAnt]||statusAnt} → ${labels[novoStatus]||novoStatus} · ${pedidos[idx].numero?fmtNumPedido(pedidos[idx].numero):''}`);
   renderPedidos();
   if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
   if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
-  const labels={agendado:'Agendado 📅',entregue:'Entregue ✅'};
   notif('Status: '+labels[novoStatus]);
   // Abre recebimento ao marcar como entregue
   if(novoStatus==='entregue'){
@@ -2422,6 +2454,72 @@ function renderPedidos(){
     </div>`;
   });
   el.innerHTML=html;
+}
+
+// ========== SISTEMA DE LOGS ==========
+const LOG_ICONES={
+  pedido:'➕',status:'🔄',edicao:'✏️',recebimento:'💰',
+  exclusao:'🗑',orcamento:'📋',despesa:'⊟',conversao:'🔁'
+};
+const LOG_CORES={
+  pedido:'var(--rosa)',status:'var(--azul)',edicao:'var(--amarelo)',
+  recebimento:'var(--verde)',exclusao:'var(--vermelho)',
+  orcamento:'var(--roxo)',despesa:'var(--texto-sec)',conversao:'var(--azul)'
+};
+
+function addLog(tipo, descricao, detalhe=''){
+  const logs=getData('logs_audit');
+  logs.unshift({
+    id:Date.now(),
+    tipo,
+    descricao,
+    detalhe,
+    ts:new Date().toISOString()
+  });
+  // Mantém máximo 500 logs
+  setData('logs_audit', logs.slice(0,500));
+}
+
+function renderLogs(){
+  const tipo=document.getElementById('log-filtro-tipo')?.value||'todos';
+  const mes=document.getElementById('log-filtro-mes')?.value||'';
+  let logs=getData('logs_audit');
+
+  if(tipo!=='todos') logs=logs.filter(l=>l.tipo===tipo);
+  if(mes) logs=logs.filter(l=>l.ts.startsWith(mes));
+
+  const cont=document.getElementById('lista-logs');
+  if(!cont) return;
+  if(!logs.length){
+    cont.innerHTML='<div class="empty">Nenhum log encontrado</div>';
+    return;
+  }
+
+  cont.innerHTML=logs.map(l=>{
+    const dt=new Date(l.ts);
+    const dataFmt=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const hora=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const cor=LOG_CORES[l.tipo]||'var(--texto-dim)';
+    const icon=LOG_ICONES[l.tipo]||'•';
+    return `<div style="display:flex;gap:.75rem;padding:.75rem 1.1rem;border-bottom:1px solid var(--borda);align-items:flex-start">
+      <div style="flex-shrink:0;text-align:center;min-width:42px">
+        <div style="font-size:.7rem;color:var(--texto-dim)">${dataFmt}</div>
+        <div style="font-size:.68rem;color:var(--texto-dim)">${hora}</div>
+      </div>
+      <div style="width:28px;height:28px;border-radius:8px;background:${cor}18;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:500;color:var(--texto)">${l.descricao}</div>
+        ${l.detalhe?`<div style="font-size:.73rem;color:var(--texto-dim);margin-top:.15rem">${l.detalhe}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function limparLogs(){
+  if(!confirm('Limpar todos os logs? Esta ação não pode ser desfeita.')) return;
+  setData('logs_audit',[]);
+  renderLogs();
+  notif('Logs apagados');
 }
 
 // ========== OCULTAR VALORES ==========
@@ -2666,6 +2764,7 @@ function orcConverterPedido(){
   const obs = document.getElementById('orc-obs').value.trim();
   carrinho = carrinhoOrc.map(i=>({...i, id:Date.now()+Math.random()}));
   fecharModalOrcamento();
+  if(orc) addLog('conversao',`Orçamento convertido — ${orc.cliente}`,`${fmtNumOrc(orc.numero||0)} → pedido · ${fmtBRL(orc.total)}`);
   abrirModalNovoPedido();
   requestAnimationFrame(()=>{
     setTimeout(()=>{
@@ -2695,7 +2794,9 @@ function salvarOrcamento(){
     if(idx>=0) orcs[idx]={...orcs[idx],cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,updatedAt:Date.now()};
   } else {
     const _numOrc=proximoNumero();
-    orcs.push({id:Date.now(),numero:_numOrc,cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,createdAt:Date.now(),status:'pendente'});
+    const _novoOrc={id:Date.now(),numero:_numOrc,cliente,data,obs,itens:[...carrinhoOrc],adicionais:[...adicionaisOrc],total,createdAt:Date.now(),status:'pendente'};
+    orcs.push(_novoOrc);
+    addLog('orcamento',`Orçamento criado — ${cliente}`,`${fmtNumOrc(_numOrc)} · ${fmtBRL(total)}`);
   }
   setData('orcamentos',orcs);
   fecharModalOrcamento();
@@ -3142,13 +3243,8 @@ function renderDashboard(){
   // Pedidos entregues = soma o valorRecebido (ou valor total se for pedido antigo sem controle)
   const pedMes=pedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
   const despMes=despesas.filter(d=>d.data.startsWith(mes));
-  const fat=pedMes.reduce((s,p)=>{
-    if(p.valorRecebido!=null && p.valorRecebido>0) return s+p.valorRecebido;
-    // Pedidos antigos (sem controle de recebimento) e já entregues: usa valor total
-    if(p.valorRecebido==null && p.status==='entregue') return s+p.valor;
-    // Agendados sem recebimento = não conta
-    return s;
-  },0);
+  // Faturamento = valorRecebido efetivamente recebido (zero se não registrado)
+  const fat=pedMes.reduce((s,p)=>s+(p.valorRecebido||0),0);
   const fatTotal=pedMes.reduce((s,p)=>s+p.valor,0);
   const desp=despMes.reduce((s,d)=>s+d.valor,0);
   const lucro=fat-desp;
@@ -3164,7 +3260,7 @@ function renderDashboard(){
   const despAnt=despesas.filter(d=>d.data.startsWith(mesAnt));
 
   // Recebido mês anterior: se tem valorRecebido usa ele, senão usa valor total do pedido
-  const fatAnt=pedAnt.reduce((s,p)=>s+(p.valorRecebido!=null?p.valorRecebido:p.valor),0);
+  const fatAnt=pedAnt.reduce((s,p)=>s+(p.valorRecebido||0),0);
   const fatTotalAnt=pedAnt.reduce((s,p)=>s+p.valor,0);
   const despAntV=despAnt.reduce((s,d)=>s+d.valor,0);
   const lucroAnt=fatAnt-despAntV;
@@ -4138,6 +4234,7 @@ function salvarEdicao(){
     extra:{desc:extraDesc,val:extraV}, desconto:dv, descontoTipo:dt,
   };
   setData('pedidos',pedidos);
+  addLog('edicao',`Pedido editado — ${pedidos[idx].cliente}`,`${pedidos[idx].numero?fmtNumPedido(pedidos[idx].numero):''} · ${fmtBRL(valorFinal)}`);
   fecharModal();
   renderPedidos();
   if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
