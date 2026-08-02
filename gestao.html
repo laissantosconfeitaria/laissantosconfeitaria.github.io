@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.7 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.8 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -2368,7 +2368,11 @@ function renderPedidos(){
     if(!aFut&&!bFut) return b.data.localeCompare(a.data);
     return aFut?-1:1;
   });
-  if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
+  if(!pedidos.length){
+    const msg=statusFiltro==='agendado'?'Nenhum pedido agendado':statusFiltro==='entregue'?'Nenhum pedido entregue neste mês':'Nenhum pedido neste mês';
+    document.getElementById('tabela-pedidos').innerHTML=`<div class="empty">${msg}</div>`;
+    return;
+  }
 
   const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
   const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍','google-rec':'🔄',outro:'📌'};
@@ -2377,7 +2381,7 @@ function renderPedidos(){
   let html='';
   pedidos.forEach(p=>{
     const dt=new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'});
-    const prods=p.produtos.length?p.produtos.slice(0,3).map(normP).join(', ')+(p.produtos.length>3?' +mais':''):'—';
+    const prods=(p.produtos||[]).length?(p.produtos||[]).slice(0,3).map(normP).join(', ')+((p.produtos||[]).length>3?' +mais':''):'—';
     const protegido = p.status==='entregue'||p.status==='cancelado';
 
     // Destaque visual para hoje e amanhã
@@ -2403,7 +2407,7 @@ function renderPedidos(){
         <span style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rosa)">${fmtBRL(p.valor)}</span>
       </div>
       <div style="margin-bottom:.65rem">
-        <div style="font-size:.95rem;font-weight:500;color:var(--texto)">${p.cliente}</div>
+        <div style="font-size:.95rem;font-weight:500;color:var(--texto)">${p.numero?`<span style="font-size:.72rem;color:var(--rosa);font-weight:500;margin-right:.3rem">${fmtNumPedido(p.numero)}</span>`:''}${p.cliente}</div>
         ${p.itens && p.itens.length
           ? `<div style="background:var(--bg2);border-radius:8px;padding:.5rem .7rem;margin-top:.4rem">
               ${p.itens.map(i=>`<div style="padding:.25rem 0;border-bottom:1px solid var(--borda)">
