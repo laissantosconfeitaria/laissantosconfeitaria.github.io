@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.8 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.9 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -486,7 +486,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div style="flex:1;min-width:0">
             <div style="font-size:.85rem;font-weight:500;color:var(--vermelho)" id="alerta-agendados-titulo">Pedidos não finalizados</div>
             <div style="font-size:.73rem;color:var(--texto-sec);margin-top:.2rem;line-height:1.5" id="alerta-agendados-lista"></div>
-            <button onclick="document.getElementById('filtro-status-ped').value='agendado';renderPedidos();this.closest('[id]').style.display='none'" 
+            <button onclick="document.getElementById('filtro-status-ped').value='agendado';renderPedidos();document.getElementById('alerta-agendados-passados').style.display='none'" 
               style="margin-top:.5rem;padding:.35rem .85rem;border-radius:8px;border:1px solid rgba(240,96,96,.3);background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.75rem;font-family:'DM Sans',sans-serif">
               Ver agendados e atualizar status
             </button>
@@ -3403,7 +3403,7 @@ function renderComparativo(){
 
   // Calcula métricas por mês
   const dados=meses.map(mes=>{
-    const peds=allPedidos.filter(p=>p.data.startsWith(mes)&&p.status==='entregue');
+    const peds=allPedidos.filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
     const desps=allDesp.filter(d=>d.data.startsWith(mes));
     const fat=peds.reduce((s,p)=>s+p.valor,0);
     const desp=desps.reduce((s,d)=>s+d.valor,0);
@@ -3424,7 +3424,7 @@ function renderComparativo(){
     <div class="card-stat"><div class="label">Fat. total período</div><div class="value green">${fmtBRL(totalFat)}</div><div class="sub">${meses.length} meses</div></div>
     <div class="card-stat"><div class="label">Despesas período</div><div class="value red">${fmtBRL(totalDesp)}</div></div>
     <div class="card-stat"><div class="label">Lucro período</div><div class="value ${totalLiq>=0?'green':'red'}">${fmtBRL(totalLiq)}</div></div>
-    <div class="card-stat"><div class="label">Pedidos entregues</div><div class="value">${totalQtd}</div></div>
+    <div class="card-stat"><div class="label">Pedidos no mês</div><div class="value">${totalQtd}</div></div>
     <div class="card-stat"><div class="label">Melhor mês</div><div class="value blue">${melhorMes?.label||'—'}</div><div class="sub">${fmtBRL(melhorMes?.fat||0)}</div></div>
   `;
 
