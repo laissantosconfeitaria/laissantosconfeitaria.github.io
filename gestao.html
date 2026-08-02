@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.9 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.0 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -477,23 +477,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
           cursor:pointer;box-shadow:0 3px 14px rgba(232,145,184,.3);
           white-space:nowrap;flex-shrink:0;
         ">＋ Novo pedido</button>
-      </div>
-
-      <!-- ALERTA: pedidos passados ainda agendados -->
-      <div id="alerta-agendados-passados" style="display:none;background:rgba(240,96,96,.1);border:1px solid rgba(240,96,96,.25);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1rem;position:relative;z-index:1">
-        <div style="display:flex;align-items:flex-start;gap:.6rem">
-          <span style="font-size:1rem;flex-shrink:0;margin-top:.1rem">⚠️</span>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.85rem;font-weight:500;color:var(--vermelho)" id="alerta-agendados-titulo">Pedidos não finalizados</div>
-            <div style="font-size:.73rem;color:var(--texto-sec);margin-top:.2rem;line-height:1.5" id="alerta-agendados-lista"></div>
-            <button onclick="document.getElementById('filtro-status-ped').value='agendado';renderPedidos();document.getElementById('alerta-agendados-passados').style.display='none'" 
-              style="margin-top:.5rem;padding:.35rem .85rem;border-radius:8px;border:1px solid rgba(240,96,96,.3);background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.75rem;font-family:'DM Sans',sans-serif">
-              Ver agendados e atualizar status
-            </button>
-          </div>
-          <button onclick="this.closest('#alerta-agendados-passados').style.display='none'" 
-            style="background:none;border:none;color:var(--texto-dim);cursor:pointer;font-size:1rem;padding:.1rem;flex-shrink:0;line-height:1">✕</button>
-        </div>
       </div>
 
       <!-- HISTÓRICO (aparece primeiro) -->
@@ -2317,64 +2300,45 @@ function alterarStatus(id, novoStatus){
 }
 
 function renderPedidos(){
-  const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
+  const mes=document.getElementById('filtro-mes-ped')?.value||mesAtual();
   const hojeStr=hoje();
   const buscaRaw=(document.getElementById('busca-pedido')?.value||'').toLowerCase().trim();
   const statusFiltro=document.getElementById('filtro-status-ped')?.value||'todos';
 
-  // Alerta: pedidos com data ANTERIOR a hoje (ontem ou antes) ainda como Agendado
-  // Exclui pedidos com data futura ou de hoje
-  const ontemStr=dataLocal(new Date(Date.now()-86400000));
-  const pedidosAtrasados=getData('pedidos').filter(p=>
-    p.status==='agendado' && p.data<=ontemStr
-  );
-  const alertDiv=document.getElementById('alerta-agendados-passados');
-  if(alertDiv){
-    if(pedidosAtrasados.length>0){
-      alertDiv.style.display='block';
-      document.getElementById('alerta-agendados-titulo').textContent=
-        `${pedidosAtrasados.length} pedido${pedidosAtrasados.length>1?'s':''} com data passada — verifique se foram entregues`;
-      // Mostra até 5, agrupa os demais
-      const visiveis=pedidosAtrasados.slice(0,5).map(p=>`${p.cliente} (${fmtData(p.data)})`);
-      const extra=pedidosAtrasados.length>5?` e mais ${pedidosAtrasados.length-5}...`:'';
-      document.getElementById('alerta-agendados-lista').innerHTML=
-        visiveis.join('<br>')+extra;
-    } else {
-      alertDiv.style.display='none';
+  // Filtro simples e robusto
+  const todosPedidos=getData('pedidos');
+  const pedidos=todosPedidos.filter(p=>{
+    // Filtro por status
+    if(statusFiltro==='agendado' && p.status!=='agendado') return false;
+    if(statusFiltro==='entregue' && p.status!=='entregue') return false;
+    // Filtro por mês (apenas quando não está filtrando só por agendado)
+    if(statusFiltro!=='agendado' && !p.data.startsWith(mes)) return false;
+    // Busca por nome ou número
+    if(buscaRaw){
+      const numStr=p.numero?String(p.numero).padStart(4,'0'):'';
+      const matchNum=numStr&&numStr.includes(buscaRaw.replace(/[#]/g,'').padStart(1,'0'));
+      const matchNome=(p.cliente||'').toLowerCase().includes(buscaRaw);
+      if(!matchNum&&!matchNome) return false;
     }
-  }
-
-  const todosPed=getData('pedidos').filter(p=>{
-    // Se filtrando por agendado: mostra todos os meses futuros também
-    if(statusFiltro==='agendado'){
-      if(p.status!=='agendado') return false;
-    } else if(statusFiltro==='entregue'){
-      if(!p.data.startsWith(mes)) return false;
-      if(p.status!=='entregue') return false;
-    } else {
-      // "todos": filtra pelo mês selecionado
-      if(!p.data.startsWith(mes)) return false;
-    }
-    if(!buscaRaw) return true;
-    const numStr=p.numero?String(p.numero).padStart(4,'0'):'';
-    return numStr.includes(buscaRaw.replace('#','').replace(/^0+/,'').padStart(1,'0'))||
-           (p.cliente||'').toLowerCase().includes(buscaRaw)||
-           (p.numero?'#'+numStr:'').includes(buscaRaw);
-  });
-  // Ordena: hoje → futuro (asc), passados por último (desc)
-  const pedidos=todosPed.sort((a,b)=>{
+    return true;
+  }).sort((a,b)=>{
+    // Hoje → futuro (ascendente), passados por último (descendente)
     const aFut=a.data>=hojeStr, bFut=b.data>=hojeStr;
     if(aFut&&bFut) return a.data.localeCompare(b.data)||((a.hora||'')>(b.hora||'')?1:-1);
     if(!aFut&&!bFut) return b.data.localeCompare(a.data);
     return aFut?-1:1;
   });
+
+  const el=document.getElementById('tabela-pedidos');
+  if(!el) return;
   if(!pedidos.length){
-    const msg=statusFiltro==='agendado'?'Nenhum pedido agendado':statusFiltro==='entregue'?'Nenhum pedido entregue neste mês':'Nenhum pedido neste mês';
-    document.getElementById('tabela-pedidos').innerHTML=`<div class="empty">${msg}</div>`;
+    const msg=statusFiltro==='agendado'?'Nenhum pedido agendado':
+              statusFiltro==='entregue'?'Nenhum pedido entregue neste mês':
+              'Nenhum pedido neste mês';
+    el.innerHTML=`<div class="empty">${msg}</div>`;
     return;
   }
 
-  const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
   const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍','google-rec':'🔄',outro:'📌'};
   const amanhaStr=dataLocal(new Date(Date.now()+86400000));
 
@@ -2457,7 +2421,7 @@ function renderPedidos(){
       ">📅 + Google Agenda</button>`:''}
     </div>`;
   });
-  document.getElementById('tabela-pedidos').innerHTML=html;
+  el.innerHTML=html;
 }
 
 // ========== OCULTAR VALORES ==========
