@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.1 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.2 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -2939,6 +2939,7 @@ function salvarDespesaRapida(){
   setData('despesas',desp);
   fecharDespesaRapida();
   if(document.getElementById('page-despesas').classList.contains('active'))renderDespesas();
+  addLog('despesa',`Despesa — ${desc}`,`${fmtBRL(valor)} · ${cat}`);
   tocar('despesa');
   notif('Despesa registrada ✓');
 }
@@ -3158,6 +3159,7 @@ function confirmarRecebimento(){
   if(!pedidos[idx].recebimentos) pedidos[idx].recebimentos=[];
   if(val>0) pedidos[idx].recebimentos.push({data:hoje(),valor:val,tipo:_recContexto});
   setData('pedidos',pedidos);
+  if(val>0) addLog('recebimento',`Recebimento — ${pedidos[idx].cliente}`,`${fmtBRL(val)} · ${_recContexto==='entrega'?'na entrega':'na confirmação'}${pedidos[idx].numero?' · '+fmtNumPedido(pedidos[idx].numero):''}`);
   fecharModalRecebimento();
   renderPedidos();renderDashboard();
   if(val>0) notif(fmtBRL(val)+' registrado ✓');
@@ -3184,6 +3186,7 @@ function salvarDespesa(){
   setData('despesas',desp);
   ['desp-data','desp-desc','desp-valor','desp-forn','desp-obs'].forEach(id=>document.getElementById(id).value='');
   renderDespesas();
+  addLog('despesa',`Despesa — ${desc}`,`${fmtBRL(valor)} · ${cat}${forn?' · '+forn:''}`);
   tocar('despesa');
   notif('Despesa registrada');
 }
