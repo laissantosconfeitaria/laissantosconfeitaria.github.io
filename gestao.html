@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.5 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.6 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -479,16 +479,33 @@ tr:hover td{background:rgba(255,255,255,.02)}
         ">＋ Novo pedido</button>
       </div>
 
+      <!-- ALERTA: pedidos passados ainda agendados -->
+      <div id="alerta-agendados-passados" style="display:none;background:rgba(240,96,96,.1);border:1px solid rgba(240,96,96,.25);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1rem">
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+          <span style="font-size:1rem">⚠️</span>
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:.85rem;font-weight:500;color:var(--vermelho)" id="alerta-agendados-titulo">Pedidos não finalizados</div>
+            <div style="font-size:.75rem;color:var(--texto-sec);margin-top:.2rem" id="alerta-agendados-lista"></div>
+          </div>
+          <button onclick="document.getElementById('filtro-status-ped').value='agendado';renderPedidos()" style="padding:.4rem .85rem;border-radius:8px;border:1px solid rgba(240,96,96,.3);background:rgba(240,96,96,.1);color:var(--vermelho);cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;white-space:nowrap">Ver agendados</button>
+        </div>
+      </div>
+
       <!-- HISTÓRICO (aparece primeiro) -->
       <div class="table-card">
         <div class="table-head">
           <h2>Histórico de pedidos</h2>
-          <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
             <div style="position:relative">
               <span style="position:absolute;left:.6rem;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:.85rem;pointer-events:none">🔍</span>
               <input type="text" id="busca-pedido" placeholder="#0001 ou nome..." onkeyup="renderPedidos()"
-                style="padding:.4rem .6rem .4rem 2rem;font-size:.78rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);width:150px;font-family:'DM Sans',sans-serif">
+                style="padding:.4rem .6rem .4rem 2rem;font-size:.78rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);width:140px;font-family:'DM Sans',sans-serif">
             </div>
+            <select id="filtro-status-ped" onchange="renderPedidos()" style="padding:.4rem .6rem;font-size:.78rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+              <option value="todos">Todos</option>
+              <option value="agendado">📅 Agendados</option>
+              <option value="entregue">✅ Entregues</option>
+            </select>
             <input type="month" id="filtro-mes-ped" style="width:auto;padding:.4rem .6rem" onchange="renderPedidos()">
           </div>
         </div>
@@ -563,6 +580,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="tab active" onclick="setRelTab('diario',this)">Diário</div>
         <div class="tab" onclick="setRelTab('semanal',this)">Semanal</div>
         <div class="tab" onclick="setRelTab('mensal',this)">Mensal</div>
+        <div class="tab" onclick="setRelTab('comparativo',this)">Comparativo</div>
       </div>
       <div id="rel-diario" class="rel-tab">
         <div class="action-bar">
@@ -595,6 +613,28 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="chart-card"><h2>Despesas por categoria</h2><canvas id="chart-mensal-desp" height="120"></canvas></div>
         </div>
         <div class="table-card" id="rel-mensal-top"></div>
+      </div>
+
+      <!-- ABA COMPARATIVO -->
+      <div id="rel-comparativo" class="rel-tab" style="display:none">
+        <div class="action-bar" style="flex-wrap:wrap;gap:.5rem">
+          <label style="margin:0">De:</label>
+          <input type="month" id="comp-inicio" style="width:auto" onchange="renderComparativo()">
+          <label style="margin:0">Até:</label>
+          <input type="month" id="comp-fim" style="width:auto" onchange="renderComparativo()">
+        </div>
+        <!-- Cards resumo do período -->
+        <div class="cards-row" id="comp-cards" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))"></div>
+        <!-- Gráfico de linhas -->
+        <div class="chart-card" style="margin-bottom:1rem">
+          <h2>Evolução mensal</h2>
+          <canvas id="chart-comp-linhas" height="120"></canvas>
+        </div>
+        <!-- Tabela mês a mês -->
+        <div class="table-card">
+          <div class="table-head"><h2>Detalhamento mês a mês</h2></div>
+          <div id="comp-tabela" style="overflow-x:auto"></div>
+        </div>
       </div>
     </div>
 
@@ -2275,21 +2315,40 @@ function renderPedidos(){
   const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
   const hojeStr=hoje();
   const buscaRaw=(document.getElementById('busca-pedido')?.value||'').toLowerCase().trim();
+  const statusFiltro=document.getElementById('filtro-status-ped')?.value||'todos';
+
+  // Alerta: pedidos com data anterior a hoje ainda agendados (qualquer mês)
+  const pedidosAtrasados=getData('pedidos').filter(p=>
+    p.status==='agendado' && p.data<hojeStr
+  );
+  const alertDiv=document.getElementById('alerta-agendados-passados');
+  if(alertDiv){
+    if(pedidosAtrasados.length>0){
+      alertDiv.style.display='block';
+      document.getElementById('alerta-agendados-titulo').textContent=
+        `${pedidosAtrasados.length} pedido${pedidosAtrasados.length>1?'s':''} com data passada ainda como Agendado`;
+      document.getElementById('alerta-agendados-lista').textContent=
+        pedidosAtrasados.slice(0,3).map(p=>`${p.cliente} (${fmtData(p.data)})`).join(' · ')+(pedidosAtrasados.length>3?' e mais...':'');
+    } else {
+      alertDiv.style.display='none';
+    }
+  }
+
   const todosPed=getData('pedidos').filter(p=>{
     if(!p.data.startsWith(mes)) return false;
+    if(statusFiltro!=='todos' && p.status!==statusFiltro) return false;
     if(!buscaRaw) return true;
-    // Busca por número (#0001 ou 1) ou nome do cliente
     const numStr=p.numero?String(p.numero).padStart(4,'0'):'';
     return numStr.includes(buscaRaw.replace('#','').replace(/^0+/,'').padStart(1,'0'))||
            (p.cliente||'').toLowerCase().includes(buscaRaw)||
            (p.numero?'#'+numStr:'').includes(buscaRaw);
   });
-  // Ordena: hoje → amanhã → depois... (ascendente), passados vêm por último desc
+  // Ordena: hoje → futuro (asc), passados por último (desc)
   const pedidos=todosPed.sort((a,b)=>{
     const aFut=a.data>=hojeStr, bFut=b.data>=hojeStr;
     if(aFut&&bFut) return a.data.localeCompare(b.data)||((a.hora||'')>(b.hora||'')?1:-1);
     if(!aFut&&!bFut) return b.data.localeCompare(a.data);
-    return aFut?-1:1; // futuros/hoje primeiro
+    return aFut?-1:1;
   });
   if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
 
@@ -3290,6 +3349,148 @@ function setRelTab(tab,el){
   if(tab==='diario')renderRelDiario();
   if(tab==='semanal')renderRelSemanal();
   if(tab==='mensal')renderRelMensal();
+  if(tab==='comparativo')renderComparativo();
+}
+
+let chartCompLinhas=null;
+function renderComparativo(){
+  // Inicializa período padrão: últimos 6 meses
+  const fimEl=document.getElementById('comp-fim');
+  const iniEl=document.getElementById('comp-inicio');
+  if(!fimEl.value){
+    fimEl.value=mesAtual();
+    const d=new Date();d.setMonth(d.getMonth()-5);
+    iniEl.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+  const ini=iniEl.value;
+  const fim=fimEl.value;
+  if(!ini||!fim||ini>fim){return}
+
+  // Gera lista de meses no período
+  const meses=[];
+  let cur=ini;
+  while(cur<=fim){
+    meses.push(cur);
+    const [y,m]=cur.split('-').map(Number);
+    const next=new Date(y,m,1);
+    cur=`${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  const allPedidos=getData('pedidos');
+  const allDesp=getData('despesas');
+
+  // Calcula métricas por mês
+  const dados=meses.map(mes=>{
+    const peds=allPedidos.filter(p=>p.data.startsWith(mes)&&p.status==='entregue');
+    const desps=allDesp.filter(d=>d.data.startsWith(mes));
+    const fat=peds.reduce((s,p)=>s+p.valor,0);
+    const desp=desps.reduce((s,d)=>s+d.valor,0);
+    const liquido=fat-desp;
+    const qtd=peds.length;
+    const label=new Date(mes+'-15').toLocaleDateString('pt-BR',{month:'short',year:'2-digit'});
+    return {mes,label,fat,desp,liquido,qtd};
+  });
+
+  // Cards resumo do período
+  const totalFat=dados.reduce((s,d)=>s+d.fat,0);
+  const totalDesp=dados.reduce((s,d)=>s+d.desp,0);
+  const totalLiq=totalFat-totalDesp;
+  const totalQtd=dados.reduce((s,d)=>s+d.qtd,0);
+  const melhorMes=dados.reduce((a,b)=>b.fat>a.fat?b:a,dados[0]);
+
+  document.getElementById('comp-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Fat. total período</div><div class="value green">${fmtBRL(totalFat)}</div><div class="sub">${meses.length} meses</div></div>
+    <div class="card-stat"><div class="label">Despesas período</div><div class="value red">${fmtBRL(totalDesp)}</div></div>
+    <div class="card-stat"><div class="label">Lucro período</div><div class="value ${totalLiq>=0?'green':'red'}">${fmtBRL(totalLiq)}</div></div>
+    <div class="card-stat"><div class="label">Pedidos entregues</div><div class="value">${totalQtd}</div></div>
+    <div class="card-stat"><div class="label">Melhor mês</div><div class="value blue">${melhorMes?.label||'—'}</div><div class="sub">${fmtBRL(melhorMes?.fat||0)}</div></div>
+  `;
+
+  // Gráfico de linhas
+  if(chartCompLinhas){chartCompLinhas.destroy();chartCompLinhas=null}
+  const ctx=document.getElementById('chart-comp-linhas').getContext('2d');
+  chartCompLinhas=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:dados.map(d=>d.label),
+      datasets:[
+        {
+          label:'Faturamento bruto',
+          data:dados.map(d=>d.fat),
+          borderColor:'var(--rosa)',
+          backgroundColor:'rgba(232,145,184,.1)',
+          borderWidth:2.5,
+          tension:.35,
+          pointBackgroundColor:'var(--rosa)',
+          pointRadius:4,
+          fill:true,
+        },
+        {
+          label:'Lucro líquido',
+          data:dados.map(d=>d.liquido),
+          borderColor:'var(--verde)',
+          backgroundColor:'rgba(78,203,141,.08)',
+          borderWidth:2.5,
+          tension:.35,
+          pointBackgroundColor:'var(--verde)',
+          pointRadius:4,
+          fill:true,
+        },
+        {
+          label:'Despesas',
+          data:dados.map(d=>d.desp),
+          borderColor:'var(--vermelho)',
+          backgroundColor:'rgba(240,96,96,.05)',
+          borderWidth:2,
+          tension:.35,
+          pointBackgroundColor:'var(--vermelho)',
+          pointRadius:3,
+          borderDash:[4,3],
+          fill:false,
+        },
+      ]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{color:'#8b93a8',font:{family:'DM Sans',size:11}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtBRL(ctx.parsed.y)}`}}
+      },
+      scales:{
+        x:{ticks:{color:'#555e72'},grid:{display:false}},
+        y:{ticks:{color:'#555e72',callback:v=>v>=1000?'R$'+Math.round(v/1000)+'k':'R$'+v},grid:{color:'rgba(255,255,255,.05)'}}
+      }
+    }
+  });
+
+  // Tabela detalhada
+  const rows=dados.map((d,i)=>{
+    const ant=i>0?dados[i-1]:null;
+    const varFat=ant&&ant.fat>0?Math.round(((d.fat-ant.fat)/ant.fat)*100):null;
+    const varSeta=v=>v===null?'':v>=0?`<span style="color:var(--verde);font-size:.72rem">↑${v}%</span>`:`<span style="color:var(--vermelho);font-size:.72rem">↓${Math.abs(v)}%</span>`;
+    return `<tr style="border-bottom:1px solid var(--borda)">
+      <td style="padding:.65rem 1rem;font-size:.85rem;font-weight:500;color:var(--texto);white-space:nowrap">${d.label}</td>
+      <td style="padding:.65rem 1rem;font-size:.85rem;color:var(--rosa);text-align:right">${fmtBRL(d.fat)} ${varSeta(varFat)}</td>
+      <td style="padding:.65rem 1rem;font-size:.85rem;color:var(--vermelho);text-align:right">${fmtBRL(d.desp)}</td>
+      <td style="padding:.65rem 1rem;font-size:.85rem;color:${d.liquido>=0?'var(--verde)':'var(--vermelho)'};text-align:right;font-weight:500">${fmtBRL(d.liquido)}</td>
+      <td style="padding:.65rem 1rem;font-size:.85rem;color:var(--texto-sec);text-align:center">${d.qtd}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('comp-tabela').innerHTML=`
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="border-bottom:2px solid var(--borda)">
+          <th style="padding:.6rem 1rem;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);font-weight:500">Mês</th>
+          <th style="padding:.6rem 1rem;text-align:right;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);font-weight:500">Fat. Bruto</th>
+          <th style="padding:.6rem 1rem;text-align:right;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);font-weight:500">Despesas</th>
+          <th style="padding:.6rem 1rem;text-align:right;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);font-weight:500">Lucro</th>
+          <th style="padding:.6rem 1rem;text-align:center;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--texto-dim);font-weight:500">Pedidos</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 function renderRelDiario(){
   const dia=document.getElementById('rel-dia').value;
