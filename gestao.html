@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.4 · jul/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v7.5 · jul/26</span>
       </div>
     </div>
     <nav>
@@ -483,7 +483,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="table-card">
         <div class="table-head">
           <h2>Histórico de pedidos</h2>
-          <input type="month" id="filtro-mes-ped" style="width:auto;padding:.4rem .6rem" onchange="renderPedidos()">
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <div style="position:relative">
+              <span style="position:absolute;left:.6rem;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:.85rem;pointer-events:none">🔍</span>
+              <input type="text" id="busca-pedido" placeholder="#0001 ou nome..." onkeyup="renderPedidos()"
+                style="padding:.4rem .6rem .4rem 2rem;font-size:.78rem;border-radius:8px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);width:150px;font-family:'DM Sans',sans-serif">
+            </div>
+            <input type="month" id="filtro-mes-ped" style="width:auto;padding:.4rem .6rem" onchange="renderPedidos()">
+          </div>
         </div>
         <div id="tabela-pedidos"></div>
       </div>
@@ -743,7 +750,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
               </div>
             </div>
             <div class="form-row" style="margin-bottom:.75rem">
-              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option></select></div>
+              <div><label>Canal</label><select id="ped-canal"><option value="whatsapp">WhatsApp (já clientes)</option><option value="indicacao">Indicação</option><option value="google">Google</option><option value="google-rec">Google Recorrente</option></select></div>
               <div><label>Status</label><select id="ped-status"><option value="agendado">Agendado</option><option value="entregue">Entregue</option></select></div>
             </div>
             <div><label>Observações gerais do pedido</label><input type="text" id="ped-obs" placeholder="Ex: horário, endereço de entrega, informações gerais..."></div>
@@ -1290,6 +1297,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <option value="whatsapp">WhatsApp (já clientes)</option>
             <option value="indicacao">Indicação</option>
             <option value="google">Google</option>
+            <option value="google-rec">Google Recorrente</option>
           </select>
         </div>
       </div>
@@ -2265,12 +2273,28 @@ function alterarStatus(id, novoStatus){
 
 function renderPedidos(){
   const mes=document.getElementById('filtro-mes-ped').value||mesAtual();
-  const pedidos=getData('pedidos').filter(p=>p.data.startsWith(mes)).sort((a,b)=>b.data.localeCompare(a.data));
+  const hojeStr=hoje();
+  const buscaRaw=(document.getElementById('busca-pedido')?.value||'').toLowerCase().trim();
+  const todosPed=getData('pedidos').filter(p=>{
+    if(!p.data.startsWith(mes)) return false;
+    if(!buscaRaw) return true;
+    // Busca por número (#0001 ou 1) ou nome do cliente
+    const numStr=p.numero?String(p.numero).padStart(4,'0'):'';
+    return numStr.includes(buscaRaw.replace('#','').replace(/^0+/,'').padStart(1,'0'))||
+           (p.cliente||'').toLowerCase().includes(buscaRaw)||
+           (p.numero?'#'+numStr:'').includes(buscaRaw);
+  });
+  // Ordena: hoje → amanhã → depois... (ascendente), passados vêm por último desc
+  const pedidos=todosPed.sort((a,b)=>{
+    const aFut=a.data>=hojeStr, bFut=b.data>=hojeStr;
+    if(aFut&&bFut) return a.data.localeCompare(b.data)||((a.hora||'')>(b.hora||'')?1:-1);
+    if(!aFut&&!bFut) return b.data.localeCompare(a.data);
+    return aFut?-1:1; // futuros/hoje primeiro
+  });
   if(!pedidos.length){document.getElementById('tabela-pedidos').innerHTML='<div class="empty">Nenhum pedido neste mês</div>';return}
 
   const statusLabel={agendado:'Agendado',confirmado:'Confirmado',entregue:'Entregue',pendente:'Pendente',cancelado:'Cancelado'};
-  const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍',outro:'📌'};
-  const hojeStr=dataLocal();
+  const canalIcon={whatsapp:'💬',instagram:'📸',indicacao:'🤝',loja:'🏠',google:'🔍','google-rec':'🔄',outro:'📌'};
   const amanhaStr=dataLocal(new Date(Date.now()+86400000));
 
   let html='';
@@ -2881,11 +2905,11 @@ function renderCanalChart(){
     if(ini&&fim) filtrados=pedidos.filter(p=>p.data>=ini&&p.data<=fim);
   }
 
-  const canais={whatsapp:0,google:0,indicacao:0};
-  let totalFatCanal={whatsapp:0,google:0,indicacao:0};
+  const canais={whatsapp:0,google:0,'google-rec':0,indicacao:0};
+  let totalFatCanal={whatsapp:0,google:0,'google-rec':0,indicacao:0};
   filtrados.forEach(p=>{
-    const c=p.canal||'whatsapp';
-    const key=c.includes('google')?'google':c.includes('indica')?'indicacao':'whatsapp';
+    const ch=p.canal||'whatsapp';
+    const key=ch==='google-rec'?'google-rec':ch.includes('google')?'google':ch.includes('indica')?'indicacao':'whatsapp';
     canais[key]=(canais[key]||0)+1;
     totalFatCanal[key]=(totalFatCanal[key]||0)+p.valor;
   });
@@ -2896,9 +2920,9 @@ function renderCanalChart(){
     return;
   }
 
-  const cores={whatsapp:'#4ecb8d',google:'#5cb8f0',indicacao:'#a78bfa'};
-  const labels={whatsapp:'WhatsApp',google:'Google',indicacao:'Indicação'};
-  const icons={whatsapp:'💬',google:'🔍',indicacao:'🤝'};
+  const cores={whatsapp:'#4ecb8d',google:'#5cb8f0','google-rec':'#f0c040',indicacao:'#a78bfa'};
+  const labels={whatsapp:'WhatsApp',google:'Google Ads','google-rec':'Google Recorrente',indicacao:'Indicação'};
+  const icons={whatsapp:'💬',google:'🔍','google-rec':'🔄',indicacao:'🤝'};
 
   // Gráfico
   if(chartCanal){chartCanal.destroy();chartCanal=null}
