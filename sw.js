@@ -1,4 +1,4 @@
-const CACHE = 'ls-gestao-v59';
+const CACHE = 'ls-gestao-v60';
 const ASSETS = [
   'https://laissantosconfeitaria.github.io/gestao.html',
   'https://laissantosconfeitaria.github.io/icon-192.png',
