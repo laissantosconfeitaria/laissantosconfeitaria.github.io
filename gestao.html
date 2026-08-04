@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.2 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.3 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -3277,32 +3277,39 @@ function renderDashboard(){
 
   // Projeção — regra de 3: total encomendado até hoje ÷ dias passados × dias do mês
   const fatorProj=diaAtual>0?diasNoMes/diaAtual:1;
-  const fatProj=Math.round(fatTotal*fatorProj);   // ex: R$5.239 ÷ 7 × 31 = R$23.201
-  const despProj=Math.round(desp*fatorProj);
-  const lucroProj=fatProj-despProj;               // ex: R$23.201 - R$6.568 = R$16.633
-  const qPedProj=Math.round(qPed*fatorProj); // projeção no ritmo atual
+  const dadosSuficientes=diaAtual>=5; // abaixo de 5 dias dados insuficientes
+
+  // Projeções corretas:
+  // Recebidos: o que já recebeu no ritmo atual × fator
+  const fatProj=dadosSuficientes?Math.round(fat*fatorProj):null;
+  // Despesas: mesma lógica
+  const despProj=dadosSuficientes?Math.round(desp*fatorProj):null;
+  // Lucro: projeção recebidos - projeção despesas
+  const lucroProj=dadosSuficientes&&fatProj!==null&&despProj!==null?fatProj-despProj:null;
+  // Pedidos: entregues no ritmo + agendados já confirmados (garantidos)
+  const qPedProj=dadosSuficientes?Math.round(qEntregue*fatorProj)+qAgendado:qEntregue+qAgendado;
   const ticketProj=ticket;
 
-  // Variação em relação ao mês anterior
+  // Variação em relação ao mês anterior (só se tiver projeção)
   function varPct(proj,ant){
-    if(!ant) return null;
+    if(proj===null||!ant) return null;
     return Math.round(((proj-ant)/ant)*100);
   }
-  function varHtml(pct, label='proj vs mês ant.'){
+  function varHtml(pct, label='vs mês ant.'){
     if(pct===null) return '';
     const cor=pct>=0?'var(--verde)':'var(--vermelho)';
     const seta=pct>=0?'↑':'↓';
     return `<span style="font-size:.72rem;color:${cor};font-weight:500">${seta}${Math.abs(pct)}% ${label}</span>`;
   }
-  function projLabel(proj, ant, sufixo=''){
+  function projHtml(proj, ant, sufixo){
+    if(!dadosSuficientes) return `<div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem;font-style:italic">Projeção disponível a partir do dia 5</div>`;
     const pct=varPct(proj,ant);
     const pctStr=pct!==null?` <span style="color:${pct>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem">(${pct>=0?'↑':'↓'}${Math.abs(pct)}%)</span>`:'';
-    return `<div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
-      Projeção: <span style="color:var(--azul);font-weight:500">${sufixo||maskVal(proj)}</span>${pctStr}
-    </div>`;
+    const val=sufixo||maskVal(proj);
+    return `<div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">Projeção: <span style="color:var(--azul);font-weight:500">${val}</span>${pctStr}</div>`;
   }
+  function projLabel(proj,ant,sufixo=''){return projHtml(proj,ant,sufixo||undefined)}
 
-  // % compara PROJEÇÃO do mês atual vs mês anterior completo
   const vFat=varPct(fatProj,fatAnt);
   const vDesp=varPct(despProj,despAntV);
   const vLucro=varPct(lucroProj,lucroAnt);
@@ -3318,33 +3325,28 @@ function renderDashboard(){
       <div class="label">Recebido no mês</div>
       <div class="value">${maskVal(fat)}</div>
       ${fat<fatTotal?`<div style="font-size:.7rem;color:var(--amarelo);margin-top:.1rem">Total encomendado: ${maskVal(fatTotal)}</div>`:''}
-      <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
-        Projeção: <span style="color:var(--azul);font-weight:500">${maskVal(fatProj)}</span>
-        ${vFat!==null?`<span style="color:${vFat>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vFat>=0?'↑':'↓'}${Math.abs(vFat)}%)</span>`:''}
-      </div>
+      ${projHtml(fatProj,fatAnt)}
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(fatAnt)}</div>
     </div>
     <div class="card-stat">
       <div class="label">Despesas do mês</div>
       <div class="value red">${maskVal(desp)}</div>
-      ${projLabel(despProj,despAntV)}
+      ${projHtml(despProj,despAntV)}
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(despAntV)}</div>
     </div>
     <div class="card-stat">
       <div class="label">Lucro estimado</div>
       <div class="value ${lucro>=0?'green':'red'}">${maskVal(lucro)}</div>
-      <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
-        Projeção: <span style="color:var(--azul);font-weight:500">${maskVal(lucroProj)}</span>
-        ${vLucro!==null?`<span style="color:${vLucro>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vLucro>=0?'↑':'↓'}${Math.abs(vLucro)}%)</span>`:''}
-      </div>
+      ${projHtml(lucroProj,lucroAnt)}
       <div style="font-size:.7rem;color:var(--texto-dim)">Ant: ${maskVal(lucroAnt)}</div>
     </div>
     <div class="card-stat">
       <div class="label">Pedidos no mês</div>
       <div class="value">${qPed}</div>
       <div style="font-size:.72rem;color:var(--texto-dim);margin-top:.25rem">
-        Projeção: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>
-        ${vPed!==null?`<span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem"> (${vPed>=0?'↑':'↓'}${Math.abs(vPed)}% vs mês ant.)</span>`:''}
+        ${dadosSuficientes
+          ?`Projeção: <span style="color:var(--azul);font-weight:500">${qPedProj} pedidos</span>${vPed!==null?` <span style="color:${vPed>=0?'var(--verde)':'var(--vermelho)'};font-size:.68rem">(${vPed>=0?'↑':'↓'}${Math.abs(vPed)}%)</span>`:''}`
+          :`<span style="font-style:italic">Projeção disponível a partir do dia 5</span>`}
       </div>
       <div style="font-size:.7rem;color:var(--texto-dim);margin-top:.2rem">
         <span style="color:var(--verde)">✅ ${qEntregue} entregues</span>
