@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.3 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.4 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -1264,6 +1264,24 @@ tr:hover td{background:rgba(255,255,255,.02)}
         background:linear-gradient(135deg,var(--rosa-dim),var(--rosa));
         color:#fff;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;cursor:pointer;
       ">Salvar despesa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGRADECIMENTO ENTREGA -->
+<div id="modal-agradecimento" style="display:none;position:fixed;inset:0;z-index:570;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1rem">
+  <div style="background:var(--card);border-radius:18px;border:1px solid var(--borda);width:100%;max-width:400px;box-shadow:var(--sombra);overflow:hidden">
+    <div style="background:linear-gradient(135deg,rgba(78,203,141,.15),rgba(78,203,141,.05));padding:1.25rem;border-bottom:1px solid var(--borda);text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:.3rem">🎉</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto)">Pedido entregue!</div>
+      <div style="font-size:.78rem;color:var(--texto-dim);margin-top:.2rem" id="agr-cliente-nome"></div>
+    </div>
+    <div style="padding:1.25rem">
+      <textarea id="agr-texto" rows="10" style="width:100%;font-size:.8rem;padding:.75rem;border-radius:10px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif;resize:vertical;line-height:1.6"></textarea>
+    </div>
+    <div style="padding:.85rem 1.25rem;border-top:1px solid var(--borda);display:flex;gap:.6rem">
+      <button onclick="enviarAgradecimentoWpp()" style="flex:1;padding:.8rem;border-radius:10px;border:none;background:linear-gradient(135deg,#2ea86e,var(--verde));color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer">💬 Enviar WhatsApp</button>
+      <button onclick="fecharAgradecimento()" style="padding:.8rem 1rem;border-radius:10px;border:1.5px solid var(--borda);background:none;color:var(--texto-sec);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer">Pular</button>
     </div>
   </div>
 </div>
@@ -2324,12 +2342,53 @@ function alterarStatus(id, novoStatus){
   if(document.getElementById('page-agenda').classList.contains('active'))renderAgenda();
   if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();
   notif('Status: '+labels[novoStatus]);
-  // Abre recebimento ao marcar como entregue
+  // Abre recebimento ao marcar como entregue, depois agradecimento
   if(novoStatus==='entregue'){
     tocar('entregue');
     setTimeout(()=>abrirModalRecebimento(id,'entrega'),400);
+    // Agradecimento abre após fechar o recebimento (via fecharModalRecebimento)
+    _pedidoAgradecimento=id;
   }
 }
+
+let _pedidoAgradecimento=null;
+
+function abrirAgradecimento(pedidoId){
+  const p=getData('pedidos').find(x=>x.id==pedidoId);
+  if(!p) return;
+  document.getElementById('agr-cliente-nome').textContent=p.cliente;
+  const texto=
+`Olá, ${p.cliente}! 🎂
+
+Espero que tudo tenha ficado lindo e delicioso! 🥰
+Foi um prazer fazer parte do seu momento especial.
+
+Sua opinião é muito importante para nós e nos ajuda a continuar crescendo e a atender mais pessoas como você!
+
+Se puder, deixe uma avaliação no Google — leva só 1 minutinho e significa muito pra gente 🙏
+
+⭐ Avaliar no Google:
+https://g.page/r/CVTKvD9JZhuGEBE/review
+
+Muito obrigada pela confiança! Até o próximo pedido 🩷
+Lais Santos Confeitaria`;
+  document.getElementById('agr-texto').value=texto;
+  document.getElementById('modal-agradecimento').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function enviarAgradecimentoWpp(){
+  const texto=document.getElementById('agr-texto').value;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
+  fecharAgradecimento();
+}
+
+function fecharAgradecimento(){
+  document.getElementById('modal-agradecimento').style.display='none';
+  document.body.style.overflow='';
+}
+
+document.getElementById('modal-agradecimento').addEventListener('click',function(e){if(e.target===this)fecharAgradecimento()});
 
 function renderPedidos(){
   const mes=document.getElementById('filtro-mes-ped')?.value||mesAtual();
@@ -2734,6 +2793,7 @@ function gerarOrcamentoWhatsApp(){
     ? '\n\n*Adicionais:*\n' + adicionaisOrc.map(a=>`• ${a.nome}${a.val>0?' — '+fmtBRL(a.val):''}`).join('\n')
     : '';
 
+  const metade=Math.round(total*0.5*100)/100;
   const texto =
 `Olá, ${cliente}! 😊
 
@@ -2744,7 +2804,9 @@ ${linhas}${linhasAdic}
 📅 Data do evento: ${dt}
 💰 Valor estimado: ${fmtBRL(total)}${obs?`\n📝 ${obs}`:''}
 
-Este orçamento tem validade de 7 dias. Para confirmar o pedido, é só me avisar! 🎂
+Para confirmar o pedido, solicitamos 50% do valor (${fmtBRL(metade)}) antecipado para entrar no planejamento de produção. O restante é pago na entrega. 🗓️
+
+Este orçamento tem validade de 7 dias. Para confirmar, é só me avisar! 🎂
 
 📲 Me siga no Instagram: www.instagram.com/laissantosconfeitaria
 Lá eu posto novidades, sabores e inspirações de bolos!
@@ -3169,6 +3231,12 @@ function fecharModalRecebimento(){
   document.getElementById('modal-recebimento').style.display='none';
   document.body.style.overflow='';
   _recPedidoId=null;
+  // Se veio de entrega, abre modal de agradecimento
+  if(_recContexto==='entrega'&&_pedidoAgradecimento){
+    const pid=_pedidoAgradecimento;
+    _pedidoAgradecimento=null;
+    setTimeout(()=>abrirAgradecimento(pid),300);
+  }
 }
 document.getElementById('modal-recebimento').addEventListener('click',function(e){if(e.target===this)fecharModalRecebimento()});
 
