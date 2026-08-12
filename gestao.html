@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.4 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.5 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -2776,35 +2776,41 @@ function gerarOrcamentoWhatsApp(){
 
   if(!carrinhoOrc.length){notif('Adicione ao menos um item ao orçamento','error');return}
 
+  // Linhas de itens com valor por item
   const linhas = carrinhoOrc.map(i=>{
     const nome = normP(i.nome);
+    const valorItem = i.preco>0 ? ` — ${fmtBRL(i.preco)}` : '';
     if(i.detalhe){
       const det = i.detalhe.replace(/ · /g,'\n').replace(/·/g,'\n');
       const linhasDetalhe = det.split('\n').filter(l=>l.trim()).map(l=>{
         const idx=l.indexOf(':');
         return idx>0 ? `   ${l.substring(0,idx).trim()}: ${l.substring(idx+1).trim()}` : `   ${l.trim()}`;
       }).join('\n');
-      return `• ${nome}\n${linhasDetalhe}`;
+      return `🎂 ${nome}${valorItem}\n${linhasDetalhe}`;
     }
-    return `• ${nome}`;
+    return `🎂 ${nome}${valorItem}`;
   }).join('\n\n');
 
   const linhasAdic = adicionaisOrc.length
-    ? '\n\n*Adicionais:*\n' + adicionaisOrc.map(a=>`• ${a.nome}${a.val>0?' — '+fmtBRL(a.val):''}`).join('\n')
+    ? '\n\nAdicionais:\n' + adicionaisOrc.map(a=>`• ${a.nome}${a.val>0?' — '+fmtBRL(a.val):''}`).join('\n')
     : '';
+
+  // Busca numero do orcamento em edição ou recém salvo
+  const orcAtual = getData('orcamentos').find(o=>o.cliente===cliente&&o.data===data)||null;
+  const orcNumStr = orcAtual&&orcAtual.numero ? '\n📋 '+fmtNumOrc(orcAtual.numero) : '';
 
   const metade=Math.round(total*0.5*100)/100;
   const texto =
 `Olá, ${cliente}! 😊
 
-Segue o orçamento para o seu evento:
+Segue o orçamento para o seu evento:${orcNumStr}
 
 ${linhas}${linhasAdic}
 
 📅 Data do evento: ${dt}
-💰 Valor estimado: ${fmtBRL(total)}${obs?`\n📝 ${obs}`:''}
+💰 Total estimado: ${fmtBRL(total)}${obs?`\n📝 ${obs}`:''}
 
-Para confirmar o pedido, solicitamos 50% do valor (${fmtBRL(metade)}) antecipado para entrar no planejamento de produção. O restante é pago na entrega. 🗓️
+Para confirmar o pedido, solicitamos 50% do valor (${fmtBRL(metade)}) antecipado para entrar no planejamento de produção. O restante é pago na retirada. 🗓️
 
 Este orçamento tem validade de 7 dias. Para confirmar, é só me avisar! 🎂
 
@@ -3842,13 +3848,13 @@ function abrirConfirmacao(id){
   const p = pedidos.find(x=>x.id==id);
   if(!p) return;
 
-  // Monta linhas de produto com todos os detalhes
+  // Monta linhas de produto com valor por item
   let linhasProduto = '';
   if(p.itens && p.itens.length){
     linhasProduto = p.itens.map(i=>{
       const nome = normP(i.nome);
+      const valorItem = i.preco>0 ? ` — ${fmtBRL(i.preco)}` : '';
       if(i.detalhe){
-        // Normaliza separadores
         const det = i.detalhe.replace(/ · /g,'\n').replace(/·/g,'\n');
         const linhas = det.split('\n').filter(l=>l.trim());
         const detFormatado = linhas.map(l=>{
@@ -3860,12 +3866,12 @@ function abrirConfirmacao(id){
           }
           return `   ${l.trim()}`;
         }).join('\n');
-        return `${nome}\n${detFormatado}`;
+        return `🎂 ${nome}${valorItem}\n${detFormatado}`;
       }
-      return nome;
-    }).join('\n\n* ');
+      return `🎂 ${nome}${valorItem}`;
+    }).join('\n\n');
   } else {
-    linhasProduto = p.produtos.map(normP).join('\n* ');
+    linhasProduto = (p.produtos||[]).map(normP).join('\n🎂 ');
   }
 
   const dt = new Date(p.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
@@ -3884,25 +3890,26 @@ function abrirConfirmacao(id){
   }
 
   const numStr=p.numero?fmtNumPedido(p.numero):'';
+  const metadeConf=Math.round(p.valor*0.5*100)/100;
+  const adicsConf=p.extra&&p.extra.val>0?`\n• Adicional (${p.extra.desc||'extra'}) — ${fmtBRL(p.extra.val)}`:'';
   const texto =
 `Olá, ${p.cliente}! 😊
 
 Segue a confirmação da sua encomenda:${numStr?'\n📋 Pedido '+numStr:''}
 
-* Produto: ${linhasProduto}
-* Data de entrega: ${dt}
-* Horário previsto: ${horario}
-* Local de entrega/retirada: ${local}
-* Valor: ${fmtBRL(p.valor)}${p.extra&&p.extra.val>0?`\n* Adicional (${p.extra.desc||'extra'}): ${fmtBRL(p.extra.val)}`:''}
+${linhasProduto}${adicsConf}
 
-- Pagamento: 50% antecipado e o restante no ato da entrega ou retirada.
+📅 Data de entrega: ${dt}
+🕑 Horário: ${horario}
+📦 ${local.charAt(0).toUpperCase()+local.slice(1)}
+💰 Total: ${fmtBRL(p.valor)}
 
-${p.obs?`📝 Obs: ${p.obs}\n\n`:''}Por favor, confira se todas as informações estão corretas. Caso deseje ajustar algo, é só me avisar! 🎂
+Para confirmar, solicitamos 50% antecipado (${fmtBRL(metadeConf)}) para entrar no planejamento de produção. O restante é pago na retirada. 🗓️
 
-📲 Aproveite e já me siga no Instagram: www.instagram.com/laissantosconfeitaria
-Lá eu posto novidades, sabores e inspirações de bolos!
+${p.obs?`📝 Obs: ${p.obs}\n\n`:''}Por favor, confira se todas as informações estão corretas. Qualquer ajuste é só me avisar! 🎂
 
-💬 Salve meu contato para receber meus status e facilitar futuros pedidos. Será um prazer adoçar seus momentos novamente!`;
+📲 www.instagram.com/laissantosconfeitaria
+💬 Salve meu contato para facilitar futuros pedidos. Será um prazer adoçar seus momentos!`;
 
   document.getElementById('wpp-texto').value = texto;
   const modal = document.getElementById('modal-wpp');
