@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Cardápio completo da Lais Santos Confeitaria — Monte seu pedido e envie pelo WhatsApp!">
-<meta property="og:title" content="Cardápio - Lais Santos Confeitaria">
-<meta property="og:description" content="Monte seu pedido de bolo artesanal personalizado e envie direto pelo WhatsApp!">
-<title>Cardápio - Lais Santos Confeitaria</title>
+<meta name="description" content="Monte seu bolo em Cuiabá: escolha massa, recheio e cobertura. Preços, kits e docinhos. Peça em minutos direto pelo WhatsApp.">
+<meta property="og:title" content="Cardápio de Bolos em Cuiabá | Lais Santos Confeitaria">
+<meta property="og:description" content="Monte seu bolo em Cuiabá: escolha massa, recheio e cobertura. Preços, kits e docinhos. Peça em minutos direto pelo WhatsApp.">
+<title>Cardápio de Bolos em Cuiabá | Lais Santos Confeitaria</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2VQS64MLCD"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-2VQS64MLCD');</script>
@@ -19,7 +19,7 @@ nav{background:rgba(253,248,245,.96);backdrop-filter:blur(10px);border-bottom:.5
 .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--rose-dark);text-decoration:none}
 .nav-back{font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--taupe);text-decoration:none;transition:color .2s}
 .nav-back:hover{color:var(--rose)}
-.wrap{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+.wrap{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 6rem;position:relative}
 .page-eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.4rem}
 .page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;color:var(--dark);line-height:1.2;margin-bottom:.3rem}
 .page-title em{font-style:italic;color:var(--rose-dark)}
@@ -257,6 +257,34 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   .opt-price-var { color: var(--rose) !important; font-style: italic; }
   .opt-card-var .opt-price-var::after { content: '*'; font-size: 0.7rem; }
 
+  /* ══ TRUST BALLOONS ══ */
+  .trust-balloon {
+    position: absolute;
+    display: flex; align-items: center; gap: 0.35rem;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--blush);
+    border-radius: 2rem;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--rose-dark);
+    white-space: nowrap;
+    box-shadow: 0 8px 22px rgba(201,128,138,.14);
+    pointer-events: none;
+    z-index: 1;
+    animation: floatBalloon 4.5s ease-in-out infinite;
+  }
+  .trust-balloon .tb-icon { font-size: 0.85rem; }
+  .tb-left { top: -0.6rem; left: -0.8rem; animation-delay: 0s; }
+  .tb-right { top: 1.6rem; right: -0.6rem; animation-delay: 1.4s; }
+  @keyframes floatBalloon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+  @media (max-width: 780px) {
+    .trust-balloon { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -271,6 +299,8 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
   </div>
 </nav>
 <div class="wrap">
+  <span class="trust-balloon tb-left"><span class="tb-icon">⭐</span> 5.0 no Google</span>
+  <span class="trust-balloon tb-right"><span class="tb-icon">🎂</span> +2.000 bolos entregues</span>
   <p class="page-eyebrow">✦ Cardápio Completo</p>
   <h1 class="page-title">Monte seu <em>pedido</em></h1>
   <p class="page-sub">Escolha a categoria, selecione os itens e envie pelo WhatsApp em segundos. É simples! 🌸</p>
@@ -307,6 +337,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
     <div class="order-section">
       <div class="order-section-title">🎂 Bolo Decorado — Monte o seu</div>
       <div class="intro-box">Padrão: 3 discos de massa · 2 camadas de recheio · altura 10-12cm · 100g por convidado sugerido · 100% artesanal</div>
+
 
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha a massa</div></div>
