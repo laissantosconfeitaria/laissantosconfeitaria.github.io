@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.5 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.6 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -570,6 +570,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="tab" onclick="setRelTab('semanal',this)">Semanal</div>
         <div class="tab" onclick="setRelTab('mensal',this)">Mensal</div>
         <div class="tab" onclick="setRelTab('comparativo',this)">Comparativo</div>
+        <div class="tab" onclick="setRelTab('despesas',this)">Despesas</div>
       </div>
       <div id="rel-diario" class="rel-tab">
         <div class="action-bar">
@@ -623,6 +624,37 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="table-card">
           <div class="table-head"><h2>Detalhamento mês a mês</h2></div>
           <div id="comp-tabela" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- ABA DESPESAS -->
+      <div id="rel-despesas" class="rel-tab" style="display:none">
+        <div class="action-bar">
+          <label style="margin:0">Mês:</label>
+          <input type="month" id="desp-rel-mes" style="width:auto" onchange="renderRelDespesas()">
+        </div>
+        <!-- Cards métricas -->
+        <div class="cards-row" id="desp-rel-cards" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))"></div>
+        <!-- Gráfico rosca + lista por categoria -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="chart-card">
+            <h2>Por categoria</h2>
+            <canvas id="chart-desp-rosca" height="180"></canvas>
+          </div>
+          <div class="chart-card">
+            <h2>Fixas vs Variáveis</h2>
+            <canvas id="chart-desp-fv" height="180"></canvas>
+          </div>
+        </div>
+        <!-- Evolução -->
+        <div class="chart-card" style="margin-bottom:1rem">
+          <h2>Evolução — últimos 6 meses</h2>
+          <canvas id="chart-desp-evolucao" height="100"></canvas>
+        </div>
+        <!-- Detalhamento por categoria -->
+        <div class="table-card">
+          <div class="table-head"><h2>Detalhamento por categoria</h2></div>
+          <div id="desp-rel-lista"></div>
         </div>
       </div>
     </div>
@@ -3155,10 +3187,29 @@ function renderCanalChart(){
 
   // Legenda com detalhes
   const sorted=Object.entries(canais).sort((a,b)=>b[1]-a[1]);
+  // Calcula investimento Google Ads apenas no período selecionado
+  const allDesps=getData('despesas');
+  const investGooglePeriodo=allDesps.filter(d=>{
+    if(d.cat!=='googleads') return false;
+    if(periodo==='mes') return d.data.startsWith(mesStr);
+    if(periodo==='mes-ant'){
+      const dA=new Date();dA.setMonth(dA.getMonth()-1);
+      const mAnt=`${dA.getFullYear()}-${String(dA.getMonth()+1).padStart(2,'0')}`;
+      return d.data.startsWith(mAnt);
+    }
+    if(periodo==='3meses'){const dA=new Date();dA.setMonth(dA.getMonth()-3);return d.data>=dataLocal(dA)}
+    if(periodo==='ano') return d.data.startsWith(ano);
+    if(periodo==='custom'){
+      const ini=document.getElementById('canal-data-ini')?.value;
+      const fim=document.getElementById('canal-data-fim')?.value;
+      return ini&&fim?d.data>=ini&&d.data<=fim:true;
+    }
+    return true;
+  }).reduce((s,d)=>s+d.valor,0);
+
   document.getElementById('canal-legenda').innerHTML=sorted.map(([k,v])=>{
     const pct=total?Math.round((v/total)*100):0;
     const fat=totalFatCanal[k];
-    const investGoogle=getData('despesas').filter(d=>d.cat==='googleads').reduce((s,d)=>s+d.valor,0);
     return `<div style="margin-bottom:.85rem">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
         <div style="display:flex;align-items:center;gap:.5rem">
@@ -3170,7 +3221,7 @@ function renderCanalChart(){
       <div style="height:5px;background:var(--borda);border-radius:3px;overflow:hidden;margin-bottom:.25rem">
         <div style="height:5px;background:${cores[k]};border-radius:3px;width:${pct}%;transition:width .5s"></div>
       </div>
-      <div style="font-size:.73rem;color:var(--texto-dim)">Faturamento: ${fmtBRL(fat)}${k==='google'&&investGoogle>0?` · Ads: ${fmtBRL(investGoogle)} · ROI: ${fat>0?Math.round((fat/investGoogle)*10)/10+'x':'—'}`:''}
+      <div style="font-size:.73rem;color:var(--texto-dim)">Faturamento: ${fmtBRL(fat)}${k==='google'&&investGooglePeriodo>0?` · Ads: ${fmtBRL(investGooglePeriodo)} · ROI: ${fat>0?Math.round((fat/investGooglePeriodo)*10)/10+'x':'—'}`:''}
       </div>
     </div>`;
   }).join('');
@@ -3511,6 +3562,126 @@ function setRelTab(tab,el){
   if(tab==='semanal')renderRelSemanal();
   if(tab==='mensal')renderRelMensal();
   if(tab==='comparativo')renderComparativo();
+  if(tab==='despesas')renderRelDespesas();
+}
+
+let chartDespRosca=null,chartDespFV=null,chartDespEv=null;
+function renderRelDespesas(){
+  const mes=document.getElementById('desp-rel-mes')?.value||mesAtual();
+  if(!document.getElementById('desp-rel-mes').value)
+    document.getElementById('desp-rel-mes').value=mes;
+
+  const despMes=getData('despesas').filter(d=>d.data.startsWith(mes));
+  const totalDesp=despMes.reduce((s,d)=>s+d.valor,0);
+
+  // Faturamento do mês para margem
+  const pedMes=getData('pedidos').filter(p=>p.data.startsWith(mes)&&p.status!=='cancelado');
+  const fat=pedMes.reduce((s,p)=>s+(p.valorRecebido||0),0);
+  const fatTotal=pedMes.reduce((s,p)=>s+p.valor,0);
+  const margem=fatTotal>0?Math.round(((fatTotal-totalDesp)/fatTotal)*100):0;
+  const custoPedido=pedMes.filter(p=>p.status==='entregue').length>0?
+    Math.round(totalDesp/pedMes.filter(p=>p.status==='entregue').length):0;
+
+  // Mês anterior para tendência
+  const dAnt=new Date();dAnt.setMonth(dAnt.getMonth()-1);
+  const mesAnt=`${dAnt.getFullYear()}-${String(dAnt.getMonth()+1).padStart(2,'0')}`;
+  const despAnt=getData('despesas').filter(d=>d.data.startsWith(mesAnt)).reduce((s,d)=>s+d.valor,0);
+  const tendencia=despAnt>0?Math.round(((totalDesp-despAnt)/despAnt)*100):null;
+
+  // Cards métricas
+  document.getElementById('desp-rel-cards').innerHTML=`
+    <div class="card-stat"><div class="label">Total despesas</div><div class="value red">${fmtBRL(totalDesp)}</div></div>
+    <div class="card-stat"><div class="label">Margem líquida</div><div class="value ${margem>=50?'green':margem>=30?'':'red'}">${margem}%</div><div class="sub">sobre fat. encomendado</div></div>
+    <div class="card-stat"><div class="label">Custo por pedido</div><div class="value">${fmtBRL(custoPedido)}</div><div class="sub">desp ÷ entregues</div></div>
+    <div class="card-stat"><div class="label">Tendência</div>
+      <div class="value ${tendencia===null?'':tendencia<=0?'green':'red'}">
+        ${tendencia===null?'—':tendencia>=0?'↑'+tendencia+'%':'↓'+Math.abs(tendencia)+'%'}
+      </div>
+      <div class="sub">vs mês anterior</div>
+    </div>
+  `;
+
+  // Por categoria
+  const porCat={};
+  despMes.forEach(d=>{porCat[d.cat]=(porCat[d.cat]||0)+d.valor});
+  const catsSorted=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
+
+  const catLabel={ingredientes:'🧁 Ingredientes',embalagens:'📦 Embalagens',
+    utensilios:'🔧 Utensílios',marketing:'📣 Marketing',googleads:'🎯 Google Ads',
+    energia:'⚡ Energia/Gás',entrega:'🚗 Frete/Entrega',outros:'📌 Outros'};
+  const catCores=['#f06060','#f0c040','#5cb8f0','#4ecb8d','#a78bfa','#f09060','#60d0f0','#8b93a8'];
+
+  // Gráfico rosca
+  if(chartDespRosca){chartDespRosca.destroy();chartDespRosca=null}
+  if(catsSorted.length){
+    chartDespRosca=new Chart(document.getElementById('chart-desp-rosca').getContext('2d'),{
+      type:'doughnut',
+      data:{
+        labels:catsSorted.map(([c])=>catLabel[c]||c),
+        datasets:[{data:catsSorted.map(([,v])=>v),
+          backgroundColor:catsSorted.map((_,i)=>catCores[i%catCores.length]),
+          borderWidth:2,borderColor:'#1e2535'}]
+      },
+      options:{plugins:{legend:{labels:{color:'#8b93a8',font:{family:'DM Sans',size:10}}}},cutout:'65%'}
+    });
+  }
+
+  // Fixas vs Variáveis (googleads, energia, utensilios = fixas; resto = variáveis)
+  const fixasCats=['googleads','energia','utensilios','marketing'];
+  const fixas=despMes.filter(d=>fixasCats.includes(d.cat)).reduce((s,d)=>s+d.valor,0);
+  const variaveis=totalDesp-fixas;
+  if(chartDespFV){chartDespFV.destroy();chartDespFV=null}
+  chartDespFV=new Chart(document.getElementById('chart-desp-fv').getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels:['Fixas','Variáveis'],
+      datasets:[{data:[fixas,variaveis],backgroundColor:['#5cb8f0','#f06060'],borderWidth:2,borderColor:'#1e2535'}]
+    },
+    options:{
+      plugins:{
+        legend:{labels:{color:'#8b93a8',font:{family:'DM Sans',size:11}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtBRL(ctx.parsed)} (${totalDesp>0?Math.round((ctx.parsed/totalDesp)*100):0}%)`}}
+      },
+      cutout:'65%'
+    }
+  });
+
+  // Evolução 6 meses
+  if(chartDespEv){chartDespEv.destroy();chartDespEv=null}
+  const meses6=[];
+  for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);meses6.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`)}
+  const allDesp=getData('despesas');
+  const evolData=meses6.map(m=>allDesp.filter(d=>d.data.startsWith(m)).reduce((s,d)=>s+d.valor,0));
+  chartDespEv=new Chart(document.getElementById('chart-desp-evolucao').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:meses6.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('pt-BR',{month:'short'})}),
+      datasets:[{label:'Despesas',data:evolData,borderColor:'#f06060',backgroundColor:'rgba(240,96,96,.1)',
+        borderWidth:2.5,tension:.35,pointBackgroundColor:'#f06060',pointRadius:4,fill:true}]
+    },
+    options:{
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Despesas: ${fmtBRL(ctx.parsed.y)}`}}},
+      scales:{
+        x:{ticks:{color:'#555e72'},grid:{display:false}},
+        y:{ticks:{color:'#555e72',callback:v=>v>=1000?'R$'+Math.round(v/1000)+'k':'R$'+v},grid:{color:'rgba(255,255,255,.04)'}}
+      }
+    }
+  });
+
+  // Lista por categoria
+  document.getElementById('desp-rel-lista').innerHTML=catsSorted.length?catsSorted.map(([cat,val],i)=>{
+    const pct=totalDesp>0?Math.round((val/totalDesp)*100):0;
+    const cor=catCores[i%catCores.length];
+    return `<div style="padding:.75rem 1.1rem;border-bottom:1px solid var(--borda)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.35rem">
+        <span style="font-size:.88rem;color:var(--texto)">${catLabel[cat]||cat}</span>
+        <span style="font-family:'Playfair Display',serif;color:var(--vermelho)">${fmtBRL(val)} <span style="font-size:.7rem;color:var(--texto-dim)">(${pct}%)</span></span>
+      </div>
+      <div style="height:5px;background:var(--borda);border-radius:3px;overflow:hidden">
+        <div style="height:5px;background:${cor};border-radius:3px;width:${pct}%;transition:width .6s"></div>
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty">Nenhuma despesa neste mês</div>';
 }
 
 let chartCompLinhas=null;
