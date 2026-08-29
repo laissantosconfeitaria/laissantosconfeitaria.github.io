@@ -329,7 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sub">Painel de Gestão</div>
       <div id="versao-badge" style="margin-top:.5rem;display:inline-flex;align-items:center;gap:.35rem;background:rgba(93,191,122,.1);border:1px solid rgba(93,191,122,.2);border-radius:20px;padding:.15rem .6rem">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--verde);display:inline-block"></span>
-        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.8 · ago/26</span>
+        <span style="font-size:.65rem;color:var(--verde);letter-spacing:.04em">v8.9 · ago/26</span>
       </div>
     </div>
     <nav>
@@ -453,7 +453,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="cards-row" style="grid-template-columns:1fr 1fr">
         <div class="chart-card">
-          <h2>Produtos mais vendidos</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+            <h2 style="margin:0">Produtos mais vendidos</h2>
+            <select id="prod-periodo" onchange="renderProdChart()" style="font-size:.75rem;padding:.3rem .5rem;border-radius:7px;border:1px solid var(--borda);background:var(--bg2);color:var(--texto);font-family:'DM Sans',sans-serif">
+              <option value="mes">Este mês</option>
+              <option value="mes-ant">Mês anterior</option>
+              <option value="total">Total</option>
+            </select>
+          </div>
           <canvas id="chart-produtos" height="140"></canvas>
         </div>
         <div class="chart-card">
@@ -3193,6 +3200,56 @@ function onCanalPeriodoChange(){
   renderCanalChart();
 }
 
+function renderProdChart(){
+  const periodo=document.getElementById('prod-periodo')?.value||'mes';
+  const allPedidos=getData('pedidos').filter(p=>p.status!=='cancelado');
+  let pedFiltrados;
+  if(periodo==='mes'){
+    pedFiltrados=allPedidos.filter(p=>p.data.startsWith(mesAtual()));
+  } else if(periodo==='mes-ant'){
+    const d=new Date();d.setMonth(d.getMonth()-1);
+    const mAnt=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    pedFiltrados=allPedidos.filter(p=>p.data.startsWith(mAnt));
+  } else {
+    pedFiltrados=allPedidos;
+  }
+
+  const normNome=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
+  function catProduto(nome){
+    const n=nome.toLowerCase();
+    if(n.includes('bolo decorado')||n.includes('bolo personalizado')) return 'Bolo Decorado';
+    if(n.includes('bolo simples')||n.includes('bolo de')) return 'Bolo Simples';
+    if(n.includes('vulcão')||n.includes('vulcao')) return 'Bolo Vulcão';
+    if(n.includes('kit festa')||n.includes('kit')) return 'Kit Festa';
+    if((n.includes('docinho')||n.includes('brigadeiro'))&&!n.includes('bolo')||n.includes('beijinho')) return 'Docinhos';
+    if(n.includes('cupcake')) return 'Cupcake';
+    if(n.includes('pão de mel')||n.includes('pao de mel')) return 'Pão de Mel';
+    if(n.includes('brownie')) return 'Brownie';
+    if(n.includes('sobremesa')||n.includes('travessa')||n.includes('pudim')) return 'Sobremesas';
+    if(n.includes('salgado')||n.includes('quiche')) return 'Salgados';
+    return normNome(nome).split(' ').slice(0,3).join(' ');
+  }
+  const contagem={};
+  pedFiltrados.forEach(p=>{
+    const itensNomes=p.itens&&p.itens.length?p.itens.map(i=>i.nome):(p.produtos||[]);
+    itensNomes.forEach(pr=>{const k=catProduto(normNome(pr));contagem[k]=(contagem[k]||0)+1});
+  });
+  const topProd=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(chartProd)chartProd.destroy();
+  const el=document.getElementById('chart-produtos');
+  if(!el) return;
+  if(!topProd.length){el.parentElement.querySelector('canvas').style.display='none';return;}
+  el.style.display='';
+  chartProd=new Chart(el,{
+    type:'doughnut',
+    data:{
+      labels:topProd.map(x=>`${x[0]} (${x[1]})`),
+      datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#e891b8','#c06890','#60b8f0','#5dbf7a','#f0c040','#f06060'],borderWidth:2,borderColor:'#1e2535'}]
+    },
+    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10,color:'#8880a8'}}}}
+  });
+}
+
 function renderCanalChart(){
   const pedidos=getData('pedidos').filter(p=>p.status!=='cancelado');
   const periodo=document.getElementById('canal-periodo')?.value||'mes';
@@ -3592,22 +3649,7 @@ function renderDashboard(){
     if(n.includes('salgado')||n.includes('quiche')||n.includes('torta')&&!n.includes('bolo')) return 'Salgados';
     return normNome(nome).split(' ').slice(0,3).join(' ');
   }
-  const contagem={};
-  pedidos.filter(p=>p.status!=='cancelado').forEach(p=>{
-    const itensNomes = p.itens&&p.itens.length ? p.itens.map(i=>i.nome) : (p.produtos||[]);
-    itensNomes.forEach(pr=>{
-      const k=catProduto(normNome(pr));
-      contagem[k]=(contagem[k]||0)+1;
-    });
-  });
-  const topProd=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if(chartProd)chartProd.destroy();
-  chartProd=new Chart(document.getElementById('chart-produtos'),{
-    type:'doughnut',
-    data:{labels:topProd.map(x=>x[0]),datasets:[{data:topProd.map(x=>x[1]),backgroundColor:['#e891b8','#c06890','#60b8f0','#5dbf7a','#f0c040','#f06060']}]},
-    options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12,color:'#8880a8'}}}}
-  });
-
+  renderProdChart();
 
   // Barras meses — últimos 6 meses
   const meses6=[];const fat6=[];const desp6=[];
@@ -4018,11 +4060,28 @@ function renderRelMensal(){
     });
   }
 
-  // Top produtos
-  const normNome2=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
-  const contagem={};
-  pedidos.forEach(p=>(p.produtos||[]).forEach(pr=>{const k=normNome2(pr);contagem[k]=(contagem[k]||0)+1}));
-  const top=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  // Top produtos do mês — mesmos dados já filtrados por mês
+  const normNomeM=n=>n.replace(/[\u{1F300}-\u{1FFFF}]|\u{FE0F}/gu,'').trim();
+  function catProdutoM(nome){
+    const n=nome.toLowerCase();
+    if(n.includes('bolo decorado')||n.includes('bolo personalizado')) return 'Bolo Decorado';
+    if(n.includes('bolo simples')||n.includes('bolo de')) return 'Bolo Simples';
+    if(n.includes('vulcão')||n.includes('vulcao')) return 'Bolo Vulcão';
+    if(n.includes('kit festa')||n.includes('kit')) return 'Kit Festa';
+    if((n.includes('docinho')||n.includes('brigadeiro'))&&!n.includes('bolo')||n.includes('beijinho')) return 'Docinhos';
+    if(n.includes('cupcake')) return 'Cupcake';
+    if(n.includes('pão de mel')||n.includes('pao de mel')) return 'Pão de Mel';
+    if(n.includes('brownie')) return 'Brownie';
+    if(n.includes('sobremesa')||n.includes('travessa')||n.includes('pudim')) return 'Sobremesas';
+    if(n.includes('salgado')||n.includes('quiche')) return 'Salgados';
+    return normNomeM(nome).split(' ').slice(0,3).join(' ');
+  }
+  const contagemM={};
+  pedidos.filter(p=>p.status!=='cancelado').forEach(p=>{
+    const itensNomes=p.itens&&p.itens.length?p.itens.map(i=>i.nome):(p.produtos||[]);
+    itensNomes.forEach(pr=>{const k=catProdutoM(normNomeM(pr));contagemM[k]=(contagemM[k]||0)+1});
+  });
+  const top=Object.entries(contagemM).sort((a,b)=>b[1]-a[1]).slice(0,8);
   let html='<div class="table-head"><h2>Produtos mais vendidos no mês</h2></div>';
   if(!top.length){html+='<div class="empty">Sem dados de produtos</div>'}
   else{
