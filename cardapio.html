@@ -1434,6 +1434,12 @@ function buildMessage() {
 function sendWA() {
   if (!cart.length) { showToast('Adicione itens ao carrinho!'); return; }
   var msg = buildMessage();
+  if (typeof gtag === 'function') {
+    gtag('event', 'pedido_whatsapp', {
+      itens_no_carrinho: cart.length,
+      link_location: window.location.pathname
+    });
+  }
   window.open('https://wa.me/5565992094491?text=' + encodeURIComponent(msg), '_blank');
 }
 
@@ -1589,6 +1595,20 @@ function onKitTamSelect(el) {
     }, 900);
   }
 })();
+</script>
+
+<script>
+/* Rastreamento de cliques em links do WhatsApp (dúvidas, nav, flutuante, modal) */
+document.addEventListener('click', function(e){
+  var link = e.target.closest('a[href*="wa.me"]');
+  if (!link) return;
+  if (typeof gtag === 'function') {
+    gtag('event', 'whatsapp_click', {
+      link_text: (link.textContent || link.title || '').trim().slice(0, 60),
+      link_location: window.location.pathname
+    });
+  }
+}, true);
 </script>
 
 </body>
