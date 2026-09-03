@@ -453,7 +453,9 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <div class="mp-photo-wrap">
           <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-chantininho.webp" alt="Bolo Chantininho" loading="lazy" width="700" height="933">
           <img class="mp-carousel-img" src="img/mais-pedidos/mp-chantininho-2.webp" alt="Bolo Chantininho, outro modelo" loading="lazy" width="700" height="933">
-          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-chantininho-3.webp" alt="Bolo Chantininho azul personalizado" loading="lazy" width="700" height="933">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-chantininho-4.webp" alt="Bolo Chantininho tema doce" loading="lazy" width="700" height="773">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span><span class="mp-dot"></span><span class="mp-dot"></span></div>
         </div>
         <div class="mp-body">
           <div class="mp-name">Bolo Chantininho</div>
@@ -495,7 +497,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <div class="mp-photo-wrap"><div class="mp-img-icon">🎁</div></div>
+        <div class="mp-photo-wrap">
+          <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-kit-festa.webp" alt="Kit Festa" loading="lazy" width="700" height="933">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-kit-festa-2.webp" alt="Kit Festa, outro modelo" loading="lazy" width="700" height="499">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+        </div>
         <div class="mp-body">
           <div class="mp-name">Kit Festa</div>
           <div class="mp-sub">P +50 · M +100 · G +150 docinhos</div>
@@ -509,7 +515,8 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
         <div class="mp-photo-wrap">
           <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-docinhos.webp" alt="Docinhos" loading="lazy" width="700" height="933">
           <img class="mp-carousel-img" src="img/mais-pedidos/mp-docinhos-2.webp" alt="Docinhos, outro modelo" loading="lazy" width="700" height="1060">
-          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-docinhos-3.webp" alt="Docinhos, sabores variados" loading="lazy" width="700" height="1421">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span><span class="mp-dot"></span></div>
         </div>
         <div class="mp-body">
           <div class="mp-name">Docinhos</div>
@@ -1671,11 +1678,18 @@ function showToast(msg) {
 
 updateCart();
 
+function getMaxDoceForKit(name) {
+  if (name === 'Kit P') return 1;
+  if (name === 'Kit M') return 2;
+  if (name === 'Kit G') return 3;
+  return 3;
+}
+
 function kitDoceSelect(el) {
   var tam = document.querySelector('#g-kit-tam .selected');
   if (!tam) return;
-  var isP = tam.querySelector('.si-name').textContent.trim() === 'Kit P';
-  var maxDoc = isP ? 2 : 3;
+  var tamName = tam.querySelector('.si-name').textContent.trim();
+  var maxDoc = getMaxDoceForKit(tamName);
   var cards = Array.from(document.querySelectorAll('#g-kit-doce .opt-card'));
   var selected = cards.filter(c => c.classList.contains('selected'));
   if (el.classList.contains('selected')) {
@@ -1695,8 +1709,7 @@ function onKitTamSelect(el) {
   ssel(el, 'g-kit-tam');
   var stepDoce = document.getElementById('step-kit-doce');
   if (stepDoce) stepDoce.style.display = 'block';
-  var isP = el.querySelector('.si-name').textContent.trim() === 'Kit P';
-  var maxDoc = isP ? 2 : 3;
+  var maxDoc = getMaxDoceForKit(el.querySelector('.si-name').textContent.trim());
   var hint = document.getElementById('kit-doce-hint');
   if (hint) hint.textContent = 'escolha ' + maxDoc + ' sabor' + (maxDoc > 1 ? 'es' : '');
   document.querySelectorAll('#g-kit-doce .opt-card').forEach(c => c.classList.remove('selected'));
