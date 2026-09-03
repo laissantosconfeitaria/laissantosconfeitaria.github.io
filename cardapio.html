@@ -362,6 +362,14 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
                    background: var(--cream); display: block; }
   .mp-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; display: block; }
+  .mp-carousel-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                      object-fit: cover; display: block; opacity: 0; transition: opacity 0.7s ease; }
+  .mp-carousel-img.mp-active { opacity: 1; }
+  .mp-dots { position: absolute; bottom: 0.4rem; left: 0; right: 0; z-index: 2;
+             display: flex; justify-content: center; gap: 0.3rem; }
+  .mp-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.6);
+            transition: all 0.3s ease; }
+  .mp-dot.mp-active { background: #fff; width: 12px; border-radius: 3px; }
   .mp-img-icon { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                  display: flex; align-items: center; justify-content: center;
                  font-size: 2.2rem; background: var(--rose-light); }
@@ -441,7 +449,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
 
       <div class="mp-card mp-featured">
         <span class="mp-badge mp-badge-hot">Mais pedido</span>
-        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-chantininho.webp" alt="Bolo Chantininho" loading="lazy" width="700" height="933"></div>
+        <div class="mp-photo-wrap">
+          <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-chantininho.webp" alt="Bolo Chantininho" loading="lazy" width="700" height="933">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-chantininho-2.webp" alt="Bolo Chantininho, outro modelo" loading="lazy" width="700" height="933">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+        </div>
         <div class="mp-body">
           <div class="mp-name">Bolo Chantininho</div>
           <div class="mp-sub">P · M · G · GG</div>
@@ -452,7 +464,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-naked-cake.webp" alt="Naked Cake" loading="lazy" width="700" height="683"></div>
+        <div class="mp-photo-wrap">
+          <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-naked-cake.webp" alt="Naked Cake" loading="lazy" width="700" height="683">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-naked-cake-2.webp" alt="Naked Cake, outro modelo" loading="lazy" width="700" height="773">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+        </div>
         <div class="mp-body">
           <div class="mp-name">Naked Cake</div>
           <div class="mp-sub">P · M · G · GG</div>
@@ -463,7 +479,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-bento-cake.webp" alt="Bento Cake" loading="lazy" width="700" height="702"></div>
+        <div class="mp-photo-wrap">
+          <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-bento-cake.webp" alt="Bento Cake" loading="lazy" width="700" height="702">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-bento-cake-2.webp" alt="Bento Cake, outro modelo" loading="lazy" width="700" height="860">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+        </div>
         <div class="mp-body">
           <div class="mp-name">Bento Cake</div>
           <div class="mp-sub">Individual</div>
@@ -485,7 +505,11 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-docinhos.webp" alt="Docinhos" loading="lazy" width="700" height="933"></div>
+        <div class="mp-photo-wrap">
+          <img class="mp-carousel-img mp-active" src="img/mais-pedidos/mp-docinhos.webp" alt="Docinhos" loading="lazy" width="700" height="933">
+          <img class="mp-carousel-img" src="img/mais-pedidos/mp-docinhos-2.webp" alt="Docinhos, outro modelo" loading="lazy" width="700" height="1060">
+          <div class="mp-dots"><span class="mp-dot mp-active"></span><span class="mp-dot"></span></div>
+        </div>
         <div class="mp-body">
           <div class="mp-name">Docinhos</div>
           <div class="mp-sub">25 · 50 · 100 un</div>
@@ -536,7 +560,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">2</div><div class="step-label">Escolha o tamanho</div></div>
         <div class="options-grid" id="g-dec-tam">
-          <div class="opt-card" data-bento="true" onclick="sel(this,'g-dec-tam')"><div class="opt-name">PP · Bento</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$ 66</div></div>
+          <div class="opt-card" data-bento="true" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Bento Cake</div><div class="opt-info">~2 fatias · 10cm</div><div class="opt-price">a partir de R$ 66</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho P</div><div class="opt-info">8-10 fatias · 15cm</div><div class="opt-price">a partir de R$ 109</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-badge badge-popular">Mais pedido</div><div class="opt-name">Tamanho M</div><div class="opt-info">18-20 fatias · 18cm</div><div class="opt-price">a partir de R$ 218</div></div>
           <div class="opt-card" onclick="sel(this,'g-dec-tam')"><div class="opt-name">Tamanho G</div><div class="opt-info">28-30 fatias · 21cm</div><div class="opt-price">a partir de R$ 327</div></div>
@@ -552,8 +576,8 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Brigadeiro gourmet 50% cacau</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Beijinho de coco</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Doce de leite artesanal</div></div>
-          <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Dois amores</div></div>
-          <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Prestígio</div></div>
+          <div class="opt-card" data-weight="2" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Dois amores</div></div>
+          <div class="opt-card" data-weight="2" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Prestígio</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Leite ninho</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">4 leites</div></div>
           <div class="opt-card" onclick="multi(this,'g-dec-rec',2)"><div class="opt-badge badge-trad">Tradicional</div><div class="opt-name">Mousse de chocolate</div></div>
@@ -735,11 +759,10 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       <div class="step">
         <div class="step-header"><div class="step-num">1</div><div class="step-label">Escolha o kit</div></div>
         <div class="si-grid" id="g-kit-tam">
-          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit P</div><div class="si-desc">Bolo 15cm · 8-10 fatias · 70 docinhos</div><div class="si-price">R$ 220</div></div>
-          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit M</div><div class="si-desc">Bolo 18cm · 18-20 fatias · 100 docinhos</div><div class="si-price">R$ 358</div></div>
-          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit G</div><div class="si-desc">Bolo 21cm · 28-30 fatias · 150 docinhos</div><div class="si-price">R$ 495</div></div>
-          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit GG</div><div class="si-desc">Bolo 23cm · 38-40 fatias · 200 docinhos</div><div class="si-price">R$ 714</div></div>
-          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit EX</div><div class="si-desc">Bolo 26cm · 48-50 fatias · 250 docinhos</div><div class="si-price">R$ 897</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit P</div><div class="si-desc">Bolo P 15cm + 50 docinhos</div><div class="si-price">R$ 209</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit M</div><div class="si-desc">Bolo M 18cm + 100 docinhos</div><div class="si-price">R$ 409</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Kit G</div><div class="si-desc">Bolo G 21cm + 150 docinhos</div><div class="si-price">R$ 609</div></div>
+          <div class="si-card" onclick="onKitTamSelect(this)"><div class="si-name">Maiores volumes</div><div class="si-desc">Kits GG e EX, sob consulta</div><div class="si-price">Consulte com a Lais</div></div>
         </div>
       </div>
       <div class="step">
@@ -758,8 +781,8 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
           <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">4 leites</div></div>
           <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Leite ninho</div></div>
           <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Choconinho</div></div>
-          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Prestígio</div></div>
-          <div class="opt-card" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Dois amores</div></div>
+          <div class="opt-card" data-weight="2" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Prestígio</div></div>
+          <div class="opt-card" data-weight="2" onclick="multi(this,'g-kit-rec',2)"><div class="opt-name">Dois amores</div></div>
         </div>
       </div>
       
@@ -938,7 +961,7 @@ var P_SOBREMESAS = {
 };
 
 // Kit Festa
-var P_KIT = { P:220, M:358, G:495, GG:714, EX:897 };
+var P_KIT = { P:209, M:409, G:609 };
 
 // Cupcakes
 var P_CUPCAKE = {
@@ -1316,9 +1339,16 @@ function multi(el, gid, maxNormal) {
   var tamEl = document.querySelector('#g-dec-tam .selected');
   var isBento = tamEl ? (tamEl.getAttribute('data-bento') === 'true') : false;
   var maxAllowed = isBento ? 1 : maxNormal;
+  var weight = parseInt(el.getAttribute('data-weight') || '1', 10);
   if (el.classList.contains('selected')) { el.classList.remove('selected'); updatePreview(); return; }
-  var selected = document.querySelectorAll('#' + gid + ' .selected');
-  if (selected.length >= maxAllowed) { showToast(isBento ? 'Bento cake: apenas 1 recheio!' : 'Maximo 2 recheios!'); return; }
+  var usedWeight = 0;
+  document.querySelectorAll('#' + gid + ' .selected').forEach(function(s) {
+    usedWeight += parseInt(s.getAttribute('data-weight') || '1', 10);
+  });
+  if (usedWeight + weight > maxAllowed) {
+    showToast(isBento ? 'Bento cake: apenas 1 recheio!' : (weight > 1 ? 'Este sabor já equivale a 2 recheios!' : 'Maximo 2 recheios!'));
+    return;
+  }
   el.classList.add('selected');
   updatePreview();
 }
@@ -1671,6 +1701,25 @@ function onKitTamSelect(el) {
   document.querySelectorAll('#g-kit-doce .opt-card').forEach(c => c.classList.remove('selected'));
   updatePreview();
 }
+
+(function(){
+  var wraps = document.querySelectorAll('.mp-photo-wrap');
+  wraps.forEach(function(wrap, wrapIndex){
+    var imgs = wrap.querySelectorAll('.mp-carousel-img');
+    var dots = wrap.querySelectorAll('.mp-dot');
+    if (imgs.length < 2) return;
+    var idx = 0;
+    setTimeout(function(){
+      setInterval(function(){
+        imgs[idx].classList.remove('mp-active');
+        if (dots[idx]) dots[idx].classList.remove('mp-active');
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('mp-active');
+        if (dots[idx]) dots[idx].classList.add('mp-active');
+      }, 3200);
+    }, wrapIndex * 450);
+  });
+})();
 
 </script>
 
