@@ -358,10 +358,14 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
               padding: 0.15rem 0.55rem; border-radius: 2rem; }
   .mp-badge-hot { background: var(--rose); color: #fff; }
   .mp-badge-new { background: var(--gold); color: #fff; }
-  .mp-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; background: var(--cream); }
-  .mp-img-icon { width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  .mp-photo-wrap { position: relative; width: 100%; padding-top: 100%; overflow: hidden;
+                   background: var(--cream); display: block; }
+  .mp-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; display: block; }
+  .mp-img-icon { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                 display: flex; align-items: center; justify-content: center;
                  font-size: 2.2rem; background: var(--rose-light); }
-  .mp-body { padding: 0.6rem 0.7rem 0.7rem; }
+  .mp-body { padding: 0.6rem 0.7rem 0.7rem; text-align: center; }
   .mp-name { font-size: 0.85rem; font-weight: 500; color: var(--dark); margin-bottom: 0.1rem; }
   .mp-sub { font-size: 0.68rem; color: var(--taupe); margin-bottom: 0.4rem; }
   .mp-price { font-size: 0.85rem; font-weight: 500; color: var(--rose-dark); margin-bottom: 0.5rem; }
@@ -437,7 +441,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
 
       <div class="mp-card mp-featured">
         <span class="mp-badge mp-badge-hot">Mais pedido</span>
-        <img class="mp-img" src="img/mais-pedidos/mp-chantininho.webp" alt="Bolo Chantininho" loading="lazy" width="700" height="933">
+        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-chantininho.webp" alt="Bolo Chantininho" loading="lazy" width="700" height="933"></div>
         <div class="mp-body">
           <div class="mp-name">Bolo Chantininho</div>
           <div class="mp-sub">P · M · G · GG</div>
@@ -448,7 +452,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <img class="mp-img" src="img/mais-pedidos/mp-naked-cake.webp" alt="Naked Cake" loading="lazy" width="700" height="683">
+        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-naked-cake.webp" alt="Naked Cake" loading="lazy" width="700" height="683"></div>
         <div class="mp-body">
           <div class="mp-name">Naked Cake</div>
           <div class="mp-sub">P · M · G · GG</div>
@@ -459,7 +463,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <img class="mp-img" src="img/mais-pedidos/mp-bento-cake.webp" alt="Bento Cake" loading="lazy" width="700" height="702">
+        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-bento-cake.webp" alt="Bento Cake" loading="lazy" width="700" height="702"></div>
         <div class="mp-body">
           <div class="mp-name">Bento Cake</div>
           <div class="mp-sub">Individual</div>
@@ -470,7 +474,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <div class="mp-img-icon">🎁</div>
+        <div class="mp-photo-wrap"><div class="mp-img-icon">🎁</div></div>
         <div class="mp-body">
           <div class="mp-name">Kit Festa</div>
           <div class="mp-sub">P +50 · M +100 · G +150 docinhos</div>
@@ -481,7 +485,7 @@ td:not(:first-child){text-align:center;color:var(--rose-dark);font-weight:500}
       </div>
 
       <div class="mp-card">
-        <img class="mp-img" src="img/mais-pedidos/mp-docinhos.webp" alt="Docinhos" loading="lazy" width="700" height="933">
+        <div class="mp-photo-wrap"><img class="mp-img" src="img/mais-pedidos/mp-docinhos.webp" alt="Docinhos" loading="lazy" width="700" height="933"></div>
         <div class="mp-body">
           <div class="mp-name">Docinhos</div>
           <div class="mp-sub">25 · 50 · 100 un</div>
